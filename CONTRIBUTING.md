@@ -10,7 +10,7 @@
 - Unity（バージョンは別途 `README.md` に記載）
 - C#
 - Git / GitHub
-- Microsoft Temas（タスク管理、チーム内コミュニケーション）
+- Microsoft Teams（タスク管理、チーム内コミュニケーション）
 
 ---
 

@@ -20,12 +20,12 @@
 ## 📦 プロジェクト構成（主なフォルダ）
 
 Assets/
-├── Scripts/ # スクリプト類
-├── Scenes/ # シーン
-├── Prefabs/ # プレハブ
-├── Models/ # モデル関連
-├── Audio/ # 音素材
-└── UI/ # UI要素
+├── Scripts/ -- スクリプト類  
+├── Scenes/ -- シーン  
+├── Prefabs/ -- プレハブ  
+├── Models/ -- モデル関連  
+├── Audio/ -- 音素材  
+└── UI/ -- UI要素  
 
 ---
 
@@ -57,13 +57,13 @@ Assets/
 
 ## 📋 タスク管理
 
-タスクや進捗は Microsoft Teams にて管理しています。
+タスクや進捗は `Microsoft Teams` にて管理しています。
 
 ---
 
 ## 📷 コンセプトイメージ
 
-![concept1](Docs/concept1.png)
+![concept1](Docs/concept1.jpg)
 
 ---
 
