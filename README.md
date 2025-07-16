@@ -1,134 +1,72 @@
-# AnimalEscape
+# 🐧🐵 「脱走アニマル大作戦」（仮決定）
 
-# Unity プロジェクト命名規則
-
-このドキュメントは、本プロジェクトで使用するファイル、アセット、コードの命名規則を定義します。チームでの開発をスムーズに進めるために、明確で一貫性のある命名を徹底しましょう。
+このプロジェクトはUnityで開発中の2人協力型アクションパズルゲームです。  
+プレイヤーはペンギンとサルを操作し、ギミックや敵を乗り越えてゴールを目指します！
 
 ---
 
-## 📁 1. プロジェクトフォルダ構成
+## 🎮 ゲーム概要
+
+- タイトル（仮）：「脱走アニマル大作戦」
+- 開発エンジン：Unity 6000.0.36f1
+- プレイ人数：2人（ローカル）
+- 主な要素：
+  - キャラごとの特殊能力
+  - 連携ギミック・パズル
+  - 敵の回避・攻略要素
+
+---
+
+## 📦 プロジェクト構成（主なフォルダ）
 
 Assets/
-
-├── Scripts/　　　　C#スクリプトを全部このフォルダに入れます
-
-│　　　├── Player/　　中に細かく分類する
-
-│　　　├── Enemy/
-
-│　　　└── UI/
-
-├── Prefabs/　　　　Unityのプレハブ、できれば中にも分類する
-
-├── Scenes/　　　　Unityのシーン、他の人のシーンを影響しないため、自分の開発シーンを作ってください
-
-├── Models/　　　　３Dモデル
-
-├── Images/　　　　画像
-
-└── Audio/　　　　音声
- 
-　　　├── BGM/
-  
-　　　└── SFX/
-
+├── Scripts/ # スクリプト類
+├── Scenes/ # シーン
+├── Prefabs/ # プレハブ
+├── Models/ # モデル関連
+├── Audio/ # 音素材
+└── UI/ # UI要素
 
 ---
 
-## 🗂 2. ファイル＆アセットの命名規則
+## 🚀 セットアップ手順
 
-### ✅ 基本ルール
-- **パスカルケース（PascalCase）** を基本とする（例：`PlayerController.cs`）
-- 半角スペースや特殊文字は使用しない（必要なら `_` を使う）
-- **短くても意味が通る名前**を心がける
-- Unityのオブジェクト/クラス名とファイル名は基本的に一致させる
+1. Unity Hubでプロジェクトを開く（バージョンは `6000.0.36f1 LTS` 推奨）
+2. 必要なパッケージが自動でインポートされるのを待つ
 
 ---
 
-### 📜 C#スクリプト
+## 🛠 開発メンバー（Programmer）
 
-| 用途            | 例                       |
-|-----------------|--------------------------|
-| MonoBehaviour   | `PlayerController.cs`   |
-| マネージャー     | `GameManager.cs`       |
-| UI スクリプト    | `MainMenuUI.cs`         |
+- 🎯 ディレクター：三森
+- 👤 サブディレクター：松尾、行岡
+- 🧩 メインプログラマー：ト・レキキ、ＡＭＩＲＵＬＬＡＨ ＩＺＺＡＮ
 
----
-
-### 🎨 アセット＆プレハブ
-
-| タイプ            | 命名例                   |
-|------------------|--------------------------|
-| プレハブ         | `EnemyGoblin.prefab`      |
-| UI プレハブ      | `UI_HealthBar.prefab`     |
-| モデル           | `Goblin_Idle.fbx`         |
-| アニメーション    | `Player_Walk.anim`        |
-| 効果音           | `SFX_Jump.wav`            |
-| BGM              | `BGM_Battle.mp3`         |
-| ScriptableObject | `LevelData.asset`        |
+他のチーム（デザイン・アートなど）は別ドキュメント参照
 
 ---
 
-### 🎬 シーン
+## 👣 開発フロー（簡易）
 
-| タイプ  | 命名例                        |
-|---------|------------------------------|
-| メニュー | `MainMenu.unity`             |
-| ステージ | `Level01.unity`              |
-| テスト   | `Test_PlayerMovement.unity`  |
-
----
-
-## 💻 3. コード命名規則（C#）
-
-### ✅ 基本ルール
-- クラス名、メソッド名、publicなフィールドには **パスカルケース** を使用
-- ローカル変数や private フィールドには **キャメルケース**（先頭小文字）を使用（例：`rotateSpeed`）
-- `private` な変数は `_` で始める（例：`_speed`）
-- できれば、クラス名は **名詞**、メソッド名は **動詞** で命名
-- 略語は一般的なもの（`UI`, `ID`など）以外は避ける
-- 定数（const）は全部大文字を使用（例：`MAX_SPEED`）
-- 1ファイルにすべて詰め込むを避ける
-- Unity のライフサイクル関数（Start, Updateなど）はクラス内の最上部に記述
-- 複雑なロジックにはコメントを付ける
+- 開発ブランチは `feat/`, `fix/` などで分ける
+- 全PRは `dev` ブランチに送る
+- 命名規則は [`NAMING_CONVENTIONS.md`](./NAMING_CONVENTIONS.md)
+- 開発手順・Gitの使い方は [`CONTRIBUTING.md`](./CONTRIBUTING.md)
 
 ---
 
-### 🧱 クラス & 構造体（例）
+## 📋 タスク管理
 
-```csharp
-public class PlayerController { ... }
-public struct EnemyState { ... }
-```
+タスクや進捗は Microsoft Teams にて管理しています。
 
-### ⚙️ 関数
+---
 
-```csharp
-public void TakeDamage(int amount) { ... }
-private void MoveForward() { ... }
-```
+## 📷 コンセプトイメージ
 
-### 📦 変数
+![concept1](Docs/concept1.png)
 
-```csharp
-[SerializeField] private float _speed;
-private int _health;
-public string PlayerName;
-public bool IsGrounded { get; private set; }
-```
+---
 
-### 🧾 定数
+## 📝 ライセンス
 
-```csharp
-private const float GRAVITY = 9.81f;
-```
-
-### ✅ 列挙型
-
-```csharp
-public enum EnemyType {
-    Goblin,
-    Orc,
-    Boss
-}
-```
+このプロジェクトは教育目的で開発されており、商用利用はできません。
