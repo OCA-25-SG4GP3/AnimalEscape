@@ -7,7 +7,7 @@
 
 ## 🛠 使用技術
 
-- Unity（バージョンは別途 `README.md` に記載）
+- Unity（バージョンは別途 [`README.md`](./README.md) に記載）
 - C#
 - Git / GitHub
 - Microsoft Teams（タスク管理、チーム内コミュニケーション）
@@ -29,6 +29,7 @@
 | `main`     | リリース・安定版（直接Push禁止） |
 | `dev`      | 開発統合用（Pull Requestでのみマージ） |
 | `feat/<機能名>` | 新しい機能の開発用 |
+| `fix/<バグ名>`     | バグ修正用 |
 
 例：
 
