@@ -11,6 +11,12 @@ public static class AgentHelper
     {
         agent.isStopped = true;
     }
+    public static void StopAndClear(NavMeshAgent agent)
+    {
+        agent.isStopped = true;
+        agent.ResetPath(); // clears destination
+    }
+
     public static void MoveTo(NavMeshAgent agent, Vector3 destination)
     {
         agent.destination = destination;
