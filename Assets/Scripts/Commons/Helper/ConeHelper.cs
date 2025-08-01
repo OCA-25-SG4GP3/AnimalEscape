@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -20,7 +21,7 @@ public struct ConeInfo
 
 public static class ConeHelper
 {
-    public static GameObject CheckTargetsInCone(ConeInfo coneInfo, List<GameObject> targetsToCheck)
+    public static GameObject CheckClosestTargetInCone(ConeInfo coneInfo, List<GameObject> targetsToCheck, Func<GameObject, bool> predToIgnoreElem = null)
     {
         //準備したオブジェクトリストから、視野角にいるかどうかをチェック。
         //いたら、保存。
@@ -28,6 +29,7 @@ public static class ConeHelper
         float closestDistanceFound = float.MaxValue;
         foreach (GameObject potentialTarget in targetsToCheck)
         {
+            if (predToIgnoreElem != null && predToIgnoreElem(potentialTarget)) continue;
             Vector3 toTarget = potentialTarget.transform.position - coneInfo.coneMiddle;
             float distance = toTarget.magnitude;
 
@@ -50,7 +52,7 @@ public static class ConeHelper
 
     public static void DrawConeGizmo(ConeInfo coneInfo) //DEBUG only
     {
-        
+
         Vector3 pos = coneInfo.coneMiddle;
 
         Gizmos.color = new Color(1, 0, 0, 0.3f);
