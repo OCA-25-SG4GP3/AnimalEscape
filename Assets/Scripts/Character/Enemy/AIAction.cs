@@ -1,15 +1,17 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.AI;
 
 public class AILogicController : MonoBehaviour
 {
-    [SerializeField][Header("何かをしたい、その候補ターゲット (複数) (尾行、など)")] public List<GameObject> targetCandidateObjects;
+    [SerializeField][Header("何かをしたい、その候補ターゲット (複数) (尾行、など)")] public List<GameObject> targetCandidateObjects; //TODO move this to singular data in gamemanager
     [SerializeField][Header("ターゲット中オブジェクト")] public GameObject currentTargetObj; //ターゲット中オブジェクト
     [SerializeReference][Header("今の行動は")] public AILogic aiLogic; //行動パターン抽象データー
     [SerializeField] public AILogicLoiter aiLogicLoiter = new(); //Inspectorから設定したい場合
     [SerializeField] public AILogicDetecting aiLogicDetecting = new(); //Inspectorから設定したい場合
+    [SerializeField] public AILogicCarryCatched aiLogicCarryCatched = new(); //Inspectorから設定したい場合
     [SerializeField] public AILogicPatrol aiLogicPatrol = new(); //Inspectorから設定したい場合
     [NonSerialized] public NavMeshAgent agent;
     Cooldown aiTick = new(0.2f); //毎フレームをチェックではなく、決めた時間にチェック
@@ -32,6 +34,7 @@ public class AILogicController : MonoBehaviour
 #if UNITY_EDITOR
         if (!agent) Debug.LogWarning("NavMeshAgentが持ってないオブジェクトです。");
 #endif
+        aiLogic.Update();
         if (!aiTick.IsCooldown)
         {
             aiLogic.Action();
@@ -59,6 +62,16 @@ public class AILogicController : MonoBehaviour
         aiLogic = newAILogic;
     }
 
+    public GameObject CheckUncaughtTargetsInCone() //捕まえてないものをチェック
+    {
+        Func<GameObject, bool> hasCaught = (obj) => { return obj.GetComponent<PlayerInfo>().hasCaught; };
+        return ConeHelper.CheckClosestTargetInCone //視野角に、チェック
+      (
+        GetConeInfo(),
+        targetCandidateObjects,
+        hasCaught //捕まえたものを除外する
+      );
+    }
     public ConeInfo GetConeInfo()
     {
         ConeInfo coneInfo = new ConeInfo(
@@ -95,8 +108,9 @@ public abstract class AILogic
     }
     protected void SetLogicName(string name) => logicName = name;
     public abstract void Enter(); ///can change animation here
-    public abstract void Action(); ///Main loop
+    public abstract void Action(); ///Main loop per cooldown tick
     public abstract void Exit();
+    public virtual void Update() { } ///Frequent call
     public virtual void DrawDebug() { }// optional override in child classes
     public void SetAILogic(AILogic aiLogic) => logicCon.SetAILogic(aiLogic);
     public bool FoundTarget()
@@ -105,10 +119,71 @@ public abstract class AILogic
     }
 }
 [System.Serializable]
+public class AILogicCarryCatched : AILogic ///検知する / 追いかける / 尾行 Chase
+{
+    public AILogicCarryCatched() : base("AI has caught an object") { }
+    [SerializeField, ReadOnly][Header("捕まえたオブジェクト")] private GameObject caughtObject;
+    [SerializeField][Header("捕獲ネットのスロット場所")] private Transform catchNetSlotT;
+    [SerializeField] private List<Jail> jails; ///牢屋
+    Vector3 dropPos;
+
+    public void CatchObject(GameObject objectToCatch)
+    {
+        caughtObject = objectToCatch;
+        objectToCatch.GetComponent<PlayerInfo>().hasCaught = true;
+    }
+    public override void Enter()
+    {
+        MoveToDropInClosestJail();
+    }
+    public override void Update()
+    {
+        UpdateCatchedObjectPosRot();
+    }
+    public override void Action()
+    {
+        const float jailCellSize = 2.8f;
+        if (AgentHelper.HasArrivedSuccess(agent, jailCellSize)) //牢屋の近くに到着
+        {
+            DropCatchedObject(dropPos);
+            SetAILogic(logicCon.aiLogicPatrol); //restore
+        }
+    }
+    Jail GetClosestJail()
+    {
+        List<Vector3> jailPositions = jails.Select(obj => obj.transform.position).ToList();
+        Vector3 closestJailPos = Vector3Helper.GetClosest(logicCon.transform.position, jailPositions, out int index);
+        return jails[index];
+    }
+    void MoveToDropInClosestJail()
+    {
+        Jail closestJail = GetClosestJail(); //store for dropping later to prevent accidents
+        dropPos = closestJail.jailedObjectSlotT.position;
+        AgentHelper.MoveTo(agent, dropPos);
+    }
+    void DropCatchedObject(Vector3 dropPos)
+    {
+        caughtObject.transform.position = dropPos;
+        caughtObject = null;
+    }
+    void UpdateCatchedObjectPosRot()
+    {
+        caughtObject.transform.position = catchNetSlotT.position;
+        caughtObject.transform.rotation = catchNetSlotT.rotation;
+    }
+
+    public override void Exit()
+    {
+        AgentHelper.ClearPath(agent);
+        if (caughtObject) DropCatchedObject(logicCon.transform.position);
+    }
+}
+[System.Serializable]
 public class AILogicDetecting : AILogic ///検知する / 追いかける / 尾行 Chase
 {
     [SerializeField] private GameObject exclamationMarkTextObj; //"!!!" テキスト
     [SerializeField] private float maxChaseDistance = 25.0f; //遠すぎたら、辞める。徘徊に戻す
+    [SerializeField] private float catchRange = 3.5f; //遠すぎたら、辞める。徘徊に戻す
     public AILogicDetecting() : base("AI is Detecting 検知した") { }
 
     public override void Enter()
@@ -120,19 +195,15 @@ public class AILogicDetecting : AILogic ///検知する / 追いかける / 尾�
     {
         //////////////////////////////////
         //他の候補したオブジェクトの中、もっと近いターゲットがいれば、それを今のターゲットにする
-        GameObject closerFoundObject = ConeHelper.CheckTargetsInCone //視野角に、チェック
-        (
-          logicCon.GetConeInfo(),
-          logicCon.targetCandidateObjects
-        );
+        GameObject closerFoundObject = logicCon.CheckUncaughtTargetsInCone();
 
         if (closerFoundObject)
         {
 #if UNITY_EDITOR
-            Debug.Log(
-                logicCon.currentTargetObj.name + "　の尾行をやめて、" +
-                 closerFoundObject.name + "　を尾行してます！"
-                );
+            // Debug.Log(
+            //     logicCon.currentTargetObj.name + "　の尾行をやめて、" +
+            //      closerFoundObject.name + "　を尾行してます！"
+            //     );
 #endif
             logicCon.currentTargetObj = closerFoundObject;
         }
@@ -141,6 +212,12 @@ public class AILogicDetecting : AILogic ///検知する / 追いかける / 尾�
         if (logicCon.currentTargetObj && IsTargetClose(maxChaseDistance))
         {
             ChaseTarget(); //追いかける
+            if (IsWithinCatchRange(logicCon.currentTargetObj))///捕獲の距離に入るかどうか
+            {
+                SetAILogic(logicCon.aiLogicCarryCatched);
+                logicCon.aiLogicCarryCatched.CatchObject(logicCon.currentTargetObj);
+                return;
+            }
         }
         else
         {
@@ -151,7 +228,12 @@ public class AILogicDetecting : AILogic ///検知する / 追いかける / 尾�
     public override void Exit()
     {
         exclamationMarkTextObj.SetActive(false);
-        AgentHelper.StopAndClear(agent);
+        AgentHelper.ClearPath(agent); //Stop chasing after losing target
+    }
+
+    bool IsWithinCatchRange(GameObject objectToCheck)
+    {
+        return Vector3.Distance(objectToCheck.transform.position, logicCon.transform.position) <= catchRange;
     }
     public override void DrawDebug()
     {
@@ -187,6 +269,7 @@ public class AILogicPatrol : AILogic ///決めた場所にパトロール / 巡�
     public AILogicPatrol() : base("AI is Patrolling to places 決めた場所に巡回してます") { }
     [SerializeField] private List<Transform> patrolSpotTransforms;
     Transform currentPatrolSpotT;
+    int mode = 0;
     [SerializeField, ReadOnly][Header("現在のパトロールインデックス")] private int patrolIndex = 0;
     public override void Enter()
     {
@@ -194,10 +277,9 @@ public class AILogicPatrol : AILogic ///決めた場所にパトロール / 巡�
         patrolIndex = nextIndex;
     }
 
-    int mode = 0;
     public override void Action()
     {
-        GameObject closestTarget = ConeHelper.CheckTargetsInCone(logicCon.GetConeInfo(), logicCon.targetCandidateObjects);
+        GameObject closestTarget = logicCon.CheckUncaughtTargetsInCone();
         if (closestTarget)
         {
             logicCon.currentTargetObj = closestTarget;
@@ -225,8 +307,6 @@ public class AILogicPatrol : AILogic ///決めた場所にパトロール / 巡�
             }
         }
     }
-
-
 
     public override void Exit()
     {
@@ -308,11 +388,8 @@ public class AILogicLoiter : AILogic ///ランダム徘徊行動
     }
     public override void Action()
     {
-        logicCon.currentTargetObj = ConeHelper.CheckTargetsInCone //視野角に、チェック
-        (
-            logicCon.GetConeInfo(),
-            logicCon.targetCandidateObjects
-          );
+        logicCon.currentTargetObj = logicCon.CheckUncaughtTargetsInCone(); //視野角に、チェック
+
 
         ////////////////////////
         //Go to AIActionDetected if detect a player

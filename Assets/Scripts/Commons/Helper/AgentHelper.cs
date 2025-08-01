@@ -11,33 +11,24 @@ public static class AgentHelper
     {
         agent.isStopped = true;
     }
-    public static void StopAndClear(NavMeshAgent agent)
+    public static void ClearPath(NavMeshAgent agent)
     {
-        agent.isStopped = true;
-        agent.ResetPath(); // clears destination
+        agent.ResetPath(); // clears destination, stop moving to that pos
     }
 
     public static void MoveTo(NavMeshAgent agent, Vector3 destination)
     {
         agent.destination = destination;
     }
-    public static bool HasArrivedSuccess(NavMeshAgent agent)
+    public static bool HasArrivedSuccess(NavMeshAgent agent, float tolerance = 0.1f)
     {
-        if (!agent.pathPending) //path has finished calculating (or never requested)
-        {
-            if (agent.pathStatus == NavMeshPathStatus.PathComplete)
-            {
-                return agent.remainingDistance <= agent.stoppingDistance && !agent.hasPath;
-            }
-            else
-            {
-#if UNITY_EDITOR
-                Debug.Log("Does not found path!");
-#endif
-                return false;
-            }
-        }
+        if (agent.pathPending) return false; // still calculating
 
-        return false;
+        if (agent.pathStatus != NavMeshPathStatus.PathComplete)
+            return false; // invalid or partial path
+
+        // Arrival check with tolerance
+        return agent.remainingDistance <= (agent.stoppingDistance + tolerance);
     }
+
 }
