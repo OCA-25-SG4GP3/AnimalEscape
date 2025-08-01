@@ -1,14 +1,20 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-
-#region AIAction
-public class AIAction : MonoBehaviour
+public class AILogicController : MonoBehaviour
 {
-    [SerializeReference] public AILogic aiLogic; //行動パターン抽象データー
+    [SerializeField][Header("何かをしたい、その候補ターゲット (複数) (尾行、など)")] public List<GameObject> targetCandidateObjects;
+    [SerializeField][Header("ターゲット中オブジェクト")] public GameObject currentTargetObj; //ターゲット中オブジェクト
+    [SerializeReference][Header("今の行動は")] public AILogic aiLogic; //行動パターン抽象データー
+    [SerializeField] public AILogicLoiter aiLogicLoiter = new(); //Inspectorから設定したい場合
+    [SerializeField] public AILogicDetecting aiLogicDetecting = new(); //Inspectorから設定したい場合
+    [SerializeField] public AILogicPatrol aiLogicPatrol = new(); //Inspectorから設定したい場合
     [NonSerialized] public NavMeshAgent agent;
-    public GameObject targetObj; //そのターゲットに何かをしたいとき
+    Cooldown aiTick = new(0.2f); //毎フレームをチェックではなく、決めた時間にチェック
+    [SerializeField] private float maxConeDistance = 20.0f;
+    [SerializeField] private float coneAngle = 50.0f;
     #region unity
     private void Awake()
     {
@@ -17,7 +23,8 @@ public class AIAction : MonoBehaviour
 
     private void Start()
     {
-        SetAIAction<AIActionLoiter>(); //初期化モードは徘徊
+        SetAILogic(aiLogicPatrol); //初期化モードはパトロール
+        //SetAILogic(aiLogicLoiter); //初期化モードは徘徊
     }
 
     void Update()
@@ -25,7 +32,11 @@ public class AIAction : MonoBehaviour
 #if UNITY_EDITOR
         if (!agent) Debug.LogWarning("NavMeshAgentが持ってないオブジェクトです。");
 #endif
-        aiLogic.Action();
+        if (!aiTick.IsCooldown)
+        {
+            aiLogic.Action();
+            aiTick.StartCooldown();
+        }
     }
     private void OnDrawGizmos()
     {
@@ -35,74 +46,255 @@ public class AIAction : MonoBehaviour
 
     #endregion
     #region public
-    public void SetAIAction<T>() where T : AILogic, new()
+    public void SetAILogic(AILogic newAILogic)
     {
         //前のAIを終わらせる
         if (aiLogic != null) aiLogic.Exit();
 
         //新しいAIがエンター
-        T newAIAction = new T();
-        newAIAction.Enter(this);
+        newAILogic.SetLogicController(this);
+        newAILogic.Enter();
 
         //前のAIを上書き
-        aiLogic = newAIAction;
+        aiLogic = newAILogic;
     }
+
+    public ConeInfo GetConeInfo()
+    {
+        ConeInfo coneInfo = new ConeInfo(
+            transform.forward,
+            transform.position,
+            maxConeDistance,
+            coneAngle
+            );
+
+        return coneInfo;
+    }
+
+
     #endregion
+
 }
+#region AILogic
+
 [System.Serializable]
 public abstract class AILogic
 ///We want this class to be loosely coupled
 ///何のゲームオブジェクトが実行できるように、依存性を少なくにします。
 {
-    protected AILogic(string name) { logicName = name; } //for debug
-    protected AIAction aiAction = null; //set on child
-    protected NavMeshAgent agent => aiAction.agent;
+    protected AILogic(string name)
+    {
+        logicName = name;
+    } //for debug
+    protected AILogicController logicCon = null; //set on child
+    protected NavMeshAgent agent => logicCon.agent;
     [SerializeField, ReadOnly] private string logicName; //Debug display
+    public void SetLogicController(AILogicController aiLogicController)
+    {
+        this.logicCon = aiLogicController;
+    }
     protected void SetLogicName(string name) => logicName = name;
-    public abstract void Enter(AIAction aiAction); ///Change animation here
+    public abstract void Enter(); ///can change animation here
     public abstract void Action(); ///Main loop
     public abstract void Exit();
     public virtual void DrawDebug() { }// optional override in child classes
+    public void SetAILogic(AILogic aiLogic) => logicCon.SetAILogic(aiLogic);
+    public bool FoundTarget()
+    {
+        return logicCon.currentTargetObj != null;
+    }
 }
 [System.Serializable]
-public class AIActionDetecting : AILogic ///検知する
+public class AILogicDetecting : AILogic ///検知する / 追いかける / 尾行 Chase
 {
-    public AIActionDetecting() : base("AI is Detecting 検知した") { }
+    [SerializeField] private GameObject exclamationMarkTextObj; //"!!!" テキスト
+    [SerializeField] private float maxChaseDistance = 25.0f; //遠すぎたら、辞める。徘徊に戻す
+    public AILogicDetecting() : base("AI is Detecting 検知した") { }
 
-    public override void Enter(AIAction aiAction)
+    public override void Enter()
     {
-        this.aiAction = aiAction;
+        exclamationMarkTextObj.SetActive(true);
+        //スプリント anim
     }
-
     public override void Action()
     {
-        if (aiAction.targetObj)
-        {
+        //////////////////////////////////
+        //他の候補したオブジェクトの中、もっと近いターゲットがいれば、それを今のターゲットにする
+        GameObject closerFoundObject = ConeHelper.CheckTargetsInCone //視野角に、チェック
+        (
+          logicCon.GetConeInfo(),
+          logicCon.targetCandidateObjects
+        );
 
-        }
-        else if (aiAction.targetObj == null || IsTargetTooFar(20.0f))
+        if (closerFoundObject)
         {
-            aiAction.SetAIAction<AIActionLoiter>();
+#if UNITY_EDITOR
+            Debug.Log(
+                logicCon.currentTargetObj.name + "　の尾行をやめて、" +
+                 closerFoundObject.name + "　を尾行してます！"
+                );
+#endif
+            logicCon.currentTargetObj = closerFoundObject;
+        }
+        //////////////////////////////////
+
+        if (logicCon.currentTargetObj && IsTargetClose(maxChaseDistance))
+        {
+            ChaseTarget(); //追いかける
+        }
+        else
+        {
+            SetAILogic(logicCon.aiLogicPatrol); //やめる。また巡回する。
+            //SetAILogic(logicCon.aiLogicLoiter); //やめる。徘徊する。
         }
     }
-    public override void Exit() { }
+    public override void Exit()
+    {
+        exclamationMarkTextObj.SetActive(false);
+        AgentHelper.StopAndClear(agent);
+    }
     public override void DrawDebug()
     {
+        if (logicCon.currentTargetObj == null) return;
 
+        Vector3 center = logicCon.transform.position;
+        float radius = maxChaseDistance;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(center, radius); //ターゲットが逃げる距離
+
+        ConeHelper.DrawConeGizmo(logicCon.GetConeInfo());
     }
 
-    bool IsTargetTooFar(float maxDistance)
+    void ChaseTarget()
     {
-        float dist = Vector3.Distance(aiAction.transform.position, aiAction.targetObj.transform.position);
+        Vector3 targetPos = logicCon.currentTargetObj.transform.position;
+        AgentHelper.MoveTo(agent, targetPos);
+    }
+
+    #region private
+    public bool IsTargetClose(float maxDistance)
+    {
+        float dist = Vector3.Distance(logicCon.transform.position, logicCon.currentTargetObj.transform.position);
         return dist <= maxDistance;
     }
-}
-[System.Serializable]
-public class AIActionLoiter : AILogic ///徘徊行動
-{
-    public AIActionLoiter() : base("AI is Loitering 徘徊中") { }
+    #endregion
 
-    Cooldown movePositionCD = new Cooldown(2.0f); //秒
+}
+
+[System.Serializable]
+public class AILogicPatrol : AILogic ///決めた場所にパトロール / 巡回
+{
+    public AILogicPatrol() : base("AI is Patrolling to places 決めた場所に巡回してます") { }
+    [SerializeField] private List<Transform> patrolSpotTransforms;
+    Transform currentPatrolSpotT;
+    [SerializeField, ReadOnly][Header("現在のパトロールインデックス")] private int patrolIndex = 0;
+    public override void Enter()
+    {
+        GetClosestPatrolSpot(out int nextIndex); //最も近いパトロール場所に巡回し始める
+        patrolIndex = nextIndex;
+    }
+
+    int mode = 0;
+    public override void Action()
+    {
+        GameObject closestTarget = ConeHelper.CheckTargetsInCone(logicCon.GetConeInfo(), logicCon.targetCandidateObjects);
+        if (closestTarget)
+        {
+            logicCon.currentTargetObj = closestTarget;
+            SetAILogic(logicCon.aiLogicDetecting);
+            return;
+        }
+        else
+        {
+            if (patrolSpotTransforms.Count == 0) { return; }
+
+            switch (mode)
+            {
+                case 0: //Moving 
+                    if (AgentHelper.HasArrivedSuccess(agent))
+                    {
+                        mode = 1;
+                    }
+                    break;
+
+                case 1://Recalculate next spot
+                    ChangeToNextPatrol();
+                    AgentHelper.MoveTo(agent, currentPatrolSpotT.position);
+                    mode = 0;
+                    break;
+            }
+        }
+    }
+
+
+
+    public override void Exit()
+    {
+
+    }
+
+    public override void DrawDebug()
+    {
+        ConeHelper.DrawConeGizmo(logicCon.GetConeInfo());
+        DrawPatrolLines();
+    }
+    void ChangeToNextPatrol()
+    {
+        patrolIndex++;
+        if (patrolIndex > patrolSpotTransforms.Count - 1) patrolIndex = 0;
+        currentPatrolSpotT = patrolSpotTransforms[patrolIndex];
+    }
+
+    Vector3 GetClosestPatrolSpot(out int nextIndex)
+    {
+        nextIndex = -1;
+        float closestDist = float.MaxValue;
+        Vector3 closestPos = Vector3.zero;
+
+        Vector3 myPos = logicCon.transform.position;
+
+        for (int i = 0; i < patrolSpotTransforms.Count; i++)
+        {
+            float dist = Vector3.SqrMagnitude(patrolSpotTransforms[i].position - myPos);
+            if (dist < closestDist)
+            {
+                closestDist = dist;
+                closestPos = patrolSpotTransforms[i].position;
+                nextIndex = i;
+            }
+        }
+
+        return closestPos;
+    }
+
+    private void DrawPatrolLines()
+    {
+        if (patrolSpotTransforms == null || patrolSpotTransforms.Count == 0)
+            return;
+
+        Gizmos.color = Color.yellow;
+
+        for (int i = 0; i < patrolSpotTransforms.Count; i++)
+        {
+            Transform current = patrolSpotTransforms[i];
+            Transform next = patrolSpotTransforms[(i + 1) % patrolSpotTransforms.Count]; // loops back to 0
+
+            if (current != null && next != null)
+            {
+                Gizmos.DrawLine(current.position, next.position);
+            }
+        }
+    }
+
+
+}
+
+[System.Serializable]
+public class AILogicLoiter : AILogic ///ランダム徘徊行動
+{
+    public AILogicLoiter() : base("AI is Loitering 徘徊中") { }
+
+    [SerializeField][Header("待機時間(秒)")] private Cooldown movePositionCD = new Cooldown(2.0f); //秒
     enum EMode
     {
         Randomizing,
@@ -111,28 +303,37 @@ public class AIActionLoiter : AILogic ///徘徊行動
     }
     EMode mode = EMode.Randomizing;
 
-    public override void Enter(AIAction aiAction)
+    public override void Enter()
     {
-        this.aiAction = aiAction;
     }
     public override void Action()
     {
+        logicCon.currentTargetObj = ConeHelper.CheckTargetsInCone //視野角に、チェック
+        (
+            logicCon.GetConeInfo(),
+            logicCon.targetCandidateObjects
+          );
+
         ////////////////////////
         //Go to AIActionDetected if detect a player
         //プレイヤーを検知したら、return。
-        if (PlayerSpotted())
+        if (FoundTarget())//検知した!!!
         {
-            aiAction.SetAIAction<AIActionDetecting>();
+            SetAILogic(logicCon.aiLogicDetecting);
             return;
         }
         ////////////////////////
 
+        Loiter(); //Loiter / Patrol
+    }
+
+    private void Loiter()
+    {
         switch (mode)
         {
             case EMode.Randomizing: //ランダム計算、終わったら徘徊する。
-                Vector3 randomNearbyPos = GetRandomPositionNearbyXZ(aiAction.transform.position, 5.0f);
+                Vector3 randomNearbyPos = GetRandomPositionNearbyXZ(logicCon.transform.position, 5.0f);
                 AgentHelper.MoveTo(agent, randomNearbyPos);
-
                 mode = EMode.Moving;
                 break;
 
@@ -161,9 +362,10 @@ public class AIActionLoiter : AILogic ///徘徊行動
         Vector3 randomXZPos = middlePos + new Vector3(randomCirclePos.x, 0.0f, randomCirclePos.y);
         return randomXZPos;
     }
-    bool PlayerSpotted()
+
+    public override void DrawDebug()
     {
-        return false;
+        ConeHelper.DrawConeGizmo(logicCon.GetConeInfo());
     }
 }
 #endregion
