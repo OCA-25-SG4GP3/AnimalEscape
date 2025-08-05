@@ -3,16 +3,13 @@ using UnityEngine;
 public class CharacterBase : MonoBehaviour
 {
     [Header("Stats")]
-    [SerializeField] protected float _walkSpeed;
-    [SerializeField] protected float _rotateSpeed;
-    protected float _moveSpeed;
+    [SerializeField] private float _moveSpeed;
+    [SerializeField] private float _rotateSpeed;
 
-    protected Rigidbody _rigidbody;
-    protected Vector3 _movement;
+    private Rigidbody _rigidbody;
 
     protected virtual void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
-        _moveSpeed = _walkSpeed;
     }
 }
