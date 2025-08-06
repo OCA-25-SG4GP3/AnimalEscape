@@ -41,16 +41,16 @@ public class Button : MonoBehaviour
 ```csharp
 public class Door : MonoBehaviour
 {
-    [SerializeField] private VoidEventSO onGameStart;
+    [SerializeField] private VoidEventSO _onButtonEvent;
 
     private void OnEnable()
     {
-        onGameStart.OnEventInvoked += DoorOpen;
+        _onButtonEvent.OnEventInvoked += DoorOpen;
     }
 
     private void OnDisable()
     {
-        onGameStart.OnEventInvoked -= DoorOpen;
+        _onButtonEvent.OnEventInvoked -= DoorOpen;
     }
 
     private void DoorOpen()
