@@ -13,6 +13,10 @@ public class PenguinControl : PlayerBase
     private Quaternion _originalRotation;
     private Quaternion _slideTiltRotation;
 
+    public RopeHit targetBox;
+    public RopeAction2 Rope;
+    public LiftAction Lift;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
@@ -47,6 +51,24 @@ public class PenguinControl : PlayerBase
                 EndSlide();
             }
         }
+
+        //アクションボタンを押している間
+        //if (_inputSystem.Penguin.<Keyboard>/ e.triggered )
+        //{
+            //ロープを引いてもう片方を上げる
+            if (targetBox.playerInside)
+            {
+                Lift.lift_flag = true;
+                Rope.rope_flag = true;
+                //Debug.Log("Eキー押下：中にプレイヤーがいるのでログを出します");
+            }
+            else
+            {
+                Lift.lift_flag = false;
+                Rope.rope_flag = false;
+            // Debug.Log("Eキー押下：中に誰もいません");
+        }
+        //}
     }
 
     private void StartSlide()
