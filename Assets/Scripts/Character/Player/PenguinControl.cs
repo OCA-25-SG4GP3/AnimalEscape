@@ -16,6 +16,7 @@ public class PenguinControl : PlayerBase
     [SerializeField] private float _rotationSpeed = 5f;       // smooth rotation speed
     private bool _isSliding = false;
 
+<<<<<<< HEAD
     [SerializeField] private TextMeshProUGUI _chargeText;
 
     private float _chargeTimer;
@@ -24,6 +25,14 @@ public class PenguinControl : PlayerBase
 
 
     private void HandleSlideRotation()
+=======
+    public RopeHit targetBox;
+    public RopeAction2 Rope;
+    public LiftAction Lift;
+
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    private void Start()
+>>>>>>> 50ab36c (ãƒšãƒ³ã‚®ãƒ³ãŒãƒ­ãƒ¼ãƒ—ã®ã¨ã“ã‚ã«è¡Œãã¨å·¦ã®ãƒªãƒ•ãƒˆãŒä¸ŠãŒã‚‹)
     {
         if (_penguinModel == null) return;
 
@@ -89,6 +98,24 @@ public class PenguinControl : PlayerBase
         {
             _chargeText.text = "";
         }
+
+        //ƒAƒNƒVƒ‡ƒ“ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚Ä‚¢‚éŠÔ
+        //if (_inputSystem.Penguin.<Keyboard>/ e.triggered )
+        //{
+            //ƒ[ƒv‚ğˆø‚¢‚Ä‚à‚¤•Ğ•û‚ğã‚°‚é
+            if (targetBox.playerInside)
+            {
+                Lift.lift_flag = true;
+                Rope.rope_flag = true;
+                //Debug.Log("EƒL[‰Ÿ‰ºF’†‚ÉƒvƒŒƒCƒ„[‚ª‚¢‚é‚Ì‚ÅƒƒO‚ğo‚µ‚Ü‚·");
+            }
+            else
+            {
+                Lift.lift_flag = false;
+                Rope.rope_flag = false;
+            // Debug.Log("EƒL[‰Ÿ‰ºF’†‚É’N‚à‚¢‚Ü‚¹‚ñ");
+        }
+        //}
     }
     public new void OnSpecialAction(InputAction.CallbackContext context)
     {
