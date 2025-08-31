@@ -2,7 +2,7 @@ using System.Diagnostics.Contracts;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "StateBaseSO", menuName = "StateBaseSO")]
-public abstract class StateBaseSO : ScriptableObject
+public abstract class StateBaseSO : DescriptionBaseSO
 {
     public bool IsComplete { get; protected set; } = false;
     public bool CanBeInterrupted { get; protected set; } = true;
@@ -21,6 +21,8 @@ public abstract class StateBaseSO : ScriptableObject
     public abstract void FixedUpdateState();
     public abstract void LateUpdateState();
     public abstract void ExitState();
+
+    public abstract void DrawStateGizmo();
 
     protected void StartTimer()
     {

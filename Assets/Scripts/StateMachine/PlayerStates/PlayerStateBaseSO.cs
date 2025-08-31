@@ -27,4 +27,8 @@ public class PlayerStateBaseSO : StateBaseSO
     public override void LateUpdateState()
     {
     }
+
+    public override void DrawStateGizmo()
+    {
+    }
 }
