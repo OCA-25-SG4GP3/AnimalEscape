@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &692962177226050595
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5642648118674483605}
+  m_Layer: 0
+  m_Name: ThrowPosition (Monkey hand)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5642648118674483605
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 692962177226050595}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.466, y: 0.48, z: 0.213}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1261348875918423859}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1786979265286982258
 GameObject:
   m_ObjectHideFlags: 0
@@ -15,6 +46,7 @@ GameObject:
   - component: {fileID: 4272331035533330904}
   - component: {fileID: 1525023715460192827}
   - component: {fileID: 3124783273995759854}
+  - component: {fileID: 8142469703255425783}
   m_Layer: 0
   m_Name: Monkey_prototype
   m_TagString: Player
@@ -37,6 +69,7 @@ Transform:
   m_Children:
   - {fileID: 5109524501646523205}
   - {fileID: 5054211092752341427}
+  - {fileID: 5642648118674483605}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!33 &6612601474506442705
@@ -131,7 +164,7 @@ MonoBehaviour:
   _rotateSpeed: 3
   _jumpPower: 7
   _groundCheckDistance: 1.1
-  _stateSO: {fileID: 0}
+  _currentState: {fileID: 0}
   _jumpStateSO: {fileID: 11400000, guid: 38d1aa3033ca7d64c87ff51e250d55d9, type: 2}
   _walkStateSO: {fileID: 11400000, guid: 0190ab7de8c85574c906f7a02a69ed35, type: 2}
   _idleStateSO: {fileID: 11400000, guid: 46bc68174494f6b4184e11c24fe30008, type: 2}
@@ -285,6 +318,21 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &8142469703255425783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1786979265286982258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fef7c304d771e0a4db860e4abdaea87c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  thrownObjPrefab: {fileID: 723665060985263201, guid: 10959d657f05ffe4890aefed3eb543d9, type: 3}
+  throwPositionObj: {fileID: 692962177226050595}
+  throwForce: 2
 --- !u!1 &3219388531774032828
 GameObject:
   m_ObjectHideFlags: 0

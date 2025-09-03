@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Wall
   - Goal
+  - Enemy
   layers:
   - Default
   - TransparentFX
@@ -13,8 +14,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - Player
+  - Thrown
   - 
   - 
   - 
