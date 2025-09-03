@@ -3,8 +3,8 @@ using UnityEngine;
 public class MonkeyThrow : MonoBehaviour
 {
     [SerializeField] private GameObject thrownObjPrefab;
-     [SerializeField] private GameObject throwPositionObj;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField] private GameObject throwPositionObj;
+    [SerializeField] private float throwForce = 1000.0f;
     void Start()
     {
 
@@ -22,5 +22,7 @@ public class MonkeyThrow : MonoBehaviour
     void Throw()
     {
         GameObject inst = Instantiate(thrownObjPrefab, throwPositionObj.transform.position, transform.rotation);
+        Rigidbody rb = inst.GetComponent<Rigidbody>();
+        rb.AddForce(transform.forward * throwForce, ForceMode.Force);
     }
 }
