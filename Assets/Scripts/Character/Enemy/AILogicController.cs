@@ -6,6 +6,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class AILogicController : MonoBehaviour
 {
+    #region Serialized
     [Header("何かをしたい、その候補ターゲット (複数) (尾行、など)")]
     [SerializeField] public List<GameObject> Targets; //TODO move this to singular data in gamemanager
     [Header("ターゲット中オブジェクト")]
@@ -15,10 +16,9 @@ public class AILogicController : MonoBehaviour
     [SerializeField] public GameObject AlertMark; //"!!!" テキスト
     [SerializeField] public List<Transform> PatrolSpots;
     [SerializeField] public List<Jail> Jails; ///牢屋
-    public NavMeshAgent Agent;
 
     [Header("今の行動は")]
-    [SerializeField] private EnemyStateBaseSO _currentState; 
+    [SerializeField] private EnemyStateBaseSO _currentState;
     [SerializeField] public EnemyStateDetectingSO DetectingState;
     [SerializeField] public EnemyStateCarryCaughtSO CarryCaughtState;
     [SerializeField] public EnemyStateLoiterSO LoiterState;
@@ -28,7 +28,11 @@ public class AILogicController : MonoBehaviour
     [Header("視野関係")]
     [SerializeField] private float _maxConeDistance = 20.0f;
     [SerializeField] private float _coneAngle = 50.0f;
+    #endregion
 
+    [NonSerializedAttribute] public NavMeshAgent Agent;
+
+    #region Unity
     private void Awake()
     {
         Agent = GetComponent<NavMeshAgent>();
@@ -52,6 +56,8 @@ public class AILogicController : MonoBehaviour
             _currentState.DrawStateGizmo();
         }
     }
+    #endregion
+
 
     public void SetState(EnemyStateBaseSO newState)
     {
@@ -66,9 +72,14 @@ public class AILogicController : MonoBehaviour
         _currentState = newState;
     }
 
-    public GameObject CheckUncaughtTargetsInCone() //捕まえてないものをチェック
+    public GameObject CheckUncaughtTargetsInCone() //捕まえらないものをチェック
     {
-        Func<GameObject, bool> hasCaught = (obj) => { return obj.GetComponent<PlayerInfo>().hasCaught; };
+        Func<GameObject, bool> hasCaught = (obj) =>
+        {
+            var playerInfo = obj.GetComponent<PlayerInfo>();
+            if (!playerInfo) Debug.LogWarning("This [" + obj.name + "] has no PlayerInfo!");
+            return playerInfo.hasCaught;
+        };
         return ConeHelper.CheckClosestTargetInCone //視野角に、チェック
       (
         GetConeInfo(),
