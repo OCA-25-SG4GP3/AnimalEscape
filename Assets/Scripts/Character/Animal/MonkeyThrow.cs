@@ -21,8 +21,8 @@ public class MonkeyThrow : MonoBehaviour
 
     void Throw()
     {
-        GameObject inst = Instantiate(thrownObjPrefab, throwPositionObj.transform.position, transform.rotation);
+        GameObject inst = Instantiate(thrownObjPrefab, throwPositionObj.transform.position, throwPositionObj.transform.rotation);
         Rigidbody rb = inst.GetComponent<Rigidbody>();
-        rb.AddForce(transform.forward * throwForce, ForceMode.Force);
+        rb.AddForce(throwPositionObj.transform.forward * throwForce, ForceMode.Force);
     }
 }
