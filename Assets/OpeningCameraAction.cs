@@ -17,20 +17,11 @@ public class OpeningCameraAction : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        //速度に*0.9し続ければ減速すると思う
-
-
     }
 
     // Update is called once per frame
     void Update()
-    {
-        //ターゲットへのベクトルを求める
-        //Vector3 toTarget =  pointA.transform.position - transform.position;
-        //toTarget.Normalize();
-        //transform.Translate(toTarget.x*cameraSpeed, toTarget.y * cameraSpeed, toTarget.z * cameraSpeed);
-
-        //一つ目のターゲットに着いたらターゲットカウントを一つ増やす
+    {       
         SetCameraTarget();
     }
 
@@ -107,16 +98,7 @@ public class OpeningCameraAction : MonoBehaviour
                         player.transform.position.y + 7.0f,
                         player.transform.position.z - 7.0f);
                     float step = 3.0f * Time.deltaTime;
-                    transform.position = Vector3.MoveTowards(current, target, cameraSpeed * 0.005f);
-
-                    //if (transform.position == target)
-                    //{
-                    //    waitTimerCount += 0.1f;
-                    //    if (waitTimerCount >= waitTimer)
-                    //    {
-                    //        targetNumber++;
-                    //    }
-                    //}
+                    transform.position = Vector3.MoveTowards(current, target, cameraSpeed * 0.005f);                   
                 }
                 break;
         }
