@@ -59,6 +59,9 @@ public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパト�
 
         for (int i = 0; i < _logicController.PatrolSpots.Count; i++)
         {
+            if (_logicController.PatrolSpots[i] == null)  //Sometimes not needed when debug | デバッグの時にたまに要らない
+            { Debug.Log("パトロールSpotsがないです。インスペクターにつけてください。チェックを無視します。"); continue; }
+
             float dist = Vector3.SqrMagnitude(_logicController.PatrolSpots[i].position - myPos);
             if (dist < closestDist)
             {
