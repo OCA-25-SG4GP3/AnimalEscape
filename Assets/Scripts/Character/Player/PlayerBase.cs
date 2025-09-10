@@ -156,7 +156,7 @@ public class PlayerBase : MonoBehaviour
 
         if (previousState != _currentState || previousState.IsComplete)
         {
-            Debug.Log($"Switching state from {previousState.name} to {_currentState.name}");
+            //Debug.Log($"Switching state from {previousState.name} to {_currentState.name}");
             previousState.ExitState();
             _currentState.Initialize();
             _currentState.EnterState();
