@@ -29,6 +29,7 @@ public static class ConeHelper
         float closestDistanceFound = float.MaxValue;
         foreach (GameObject potentialTarget in targetsToCheck)
         {
+            if (potentialTarget == null) { Debug.Log("Targetsがないです。インスペクターにつけてください。チェックを無視します。"); continue; }
             if (predToIgnoreElem != null && predToIgnoreElem(potentialTarget)) continue;
             Vector3 toTarget = potentialTarget.transform.position - coneInfo.coneMiddle;
             float distance = toTarget.magnitude;
