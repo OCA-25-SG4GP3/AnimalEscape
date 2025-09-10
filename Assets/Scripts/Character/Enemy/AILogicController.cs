@@ -74,17 +74,24 @@ public class AILogicController : MonoBehaviour
 
     public GameObject CheckUncaughtTargetsInCone() //捕まえらないものをチェック
     {
-        Func<GameObject, bool> hasCaught = (obj) =>
+        Func<GameObject, bool> isIgnore = (obj) =>
         {
             var playerInfo = obj.GetComponent<PlayerInfo>();
             if (!playerInfo) Debug.LogWarning("This [" + obj.name + "] has no PlayerInfo!");
-            return playerInfo.hasCaught;
+
+            if (playerInfo.hasCaught) return true; //Ignore if already caught.
+            if (!IsOnSight(obj.transform.position)) return true; //Ignore if there is a wall
+
+            return false; //Do not ignore. Process the check
         };
+
+
+
         return ConeHelper.CheckClosestTargetInCone //視野角に、チェック
       (
         GetConeInfo(),
         Targets,
-        hasCaught //捕まえたものを除外する
+        isIgnore //すでに捕まえたら、無視する
       );
     }
     public ConeInfo GetConeInfo()
@@ -97,5 +104,18 @@ public class AILogicController : MonoBehaviour
             );
 
         return coneInfo;
+    }
+
+    bool IsOnSight(Vector3 targetPos) //直線にいる、ものがないか？ (障害物がある？)
+    {
+        Vector3 dir = targetPos - transform.position;
+        Ray ray = new Ray(transform.position, dir);
+        float maxDist = _maxConeDistance;
+        if (Physics.Raycast(ray, out RaycastHit hit, maxDist))
+        {
+            return hit.transform.position == targetPos; //true if only the first collider hit is target
+        }
+
+        return false;
     }
 }

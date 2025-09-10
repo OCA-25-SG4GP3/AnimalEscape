@@ -6,6 +6,8 @@ using System.Linq;
 public class EnemyStateCarryCaughtSO : EnemyStateBaseSO
 {
     [SerializeField, ReadOnly][Header("捕まえたオブジェクト")] private GameObject _caughtObject;
+    [SerializeField][Header("牢屋の半径。到着際、プレイヤーをドロップ")] private float jailCellRadius = 6.2f;
+    Vector3 movePos;   // where agent should stop (edge of radius)
     Vector3 dropPos;
 
     public override void EnterState()
@@ -18,10 +20,9 @@ public class EnemyStateCarryCaughtSO : EnemyStateBaseSO
     {
         UpdateCatchedObjectPosRot();
 
-        const float jailCellSize = 2.8f;
-        if (AgentHelper.HasArrivedSuccess(_logicController.Agent, jailCellSize)) //牢屋の近くに到着
+        if (AgentHelper.HasArrivedSuccess(_logicController.Agent, jailCellRadius)) //牢屋の近くに到着
         {
-            DropCatchedObject(dropPos);
+            DropCaughtObject(dropPos);
             _logicController.SetState(_logicController.PatrolState); //restore
         }
     }
@@ -29,7 +30,7 @@ public class EnemyStateCarryCaughtSO : EnemyStateBaseSO
     public override void ExitState()
     {
         AgentHelper.ClearPath(_logicController.Agent);
-        if (_caughtObject) DropCatchedObject(_logicController.transform.position);
+        if (_caughtObject) DropCaughtObject(_logicController.transform.position);
     }
 
     public void CatchObject()
@@ -40,19 +41,35 @@ public class EnemyStateCarryCaughtSO : EnemyStateBaseSO
 
     void MoveToDropInClosestJail()
     {
-        Jail closestJail = GetClosestJail(); //store for dropping later to prevent accidents
-        dropPos = closestJail.jailedObjectSlotT.position;
-        AgentHelper.MoveTo(_logicController.Agent, dropPos);
+        SetClosestJail(); //store for dropping later to prevent accidents
+        AgentHelper.MoveTo(_logicController.Agent, movePos);
     }
 
-    Jail GetClosestJail()
+    void CheckJailExistence()
     {
+        foreach (var Jail in _logicController.Jails)
+        {
+            if (!Jail) Debug.Log("Jail is not assigned! 牢屋は設定されてない！");
+        }
+    }
+    Jail SetClosestJail()
+    {
+        CheckJailExistence(); //Debug checker
+
         List<Vector3> jailPositions = _logicController.Jails.Select(obj => obj.transform.position).ToList();
         Vector3 closestJailPos = Vector3Helper.GetClosest(_logicController.transform.position, jailPositions, out int index);
-        return _logicController.Jails[index];
+        Jail jail = _logicController.Jails[index];
+
+        // offset: stop at the edge of the radius, not the center
+        Vector3 dir = (closestJailPos - _logicController.transform.position).normalized;
+        Vector3 stopPos = closestJailPos - dir * jailCellRadius; // distance from center to edge
+
+        movePos = stopPos; // update drop position for MoveToDropInClosestJail
+        dropPos = jail.jailedObjectSlotT.position;
+        return jail;
     }
-    
-        void DropCatchedObject(Vector3 dropPos)
+
+    void DropCaughtObject(Vector3 dropPos)
     {
         _caughtObject.transform.position = dropPos;
         _caughtObject = null;
