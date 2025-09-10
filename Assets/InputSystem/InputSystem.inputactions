@@ -273,6 +273,17 @@
                     "action": "SpecialAction",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "466667bb-c41d-4f09-90b2-f3d0e67d6f34",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Player1;Keyboard&Mouse",
+                    "action": "SpecialAction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
