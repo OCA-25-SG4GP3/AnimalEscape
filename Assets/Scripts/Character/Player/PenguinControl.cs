@@ -6,16 +6,15 @@ using UnityEngine.Windows;
 
 public class PenguinControl : PlayerBase
 {
- 
+
     [SerializeField] private float _minDashForce = 5f;   // チャージ最小
     [SerializeField] private float _maxDashForce = 20f;  // チャージ最大
     [SerializeField] private float _maxChargeTime = 2f;  // 最大チャージ時間
     [SerializeField] private float _dashCooldown = 5f; // ⏳ cooldown in seconds
-
-    /*  [SerializeField] private Transform _penguinModel;  // drag child object here in Inspector
-      [SerializeField] private float _slideRotationAngle = 90f; // tilt penguin
-      [SerializeField] private float _rotationSpeed = 5f;       // smooth rotation speed
-      private bool _isSliding = false;*/
+    [SerializeField] private Transform _penguinModel;  // drag child object here in Inspector
+    [SerializeField] private float _slideRotationAngle = 90f; // tilt penguin
+    [SerializeField] private float _rotationSpeed = 5f;       // smooth rotation speed
+    private bool _isSliding = false;
 
     [SerializeField] private TextMeshProUGUI _chargeText;
 
@@ -23,8 +22,8 @@ public class PenguinControl : PlayerBase
     private bool _isCharging;
     private float _cooldownTimer = 0f; // tracks remaining cooldown
 
-   
-/*    private void HandleSlideRotation()
+
+    private void HandleSlideRotation()
     {
         if (_penguinModel == null) return;
 
@@ -37,7 +36,10 @@ public class PenguinControl : PlayerBase
             targetRotation,
             Time.deltaTime * _rotationSpeed
         );
-    }*/
+    }
+    [SerializeField] float stopSpeed = 0.5f;
+    [SerializeField] float stopHoldTime = 0.25f; // grace
+    float _slowTime;
     protected override void Update()
     {
         base.Update();
@@ -51,12 +53,25 @@ public class PenguinControl : PlayerBase
             if (_chargeTimer > _maxChargeTime)
                 _chargeTimer = _maxChargeTime;
         }
-        /*  if (_isSliding && _rigidbody.linearVelocity.magnitude < 0.5f)
-          {
-              _isSliding = false;
-          }
-          HandleSlideRotation();*/
+
+        HandleSlideRotation();
         HandleChargeUI();
+
+        float speedSqr = _rigidbody.linearVelocity.sqrMagnitude;
+        float stopSpeedSqr = stopSpeed * stopSpeed;
+
+        if (_isSliding)
+        {
+            if (speedSqr < stopSpeedSqr) _slowTime += Time.deltaTime;
+            else _slowTime = 0f;
+
+            if (_slowTime >= stopHoldTime)
+            {
+                _isSliding = false;
+                _slowTime = 0f;
+            }
+        }
+
     }
     private void HandleChargeUI()
     {
@@ -79,7 +94,7 @@ public class PenguinControl : PlayerBase
     {
         if (_cooldownTimer > 0f) return;
 
-     
+
         if (context.started)
         {
             // チャージ開始
@@ -92,6 +107,7 @@ public class PenguinControl : PlayerBase
         {
             // チャージ完了 → 突撃
             _isCharging = false;
+            _isSliding = true;
             float chargeRatio = _chargeTimer / _maxChargeTime;
             float dashForce = Mathf.Lerp(_minDashForce, _maxDashForce, chargeRatio);
 
