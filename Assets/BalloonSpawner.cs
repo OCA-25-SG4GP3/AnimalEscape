@@ -2,40 +2,53 @@ using UnityEngine;
 
 public class BalloonManager : MonoBehaviour
 {
-    [SerializeField] private int        _balloonMax;            // •—‘D‚ÌÅ‘å”
-    [SerializeField] private GameObject _balloonPrefab;        // •—‘DƒvƒŒƒnƒu
-    [SerializeField] private GameObject _keyPrefab;            // Œ®ƒvƒŒƒnƒu
+    [SerializeField] private int _balloonMax;
+    [SerializeField] private GameObject _balloonPrefab;
+    [SerializeField] private GameObject _keyPrefab;
 
-    [Header("ƒXƒ|[ƒ“”ÍˆÍ")]
-    [SerializeField] private Vector3 _spawnMin;   // ƒXƒ|[ƒ“”ÍˆÍ‚ÌÅ¬’l
-    [SerializeField] private Vector3 _spawnMax;   // ƒXƒ|[ƒ“”ÍˆÍ‚ÌÅ‘å’l
-
+    [Header("ã‚¹ãƒãƒ¼ãƒ³ç¯„å›²")]
+    [SerializeField] private Transform _spawnMin;
+    [SerializeField] private Transform _spawnMax;
+    
     void Start()
     {
-        // ƒ‰ƒ“ƒ_ƒ€‚Å“–‚½‚è•—‘D‚ÌƒCƒ“ƒfƒbƒNƒX‚ğŒˆ‚ß‚é
+        // ãƒ©ãƒ³ãƒ€ãƒ ã§å½“ãŸã‚Šé¢¨èˆ¹ã®ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’æ±ºã‚ã‚‹
         int luckyIndex = Random.Range(0, _balloonMax);
 
         for (int i = 0; i < _balloonMax; i++)
         {
-            // ƒ‰ƒ“ƒ_ƒ€À•W‚ğŒˆ’è
+            // ãƒ©ãƒ³ãƒ€ãƒ åº§æ¨™ã‚’æ±ºå®š
             Vector3 pos = new Vector3(
-                Random.Range(_spawnMin.x, _spawnMax.x),
-                Random.Range(_spawnMin.y, _spawnMax.y),
-                Random.Range(_spawnMin.z, _spawnMax.z)
+                Random.Range(_spawnMin.position.x, _spawnMax.position.x),
+                Random.Range(_spawnMin.position.y, _spawnMax.position.y),
+                Random.Range(_spawnMin.position.z, _spawnMax.position.z)
             );
 
-            // •—‘D‚ğ¶¬
+            // é¢¨èˆ¹ã‚’ç”Ÿæˆ
             GameObject balloon = Instantiate(_balloonPrefab, pos, Quaternion.identity);
 
-            // Balloon ƒXƒNƒŠƒvƒg‚ğæ“¾‚µ‚Ä‰Šú‰»
+            // Balloon ã‚¹ã‚¯ãƒªãƒ—ãƒˆã‚’å–å¾—ã—ã¦åˆæœŸåŒ–
             Balloon balloonScript = balloon.GetComponent<Balloon>();
 
 
-            // ‘I‚Î‚ê‚½”š‚Ì•—‘D‚ğ“–‚½‚è‚Éİ’è
+            // é¸ã°ã‚ŒãŸæ•°å­—ã®é¢¨èˆ¹ã‚’å½“ãŸã‚Šã«è¨­å®š
             if (i == luckyIndex)
-            { 
+            {
                 balloonScript.SetAsLucky(_keyPrefab);
             }
         }
+    }
+    
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Vector3 center = (_spawnMin.position + _spawnMax.position) / 2f;
+        Vector3 size = new Vector3(
+            Mathf.Abs(_spawnMin.position.x - _spawnMax.position.x),
+            Mathf.Abs(_spawnMin.position.y - _spawnMax.position.y),
+            Mathf.Abs(_spawnMin.position.z - _spawnMax.position.z)
+        );
+
+        Gizmos.DrawWireCube(center, size);
     }
 }

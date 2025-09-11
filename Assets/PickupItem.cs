@@ -3,22 +3,22 @@ using UnityEngine;
 public class PickupItem : MonoBehaviour
 {
 
-    public WarningLight warningLight; // Œx“”‚Ö‚ÌQÆ‚ğInspector‚Åİ’è‚·‚é
+    public WarningLight warningLight; // è­¦å‘Šç¯ã¸ã®å‚ç…§ã‚’Inspectorã§è¨­å®šã™ã‚‹
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            // ƒAƒCƒeƒ€íœ
+            // ã‚¢ã‚¤ãƒ†ãƒ å‰Šé™¤
             Destroy(gameObject);
 
-            // Œx“”‚É’m‚ç‚¹‚é
+            // è­¦å‘Šç¯ã«çŸ¥ã‚‰ã›ã‚‹
             if (warningLight != null)
             {
                 warningLight.ClearAlarm();
             }
 
-            Debug.Log("ƒAƒCƒeƒ€‚ğE‚Á‚½ ¨ Œx•ñ‰ğœ");
+            Debug.Log("ï¿½Aï¿½Cï¿½eï¿½ï¿½ï¿½ï¿½ï¿½Eï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½xï¿½ï¿½ï¿½ï¿½ï¿½");
         }
     }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
