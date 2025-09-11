@@ -7,7 +7,7 @@ public static class AgentHelper
     {
         agent.isStopped = false;
     }
-    public static void Stop(NavMeshAgent agent)
+    public static void Pause(NavMeshAgent agent)
     {
         agent.isStopped = true;
     }

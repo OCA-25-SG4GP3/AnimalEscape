@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 8035165503541565326}
   - component: {fileID: 1877554086000283936}
   m_Layer: 0
-  m_Name: Jail
+  m_Name: PlayerJail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

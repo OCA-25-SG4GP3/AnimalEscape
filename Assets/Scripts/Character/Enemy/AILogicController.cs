@@ -18,11 +18,12 @@ public class AILogicController : MonoBehaviour
     [SerializeField] public List<Jail> Jails; ///牢屋
 
     [Header("今の行動は")]
-    [SerializeField] private EnemyStateBaseSO _currentState;
+    [SerializeField] private EnemyStateBaseSO _currentState; public EnemyStateBaseSO CurrentState => _currentState;
     [SerializeField] public EnemyStateDetectingSO DetectingState;
     [SerializeField] public EnemyStateCarryCaughtSO CarryCaughtState;
     [SerializeField] public EnemyStateLoiterSO LoiterState;
     [SerializeField] public EnemyStatePatrolSO PatrolState;
+    [SerializeField] public EnemyStateStunnedSO StunState;
 
     // private Cooldown _aiTick = new(0.2f); //毎フレームをチェックではなく、決めた時間にチェック
     [Header("視野関係")]

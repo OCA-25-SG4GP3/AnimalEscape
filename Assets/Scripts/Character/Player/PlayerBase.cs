@@ -216,4 +216,14 @@ public class PlayerBase : MonoBehaviour
     protected virtual void SwitchAirState()
     {
     }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.CompareTag("Key"))
+        {
+            var key = collision.collider.gameObject.GetComponent<Key>();
+            key.Use();
+            Destroy(key.gameObject);
+        }
+    }
 }
