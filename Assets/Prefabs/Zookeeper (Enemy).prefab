@@ -568,6 +568,7 @@ MonoBehaviour:
   CarryCaughtState: {fileID: 11400000, guid: 092749a170c263045928e67a2417c894, type: 2}
   LoiterState: {fileID: 11400000, guid: 5071331d00314ca46a79e77eeff5d47d, type: 2}
   PatrolState: {fileID: 11400000, guid: a42db6e8a31b2e04ea5e26698dd8025b, type: 2}
+  StunState: {fileID: 11400000, guid: eef4550a3117f4f438aa2ee52ee04a53, type: 2}
   _maxConeDistance: 20
   _coneAngle: 50
 --- !u!136 &1637074052539321932

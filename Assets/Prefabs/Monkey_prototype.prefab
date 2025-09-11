@@ -273,7 +273,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Actions: {fileID: 0}
+  m_Actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   m_NotificationBehavior: 2
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
@@ -399,7 +399,7 @@ MonoBehaviour:
   throwPositionObj: {fileID: 692962177226050595}
   throwForce: 1000
   throwCd:
-    cooldownDuration: 1
+    cooldownDuration: 0.5
   cooldownText: {fileID: 2245578058235625005}
 --- !u!114 &3764618203489547029
 MonoBehaviour:
@@ -511,6 +511,7 @@ GameObject:
   - component: {fileID: 2247261385884668233}
   - component: {fileID: 8561729400023066518}
   - component: {fileID: 2245578058235625005}
+  - component: {fileID: 8459392170774627645}
   m_Layer: 5
   m_Name: Text Cooldown
   m_TagString: Untagged
@@ -579,6 +580,18 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: 0.0s
+--- !u!114 &8459392170774627645
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3339103207097682432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1b4bd882c2e4ba7488b596b10d943699, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6939748915252784007
 GameObject:
   m_ObjectHideFlags: 0
