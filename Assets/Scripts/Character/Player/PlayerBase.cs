@@ -145,7 +145,7 @@ public class PlayerBase : MonoBehaviour
         {
             return;
         }
-        Debug.Log("ground: " + CheckIsGround());
+
         if (CheckIsGround())
         {
             SwitchGroundState();
@@ -208,8 +208,6 @@ public class PlayerBase : MonoBehaviour
         }
         else if (_moveInput != Vector2.zero)
         {
-        Debug.Log(_moveInput);
-
             _currentState = _walkStateInstance;
         }
         else
