@@ -85,7 +85,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _walkSpeed: 5
-  _rotateSpeed: 3
+  _rotateSpeed: 5
   _jumpPower: 7
   _groundCheckDistance: 0.1
   _groundCheckOffset: 0.1
@@ -416,7 +416,7 @@ GameObject:
   - component: {fileID: 5895180159217829084}
   m_Layer: 6
   m_Name: Capsule
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

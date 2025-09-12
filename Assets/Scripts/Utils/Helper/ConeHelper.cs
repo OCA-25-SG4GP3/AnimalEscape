@@ -21,7 +21,7 @@ public struct ConeInfo
 
 public static class ConeHelper
 {
-    public static GameObject CheckClosestTargetInCone(ConeInfo coneInfo, List<GameObject> targetsToCheck, Func<GameObject, bool> predToIgnoreElem = null)
+    public static GameObject CheckClosestTargetInCone(ConeInfo coneInfo, GameObject[] targetsToCheck, Func<GameObject, bool> predToIgnoreElem = null)
     {
         //準備したオブジェクトリストから、視野角にいるかどうかをチェック。
         //いたら、保存。

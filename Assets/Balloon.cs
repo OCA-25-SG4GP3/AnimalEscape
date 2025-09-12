@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Balloon : MonoBehaviour
 {
-    private bool _isLucky = false;
+    [SerializeField] private bool _isLucky = false;
     private GameObject _keyPrefab;
 
     // BalloonManager から当たりを設定する
