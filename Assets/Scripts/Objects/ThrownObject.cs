@@ -22,6 +22,8 @@ public class ThrownObject : MonoBehaviour
             ActivateVFX();
             Destroy(gameObject, 3.0f); //Safeguard
             hitOnce = true;
+            AILogicController logicCont = collision.gameObject.GetComponent<AILogicController>();
+            logicCont.SetState(logicCont.StunState);
             //Destroy(gameObject);
         }
     }

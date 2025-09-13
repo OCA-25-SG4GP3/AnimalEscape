@@ -411,10 +411,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: Jail (1)
       objectReference: {fileID: 0}
-    - target: {fileID: 3637815063763678676, guid: fa40a9efae1b3fc408164d2af9ec2acf, type: 3}
-      propertyPath: m_Name
-      value: JailedObjectDropSlot
-      objectReference: {fileID: 0}
     - target: {fileID: 8035165503541565326, guid: fa40a9efae1b3fc408164d2af9ec2acf, type: 3}
       propertyPath: m_LocalPosition.x
       value: -10.45
@@ -458,39 +454,24 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 1939377528070607033, guid: fa40a9efae1b3fc408164d2af9ec2acf, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 646949754}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fa40a9efae1b3fc408164d2af9ec2acf, type: 3}
---- !u!4 &646949751 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7829436456962248884, guid: fa40a9efae1b3fc408164d2af9ec2acf, type: 3}
-  m_PrefabInstance: {fileID: 646949750}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &646949752 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1939377528070607033, guid: fa40a9efae1b3fc408164d2af9ec2acf, type: 3}
-  m_PrefabInstance: {fileID: 646949750}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &646949753 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8035165503541565326, guid: fa40a9efae1b3fc408164d2af9ec2acf, type: 3}
   m_PrefabInstance: {fileID: 646949750}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &646949754
+--- !u!114 &646949754 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 1877554086000283936, guid: fa40a9efae1b3fc408164d2af9ec2acf, type: 3}
+  m_PrefabInstance: {fileID: 646949750}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 646949752}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa964fdf61d3094429af61e6a93d9d81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jailedObjectSlotT: {fileID: 646949751}
 --- !u!1 &657342554
 GameObject:
   m_ObjectHideFlags: 0

@@ -362,11 +362,11 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""466667bb-c41d-4f09-90b2-f3d0e67d6f34"",
+                    ""id"": ""b2f2d4b8-0596-4e4e-8ff1-db79ea27427e"",
                     ""path"": ""<Keyboard>/leftShift"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": "";Player1;Keyboard&Mouse"",
+                    ""groups"": "";Player1"",
                     ""action"": ""SpecialAction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
