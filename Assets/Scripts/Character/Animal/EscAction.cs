@@ -137,7 +137,7 @@ public class EscapeAnimalAction : MonoBehaviour
             // V‚µ‚¢ƒ‰ƒ“ƒ_ƒ€‚ÈˆÚ“®•ûŒü‚ğŒˆ’è
             moveDirection = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
             wasMoving = true;
-            Debug.Log("ˆÚ“®‚µ‚Ü‚·");
+            //Debug.Log("ˆÚ“®‚µ‚Ü‚·"); //ˆê’UÁ‚µ‚Ü‚·(Zan)
         }
         else
         {
@@ -145,7 +145,7 @@ public class EscapeAnimalAction : MonoBehaviour
             // ˆÚ“®•ûŒü‚ğƒ[ƒ‚É‚·‚é
             moveDirection = Vector3.zero;
             wasMoving = false;
-            Debug.Log("’â~‚µ‚Ü‚·");
+            //Debug.Log("’â~‚µ‚Ü‚·"); //ˆê’UÁ‚µ‚Ü‚·(Zan)
         }
     }
     void CageAnimalAct()

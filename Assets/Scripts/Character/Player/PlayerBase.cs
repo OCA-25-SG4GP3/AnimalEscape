@@ -157,7 +157,7 @@ public class PlayerBase : MonoBehaviour
 
         if (previousState != _currentState || previousState.IsComplete)
         {
-            Debug.Log($"Switching state from {previousState.name} to {_currentState.name}");
+            //Debug.Log($"Switching state from {previousState.name} to {_currentState.name}");
             previousState.ExitState();
             _currentState.Initialize();
             _currentState.EnterState();
@@ -218,5 +218,15 @@ public class PlayerBase : MonoBehaviour
 
     protected virtual void SwitchAirState()
     {
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.CompareTag("Key"))
+        {
+            var key = collision.collider.gameObject.GetComponent<Key>();
+            key.Use();
+            Destroy(key.gameObject);
+        }
     }
 }
