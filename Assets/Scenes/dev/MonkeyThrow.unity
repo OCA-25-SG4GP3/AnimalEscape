@@ -554,6 +554,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Zookeeper (Enemy)
       objectReference: {fileID: 0}
+    - target: {fileID: 3632063498514462046, guid: efa15e416822c6143a5246f027e249ca, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4826137849219370858, guid: efa15e416822c6143a5246f027e249ca, type: 3}
       propertyPath: m_LocalPosition.x
       value: -10.366235

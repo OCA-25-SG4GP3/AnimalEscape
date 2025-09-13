@@ -1,21 +1,25 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class MonkeyThrow : MonoBehaviour
 {
     [SerializeField] private GameObject thrownObjPrefab;
     [SerializeField] private GameObject throwPositionObj;
     [SerializeField] private float throwForce = 1000.0f;
-    void Start()
-    {
+    [SerializeField] private Cooldown throwCd = new();
+    [SerializeField] private Text cooldownText;
 
-    }
-
-    // Update is called once per frame
     void Update()
     {
+        cooldownText.text = throwCd.GetCooldownRemainingSecond().ToString("F2") + "s"; //Update text
+
         if (Input.GetKeyDown(KeyCode.B))
         {
-            Throw();
+            if (!throwCd.IsCooldown)
+            {
+                Throw();
+                throwCd.StartCooldown();
+            }
         }
     }
 
