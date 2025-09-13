@@ -7,6 +7,8 @@ TagManager:
   - Wall
   - Goal
   - Enemy
+  - Shot
+  - Key
   layers:
   - Default
   - TransparentFX

@@ -18,14 +18,24 @@ public class Balloon : MonoBehaviour
         // ぶつかった相手が "Shot" タグを持っていたら
         if (collision.gameObject.CompareTag("Shot"))
         {
-            // 当たり風船なら鍵を生成する
-            if (_isLucky && _keyPrefab != null)
-            {
-                Instantiate(_keyPrefab, transform.position, Quaternion.identity);
-            }
-
-            // 自分（風船）を削除する
-            Destroy(gameObject);
+            DestroyByPlayerShot(); //そとから呼ばれる可能性があるので、関数化にしました（Zan）
         }
+    }
+
+    public void DestroyByPlayerShot()
+    {
+        // 当たり風船なら鍵を生成する
+        if (_isLucky && _keyPrefab != null)
+        {
+            SpawnKey(); //そとから呼ばれる可能性があるので、関数化にしました（Zan）
+        }
+
+        // 自分（風船）を削除する
+        Destroy(gameObject);
+    }
+
+    public GameObject SpawnKey()
+    {
+        return Instantiate(_keyPrefab, transform.position, Quaternion.identity);
     }
 }

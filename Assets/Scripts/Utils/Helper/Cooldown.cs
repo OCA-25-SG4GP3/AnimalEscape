@@ -19,6 +19,7 @@ public class Cooldown
     private float minCooldown = 0.0f;
     private float cooldownTick = 0.0f;
     public bool IsCooldown => Time.time < cooldownTick;
+    public float GetCooldownRemainingSecond() { return Mathf.Max(0, cooldownTick - Time.time); }
     public void SetNewCooldown(float newCooldownValue) => cooldownDuration = newCooldownValue;
     public void SetMinimalCooldown(float newCooldownValue) => minCooldown = newCooldownValue;
     public void ReduceCooldown(float reduceCooldownFactor)
@@ -33,4 +34,5 @@ public class Cooldown
         float newCd = Random.Range(minRandCooldownIncl, maxRandCooldownExcl);
         SetNewCooldown(newCd);
     }
+
 }

@@ -15,3 +15,4 @@ MonoBehaviour:
   Description: AI has caught an object
   _logicController: {fileID: 0}
   _caughtObject: {fileID: 0}
+  jailCellRadius: 5
