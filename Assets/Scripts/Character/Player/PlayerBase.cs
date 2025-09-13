@@ -9,7 +9,8 @@ public class PlayerBase : MonoBehaviour
     [SerializeField] protected float _walkSpeed;
     [SerializeField] protected float _rotateSpeed;
     [SerializeField] protected float _jumpPower;
-    [SerializeField] protected float _groundCheckDistance = 1.01f;
+    [SerializeField] protected float _groundCheckDistance = 0.01f;
+    [SerializeField] private float _groundCheckOffset = 0.1f;
 
     public float MoveSpeed { get; set; }
     public float WalkSpeed => _walkSpeed;
@@ -165,7 +166,8 @@ public class PlayerBase : MonoBehaviour
 
     protected virtual bool CheckIsGround()
     {
-        return Physics.Raycast(transform.position, Vector3.down, _groundCheckDistance);
+        Vector3 origin = transform.position + Vector3.up * _groundCheckOffset;
+        return Physics.Raycast(origin, Vector3.down, _groundCheckDistance);
     }
 
     public virtual void Move(Vector3 direction)
@@ -194,6 +196,7 @@ public class PlayerBase : MonoBehaviour
 
     protected virtual void SwitchGroundState()
     {
+       
         if (IsSpecialAction)
         {
             _currentState = _specialActionStateInstance;
