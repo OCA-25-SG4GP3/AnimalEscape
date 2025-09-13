@@ -16,7 +16,6 @@ public class PenguinControl : PlayerBase
     [SerializeField] private float _rotationSpeed = 5f;       // smooth rotation speed
     private bool _isSliding = false;
 
-<<<<<<< HEAD
     [SerializeField] private TextMeshProUGUI _chargeText;
 
     private float _chargeTimer;
@@ -24,15 +23,12 @@ public class PenguinControl : PlayerBase
     private float _cooldownTimer = 0f; // tracks remaining cooldown
 
 
-    private void HandleSlideRotation()
-=======
     public RopeHit targetBox;
     public RopeAction2 Rope;
     public LiftAction Lift;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    private void Start()
->>>>>>> 50ab36c (ãƒšãƒ³ã‚®ãƒ³ãŒãƒ­ãƒ¼ãƒ—ã®ã¨ã“ã‚ã«è¡Œãã¨å·¦ã®ãƒªãƒ•ãƒˆãŒä¸ŠãŒã‚‹)
+
+    private void HandleSlideRotation()
     {
         if (_penguinModel == null) return;
 
@@ -99,21 +95,21 @@ public class PenguinControl : PlayerBase
             _chargeText.text = "";
         }
 
-        //ƒAƒNƒVƒ‡ƒ“ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚Ä‚¢‚éŠÔ
+        //ï¿½Aï¿½Nï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½
         //if (_inputSystem.Penguin.<Keyboard>/ e.triggered )
         //{
-            //ƒ[ƒv‚ğˆø‚¢‚Ä‚à‚¤•Ğ•û‚ğã‚°‚é
+            //ï¿½ï¿½ï¿½[ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½Ğ•ï¿½ï¿½ï¿½ã‚°ï¿½ï¿½
             if (targetBox.playerInside)
             {
                 Lift.lift_flag = true;
                 Rope.rope_flag = true;
-                //Debug.Log("EƒL[‰Ÿ‰ºF’†‚ÉƒvƒŒƒCƒ„[‚ª‚¢‚é‚Ì‚ÅƒƒO‚ğo‚µ‚Ü‚·");
+                //Debug.Log("Eï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Fï¿½ï¿½ï¿½Éƒvï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚Åƒï¿½ï¿½Oï¿½ï¿½oï¿½ï¿½ï¿½Ü‚ï¿½");
             }
             else
             {
                 Lift.lift_flag = false;
                 Rope.rope_flag = false;
-            // Debug.Log("EƒL[‰Ÿ‰ºF’†‚É’N‚à‚¢‚Ü‚¹‚ñ");
+            // Debug.Log("Eï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Fï¿½ï¿½ï¿½É’Nï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½");
         }
         //}
     }
