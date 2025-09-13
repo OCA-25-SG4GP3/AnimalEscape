@@ -8,14 +8,14 @@ public class AILogicController : MonoBehaviour
 {
     #region Serialized
     [Header("何かをしたい、その候補ターゲット (複数) (尾行、など)")]
-    [SerializeField] public List<GameObject> Targets; //TODO move this to singular data in gamemanager
+    [HeaderAttribute("がインスペクタで設定されない場合、自動的にStartで設定されます。")] [SerializeField] public List<GameObject> Targets; //TODO move this to singular data in gamemanager
     [Header("ターゲット中オブジェクト")]
     [SerializeField] public GameObject CurrentTarget; //ターゲット中オブジェクト
     [Header("捕獲ネットのスロット場所")]
     [SerializeField] public Transform CatchSlot;
     [SerializeField] public GameObject AlertMark; //"!!!" テキスト
     [SerializeField] public List<Transform> PatrolSpots;
-    [SerializeField] public List<Jail> Jails; ///牢屋
+    [HeaderAttribute("牢屋がインスペクタで設定されない場合、自動的にStartで設定されます。")] [SerializeField] public List<Jail> Jails; ///牢屋
 
     [Header("今の行動は")]
     [SerializeField] private EnemyStateBaseSO _currentState; public EnemyStateBaseSO CurrentState => _currentState;
@@ -41,9 +41,33 @@ public class AILogicController : MonoBehaviour
 
     private void Start()
     {
+        FindTargets();
+        FindJails();
         SetState(PatrolState);
     }
 
+    void FindJails()
+    {
+         if (Jails.Count == 0) //auto assign when not assigned manually.
+        {
+            Jail[] jails = FindObjectsByType<Jail>(FindObjectsSortMode.None);
+            foreach (var jail in jails)
+            {
+                Jails.Add(jail);
+            }
+        }
+    }
+    void FindTargets()
+    {
+        if (Targets.Count == 0) //auto assign when not assigned manually.
+        {
+            PlayerInfo[] playerInfos = FindObjectsByType<PlayerInfo>(FindObjectsSortMode.None);
+            foreach (var info in playerInfos)
+            {
+                Targets.Add(info.gameObject);
+            }
+        }
+    }
     void Update()
     {
         if (!Agent) Debug.LogWarning("NavMeshAgentが持ってないオブジェクトです。");

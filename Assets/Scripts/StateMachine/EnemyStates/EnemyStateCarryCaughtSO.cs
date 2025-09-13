@@ -47,9 +47,10 @@ public class EnemyStateCarryCaughtSO : EnemyStateBaseSO
 
     void CheckJailExistence()
     {
+        if (_logicController.Jails.Count == 0) Debug.Log("牢屋の配列が0サイズ。");
         foreach (var Jail in _logicController.Jails)
         {
-            if (!Jail) Debug.Log("Jail is not assigned! 牢屋は設定されてない！");
+            if (!Jail) Debug.Log("Jail is not assigned in the array! 牢屋配列に、牢屋が設定されてない！");
         }
     }
     Jail SetClosestJail()

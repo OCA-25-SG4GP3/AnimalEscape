@@ -584,6 +584,7 @@ GameObject:
   - component: {fileID: 3153309230389263383}
   - component: {fileID: 9065502358452687396}
   - component: {fileID: -5675027205415781985}
+  - component: {fileID: 1599215422248836467}
   m_Layer: 0
   m_Name: Penguin_prototype
   m_TagString: Player
@@ -687,6 +688,9 @@ MonoBehaviour:
   _slideRotationAngle: 90
   _rotationSpeed: 5
   _chargeText: {fileID: 7385856075692521777}
+  targetBox: {fileID: 0}
+  Rope: {fileID: 0}
+  Lift: {fileID: 0}
   stopSpeed: 0.5
   stopHoldTime: 0.25
 --- !u!114 &-5675027205415781985
@@ -847,3 +851,16 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &1599215422248836467
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8460430454786289905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 910925d8baf6c6246bf98843d705ad06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hasCaught: 0
