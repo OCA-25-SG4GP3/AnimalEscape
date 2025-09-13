@@ -5,9 +5,10 @@ public class EscapeAnimalAction : MonoBehaviour
 {
     //=============================================
     public bool IsFree = false;  //動物が折から出ているかどうか
-    public float MoveSpeed = 0.1f;     
+    public float MoveSpeed = 0.1f;
+    public float EscapeSpeed = 6.0f;
     public float ChangeInterval = 3.0f;
-    private Vector3 moveDirection;       
+    private Vector3 moveDirection;
     //==============================================
     // 前回の行動（true=移動, false=停止）
     private bool wasMoving = false;
@@ -29,7 +30,7 @@ public class EscapeAnimalAction : MonoBehaviour
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
-    {       
+    {
         //=================================================================
         // 初期タイマーを設定
         timer = ChangeInterval;
@@ -47,9 +48,9 @@ public class EscapeAnimalAction : MonoBehaviour
     }
     // Update is called once per frame
     void Update()
-    {         
+    {
         //動物が檻から出ていないなら
-        if(!IsFree)
+        if (!IsFree)
         {
             CageAnimalAct();
         }
@@ -69,7 +70,7 @@ public class EscapeAnimalAction : MonoBehaviour
                     MoveToGoal();
                 }
             }
-        }        
+        }
         //ゴールに到着したら自身を破棄する処理
         MoveToDestory();
     }
@@ -88,7 +89,7 @@ public class EscapeAnimalAction : MonoBehaviour
         Vector3 warpPosition = transform.position + randomDirection * EscapeRadius;
 
         // オブジェクトを新しい位置へ瞬間移動させる
-        transform.position = new Vector3(warpPosition.x,1.5f,warpPosition.z);
+        transform.position = new Vector3(warpPosition.x, 1.5f, warpPosition.z);
 
         // ワープ完了フラグを立てる
         IsFree = true;
@@ -102,7 +103,7 @@ public class EscapeAnimalAction : MonoBehaviour
         // Goalへの方向を計算
         Vector3 directionToGoal = (goalTransform.position - transform.position).normalized;
         // その方向に移動
-        transform.position += directionToGoal * MoveSpeed * Time.deltaTime;
+        transform.position += directionToGoal * EscapeSpeed * Time.deltaTime;
     }
 
     //ゴールに着いたら自身を破棄する処理
@@ -161,19 +162,18 @@ public class EscapeAnimalAction : MonoBehaviour
             timer = ChangeInterval;
         }
         // 現在の移動方向に基づいてオブジェクトを移動させる
-        transform.position += moveDirection * MoveSpeed * Time.deltaTime;
 
-        
+        transform.position += moveDirection * MoveSpeed * Time.deltaTime;
     }
     void OnCollisionEnter(Collision collision)
     {
         //"Wall"と衝突したら
         // 衝突したオブジェクトのタグが "Wall" であるかチェック
         if (collision.gameObject.CompareTag("Wall"))
-        {           
+        {
             // X軸とZ軸の移動方向を反転         
             moveDirection.x *= -1.0f;
-            moveDirection.z *= -1.0f;                      
+            moveDirection.z *= -1.0f;
         }
     }
 }

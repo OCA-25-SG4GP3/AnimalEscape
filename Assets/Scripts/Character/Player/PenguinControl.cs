@@ -1,4 +1,4 @@
-ï»¿using TMPro;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -7,10 +7,10 @@ using UnityEngine.Windows;
 public class PenguinControl : PlayerBase
 {
 
-    [SerializeField] private float _minDashForce = 5f;   // ãƒãƒ£ãƒ¼ã‚¸æœ€å°
-    [SerializeField] private float _maxDashForce = 20f;  // ãƒãƒ£ãƒ¼ã‚¸æœ€å¤§
-    [SerializeField] private float _maxChargeTime = 2f;  // æœ€å¤§ãƒãƒ£ãƒ¼ã‚¸æ™‚é–“
-    [SerializeField] private float _dashCooldown = 5f; // â³ cooldown in seconds
+    [SerializeField] private float _minDashForce = 5f;   // ?¿½`?¿½?¿½?¿½[?¿½W?¿½Åï¿½
+    [SerializeField] private float _maxDashForce = 20f;  // ?¿½`?¿½?¿½?¿½[?¿½W?¿½Å‘ï¿½
+    [SerializeField] private float _maxChargeTime = 2f;  // ?¿½Å‘ï¿½`?¿½?¿½?¿½[?¿½W?¿½?¿½?¿½?¿½
+    [SerializeField] private float _dashCooldown = 5f; // ? cooldown in seconds
     [SerializeField] private Transform _penguinModel;  // drag child object here in Inspector
     [SerializeField] private float _slideRotationAngle = 90f; // tilt penguin
     [SerializeField] private float _rotationSpeed = 5f;       // smooth rotation speed
@@ -48,10 +48,17 @@ public class PenguinControl : PlayerBase
     protected override void Update()
     {
         base.Update();
+
+        ProcessSlide();
+        ProcessRopeMechanic();
+    }
+
+    void ProcessSlide()
+    {
         // Countdown cooldown
         if (_cooldownTimer > 0)
             _cooldownTimer -= Time.deltaTime;
-        // é•·æŠ¼ã—ä¸­ã«ãƒãƒ£ãƒ¼ã‚¸æ™‚é–“ã‚’åŠ ç®—
+                // ’·‰Ÿ‚µ’†‚Éƒ`ƒƒ[ƒWŠÔ‚ğ‰ÁZ
         if (_isCharging)
         {
             _chargeTimer += Time.deltaTime;
@@ -78,6 +85,7 @@ public class PenguinControl : PlayerBase
         }
 
     }
+
     private void HandleChargeUI()
     {
         if (_chargeText == null) return;
@@ -95,21 +103,27 @@ public class PenguinControl : PlayerBase
             _chargeText.text = "";
         }
 
-        //ï¿½Aï¿½Nï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½
+
+    }
+
+    void ProcessRopeMechanic()
+    {
+        if (!Lift || !Rope) return; //?¿½?¿½?¿½İ‚Ìƒv?¿½?¿½?¿½g?¿½^?¿½C?¿½v?¿½ÍA?¿½?¿½?¿½Î‚ç‚­Lift?¿½?¿½?¿½p?¿½?¿½?¿½Ü‚ï¿½?¿½?¿½
+        //?A?N?V?????{?^?????????????
         //if (_inputSystem.Penguin.<Keyboard>/ e.triggered )
         //{
-            //ï¿½ï¿½ï¿½[ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½Ğ•ï¿½ï¿½ï¿½ã‚°ï¿½ï¿½
-            if (targetBox.playerInside)
-            {
-                Lift.lift_flag = true;
-                Rope.rope_flag = true;
-                //Debug.Log("Eï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Fï¿½ï¿½ï¿½Éƒvï¿½ï¿½ï¿½Cï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚Åƒï¿½ï¿½Oï¿½ï¿½oï¿½ï¿½ï¿½Ü‚ï¿½");
-            }
-            else
-            {
-                Lift.lift_flag = false;
-                Rope.rope_flag = false;
-            // Debug.Log("Eï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Fï¿½ï¿½ï¿½É’Nï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½");
+        //???[?v???????????¿½E????¿½O??
+        if (targetBox.playerInside)
+        {
+            Lift.lift_flag = true;
+            Rope.rope_flag = true;
+            //Debug.Log("E?L?[?????F????v???C???[??????????O??o?????");
+        }
+        else
+        {
+            Lift.lift_flag = false;
+            Rope.rope_flag = false;
+            // Debug.Log("E?L?[?????F????N????????");
         }
         //}
     }
@@ -120,7 +134,7 @@ public class PenguinControl : PlayerBase
 
         if (context.started)
         {
-            // ãƒãƒ£ãƒ¼ã‚¸é–‹å§‹
+            // ?¿½`?¿½?¿½?¿½[?¿½W?¿½J?¿½n
             _isCharging = true;
             _chargeTimer = 0f;
             Debug.Log("Penguin charging!");
@@ -128,7 +142,7 @@ public class PenguinControl : PlayerBase
 
         if (context.canceled)
         {
-            // ãƒãƒ£ãƒ¼ã‚¸å®Œäº† â†’ çªæ’ƒ
+            // ?¿½`?¿½?¿½?¿½[?¿½W?¿½?¿½?¿½?¿½ ?¿½?¿½ ?¿½ËŒï¿½
             _isCharging = false;
             _isSliding = true;
             float chargeRatio = _chargeTimer / _maxChargeTime;
@@ -136,7 +150,7 @@ public class PenguinControl : PlayerBase
 
             Vector3 dashDir = new Vector3(_moveInput.x, 0, _moveInput.y);
             if (dashDir == Vector3.zero)
-                dashDir = transform.forward; // å…¥åŠ›ãŒç„¡ã‘ã‚Œã°å‰æ–¹å‘
+                dashDir = transform.forward; // ?¿½?¿½?¿½Í‚ï¿½?¿½?¿½?¿½?¿½?¿½?¿½Î‘O?¿½?¿½?¿½?¿½
 
             _rigidbody.AddForce(dashDir.normalized * dashForce, ForceMode.Impulse);
             _cooldownTimer = _dashCooldown;
