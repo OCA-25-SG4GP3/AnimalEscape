@@ -7,14 +7,19 @@ using UnityEngine.Windows;
 public class PenguinControl : PlayerBase
 {
 
-    [SerializeField] private float _minDashForce = 5f;   // ?¿½`?¿½?¿½?¿½[?¿½W?¿½Åï¿½
-    [SerializeField] private float _maxDashForce = 20f;  // ?¿½`?¿½?¿½?¿½[?¿½W?¿½Å‘ï¿½
-    [SerializeField] private float _maxChargeTime = 2f;  // ?¿½Å‘ï¿½`?¿½?¿½?¿½[?¿½W?¿½?¿½?¿½?¿½
+    [SerializeField] private float _minDashForce = 5f;   // ?ï¿½ï¿½`?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½[?ï¿½ï¿½W?ï¿½ï¿½Åï¿½
+    [SerializeField] private float _maxDashForce = 20f;  // ?ï¿½ï¿½`?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½[?ï¿½ï¿½W?ï¿½ï¿½Å‘ï¿½
+    [SerializeField] private float _maxChargeTime = 2f;  // ?ï¿½ï¿½Å‘ï¿½`?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½[?ï¿½ï¿½W?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½
     [SerializeField] private float _dashCooldown = 5f; // ? cooldown in seconds
     [SerializeField] private Transform _penguinModel;  // drag child object here in Inspector
     [SerializeField] private float _slideRotationAngle = 90f; // tilt penguin
     [SerializeField] private float _rotationSpeed = 5f;       // smooth rotation speed
+    [SerializeField] private GameObject _impactCollider;       
+    [SerializeField] private GameObject _vfxObjPrefab;       
+    private bool _hitOnce = false;
     private bool _isSliding = false;
+
+    public GameObject ImpactCollider => _impactCollider;
 
     [SerializeField] private TextMeshProUGUI _chargeText;
 
@@ -58,7 +63,7 @@ public class PenguinControl : PlayerBase
         // Countdown cooldown
         if (_cooldownTimer > 0)
             _cooldownTimer -= Time.deltaTime;
-                // ’·‰Ÿ‚µ’†‚Éƒ`ƒƒ[ƒWŠÔ‚ğ‰ÁZ
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éƒ`ï¿½ï¿½ï¿½[ï¿½Wï¿½ï¿½ï¿½Ô‚ï¿½ï¿½ï¿½ï¿½Z
         if (_isCharging)
         {
             _chargeTimer += Time.deltaTime;
@@ -79,11 +84,28 @@ public class PenguinControl : PlayerBase
 
             if (_slowTime >= stopHoldTime)
             {
+                _impactCollider.SetActive(false);
+
                 _isSliding = false;
                 _slowTime = 0f;
             }
         }
+    }
 
+    protected override void OnCollisionEnter(Collision collision)
+    {
+        base.OnCollisionEnter(collision); //
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            _hitOnce = true;
+            ActivateVFX();
+        }
+    }
+
+    void ActivateVFX()
+    {
+        GameObject inst = Instantiate(_vfxObjPrefab,transform.position,transform.rotation);
+        inst.SetActive(true);
     }
 
     private void HandleChargeUI()
@@ -108,11 +130,11 @@ public class PenguinControl : PlayerBase
 
     void ProcessRopeMechanic()
     {
-        if (!Lift || !Rope) return; //?¿½?¿½?¿½İ‚Ìƒv?¿½?¿½?¿½g?¿½^?¿½C?¿½v?¿½ÍA?¿½?¿½?¿½Î‚ç‚­Lift?¿½?¿½?¿½p?¿½?¿½?¿½Ü‚ï¿½?¿½?¿½
+        if (!Lift || !Rope) return; //?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½İ‚Ìƒv?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½g?ï¿½ï¿½^?ï¿½ï¿½C?ï¿½ï¿½v?ï¿½ï¿½ÍA?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½Î‚ç‚­Lift?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½p?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½Ü‚ï¿½?ï¿½ï¿½?ï¿½ï¿½
         //?A?N?V?????{?^?????????????
         //if (_inputSystem.Penguin.<Keyboard>/ e.triggered )
         //{
-        //???[?v???????????¿½E????¿½O??
+        //???[?v???????????ï¿½ï¿½E????ï¿½ï¿½O??
         if (targetBox.playerInside)
         {
             Lift.lift_flag = true;
@@ -129,12 +151,15 @@ public class PenguinControl : PlayerBase
     }
     public new void OnSpecialAction(InputAction.CallbackContext context)
     {
-        if (_cooldownTimer > 0f) return;
+        if (_cooldownTimer > 0f)
+        {
+            return;
+        }
 
 
         if (context.started)
         {
-            // ?¿½`?¿½?¿½?¿½[?¿½W?¿½J?¿½n
+            // ?ï¿½ï¿½`?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½[?ï¿½ï¿½W?ï¿½ï¿½J?ï¿½ï¿½n
             _isCharging = true;
             _chargeTimer = 0f;
             Debug.Log("Penguin charging!");
@@ -142,7 +167,7 @@ public class PenguinControl : PlayerBase
 
         if (context.canceled)
         {
-            // ?¿½`?¿½?¿½?¿½[?¿½W?¿½?¿½?¿½?¿½ ?¿½?¿½ ?¿½ËŒï¿½
+            // ?ï¿½ï¿½`?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½[?ï¿½ï¿½W?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½?ï¿½ï¿½ ?ï¿½ï¿½ËŒï¿½
             _isCharging = false;
             _isSliding = true;
             float chargeRatio = _chargeTimer / _maxChargeTime;
@@ -150,11 +175,13 @@ public class PenguinControl : PlayerBase
 
             Vector3 dashDir = new Vector3(_moveInput.x, 0, _moveInput.y);
             if (dashDir == Vector3.zero)
-                dashDir = transform.forward; // ?¿½?¿½?¿½Í‚ï¿½?¿½?¿½?¿½?¿½?¿½?¿½Î‘O?¿½?¿½?¿½?¿½
+                dashDir = transform.forward; // ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½Í‚ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½Î‘O?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½
 
             _rigidbody.AddForce(dashDir.normalized * dashForce, ForceMode.Impulse);
             _cooldownTimer = _dashCooldown;
             Debug.Log($"Penguin dashed with force {dashForce}!");
+            _impactCollider.SetActive(true);
+            _hitOnce = false;
         }
     }
     public bool CanDash => _cooldownTimer <= 0f;

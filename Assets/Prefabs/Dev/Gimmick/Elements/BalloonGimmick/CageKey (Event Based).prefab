@@ -98,7 +98,7 @@ GameObject:
   - component: {fileID: 2602941072003651301}
   - component: {fileID: 2873017983015435929}
   m_Layer: 0
-  m_Name: CageKey
+  m_Name: CageKey (Event Based)
   m_TagString: Key
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

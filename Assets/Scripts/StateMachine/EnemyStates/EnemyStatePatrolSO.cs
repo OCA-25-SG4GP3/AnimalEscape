@@ -5,7 +5,7 @@ public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパト�
 {
     private Transform _currentPatrolSpotT;
     private int _mode = 0;
-    [SerializeField, ReadOnly][Header("現在のパトロールインデックス")] private int _patrolIndex = 0;
+    [Header("現在のパトロールインデックス")] private int _patrolIndex = 0;
     public override void EnterState()
     {
         GetClosestPatrolSpot(out int nextIndex); //最も近いパトロール場所に巡回し始める

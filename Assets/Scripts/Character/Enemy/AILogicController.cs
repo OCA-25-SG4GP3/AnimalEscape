@@ -47,7 +47,7 @@ public class AILogicController : MonoBehaviour
         SetState(PatrolState);
         Targets = GameObject.FindGameObjectsWithTag("Player");
         //FindTargets();
-        SetState(LoiterState);
+        //SetState(LoiterState);
     }
 
     void FindJails()
@@ -103,12 +103,11 @@ public class AILogicController : MonoBehaviour
 
     public GameObject CheckUncaughtTargetsInCone() //捕まえらな�?も�?�をチェ�?ク
     {
-        Func<GameObject, bool> isIgnore = (obj) =>
+        Func<GameObject, bool> isIgnore = (obj) => //すでに牢屋に入ったら、チェックしない。
         {
-            // var playerInfo = obj.GetComponent<PlayerInfo>();
-            // if (!playerInfo) Debug.LogWarning("This [" + obj.name + "] has no PlayerInfo!");
-            // return playerInfo.hasCaught;
-            return false;
+             var playerInfo = obj.GetComponent<PlayerInfo>();
+             if (!playerInfo) Debug.LogWarning("This [" + obj.name + "] has no PlayerInfo!");
+             return playerInfo.hasCaught;
         };
         if (Targets.Length > 0)
             return ConeHelper.CheckClosestTargetInCone //視野角に、チェ�?ク
@@ -143,5 +142,13 @@ public class AILogicController : MonoBehaviour
         }
 
         return false;
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Shot"))
+        {
+            Destroy(gameObject);
+        }
     }
 }
