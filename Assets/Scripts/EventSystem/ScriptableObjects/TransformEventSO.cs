@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-public class TransformEventSO
+[CreateAssetMenu(menuName = "Events/Transform Event")]
+
+public class TransformEventSO: DescriptionBaseSO
 {
     public UnityAction<Transform> OnEventInvoked;
 
