@@ -21,7 +21,7 @@ public class EnemyStateLoiterSO : EnemyStateBaseSO ///ランダム徘徊行動
 
         ////////////////////////
         //Go to AIActionDetected if detect a player
-        //プレイヤーを検知したら、return。
+        //プレイヤーを検知したら、SetState, return。
         if (FoundTarget())//検知した!!!
         {
             _logicController.SetState(_logicController.DetectingState);
@@ -29,10 +29,11 @@ public class EnemyStateLoiterSO : EnemyStateBaseSO ///ランダム徘徊行動
         }
         ////////////////////////
 
-        Loiter(); //Loiter / Patrol
+        //検知しない場合、巡回更新続ける
+        LoiterState(); //Loiter / Patrol
     }
 
-    private void Loiter()
+    private void LoiterState()
     {
         switch (_mode)
         {

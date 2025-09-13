@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class PickupItem : MonoBehaviour
 {
-
     public WarningLight warningLight; // Œx“”‚Ö‚ÌQÆ‚ğInspector‚Åİ’è‚·‚é
 
     private void OnTriggerEnter(Collider other)

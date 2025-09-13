@@ -95,8 +95,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8035165503541565326}
+  - component: {fileID: 1877554086000283936}
   m_Layer: 0
-  m_Name: Jail
+  m_Name: PlayerJail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -112,13 +113,26 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 11.94, y: 0, z: 12.58}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.69948, y: 0.69948, z: 0.69948}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7829436456962248884}
   - {fileID: 7401699791340424493}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1877554086000283936
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939377528070607033}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa964fdf61d3094429af61e6a93d9d81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  jailedObjectSlotT: {fileID: 7829436456962248884}
 --- !u!1 &1968125970804357805
 GameObject:
   m_ObjectHideFlags: 0
@@ -387,7 +401,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7829436456962248884}
   m_Layer: 0
-  m_Name: DropSlot
+  m_Name: JailedObjectDropSlot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -402,7 +416,7 @@ Transform:
   m_GameObject: {fileID: 3637815063763678676}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.391, z: 0}
+  m_LocalPosition: {x: 0, y: 1.28, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1208,7 +1222,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.1503, y: 1.1503, z: 1.1503}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2887811920377286159}
