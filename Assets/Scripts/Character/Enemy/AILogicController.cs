@@ -8,7 +8,7 @@ public class AILogicController : MonoBehaviour
 {
     #region Serialized
     [Header("何かをしたい、その候補ターゲット (複数) (尾行、など)")]
-    [SerializeField] public List<GameObject> Targets; //TODO move this to singular data in gamemanager
+    [SerializeField] public GameObject[] Targets; //TODO move this to singular data in gamemanager
     [Header("ターゲット中オブジェクト")]
     [SerializeField] public GameObject CurrentTarget; //ターゲット中オブジェクト
     [Header("捕獲ネットのスロット場所")]
@@ -41,7 +41,8 @@ public class AILogicController : MonoBehaviour
 
     private void Start()
     {
-        SetState(PatrolState);
+        Targets = GameObject.FindGameObjectsWithTag("Player");
+        SetState(LoiterState);
     }
 
     void Update()
@@ -58,7 +59,6 @@ public class AILogicController : MonoBehaviour
         }
     }
     #endregion
-
 
     public void SetState(EnemyStateBaseSO newState)
     {
@@ -77,23 +77,20 @@ public class AILogicController : MonoBehaviour
     {
         Func<GameObject, bool> isIgnore = (obj) =>
         {
-            var playerInfo = obj.GetComponent<PlayerInfo>();
-            if (!playerInfo) Debug.LogWarning("This [" + obj.name + "] has no PlayerInfo!");
-
-            if (playerInfo.hasCaught) return true; //Ignore if already caught.
-            if (!IsOnSight(obj.transform.position)) return true; //Ignore if there is a wall
-
-            return false; //Do not ignore. Process the check
+            // var playerInfo = obj.GetComponent<PlayerInfo>();
+            // if (!playerInfo) Debug.LogWarning("This [" + obj.name + "] has no PlayerInfo!");
+            // return playerInfo.hasCaught;
+            return false;
         };
-
-
-
-        return ConeHelper.CheckClosestTargetInCone //視野角に、チェック
-      (
-        GetConeInfo(),
-        Targets,
-        isIgnore //すでに捕まえたら、無視する
-      );
+        if (Targets.Length > 0)
+            return ConeHelper.CheckClosestTargetInCone //視野角に、チェック
+          (
+            GetConeInfo(),
+            Targets,
+            isIgnore //捕まえたものを除外する
+          );
+        else
+            return null;
     }
     public ConeInfo GetConeInfo()
     {

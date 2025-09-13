@@ -15,9 +15,24 @@ public class WarningLight : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip alarmSound;
 
+    [SerializeField] private VoidEventSO _onCageOpenEvent;
+    [SerializeField] private VoidEventSO _onAlertTriggerEvent;
+    [SerializeField] private TransformEventSO _onEnemyTriggerEvent;
+
+
     private float blinkTimer = 0f;
     private bool isActive = false; // 常時動作させるなら true
     private bool alarmCleared = false;   // アイテムを取って警報解除されたか
+
+    private void OnEnable()
+    {
+        _onCageOpenEvent.OnEventInvoked += TurnOff;
+    }
+
+    private void OnDisable()
+    {
+        _onCageOpenEvent.OnEventInvoked -= TurnOff;
+    }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -62,19 +77,21 @@ public class WarningLight : MonoBehaviour
         if (alarmCleared) return; //警報解除済みなら無視
         if (other.CompareTag("Player"))
         {
+            _onAlertTriggerEvent.InvokeEvent();
+            _onEnemyTriggerEvent.InvokeEvent(transform);
             TurnOn();
         }
     }
 
-    // プレイヤーが部屋から出たとき
-    private void OnTriggerExit(Collider other)
-    {
-        if (alarmCleared) return; //警報解除済みなら無視
-        if (other.CompareTag("Player"))
-        {
-            TurnOff();
-        }
-    }
+    // // プレイヤーが部屋から出たとき
+    // private void OnTriggerExit(Collider other)
+    // {
+    //     if (alarmCleared) return; //警報解除済みなら無視
+    //     // if (other.CompareTag("Player"))
+    //     // {
+    //     //     TurnOff();
+    //     // }
+    // }
 
     // 外部から呼び出す（アイテム側から通知）
     public void ClearAlarm()

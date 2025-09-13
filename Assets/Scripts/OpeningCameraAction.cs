@@ -4,8 +4,8 @@ public class OpeningCameraAction : MonoBehaviour
 {
     Vector3 defaultSpeed = new Vector3(0.01f, 0.01f, 0.01f);
 
-    public float cameraSpeed = 0.01f; //カメラの移動速度  
-    public float waitTimer = 0.0f;    //カメラがターゲットについた時の停止時間 
+    public float cameraSpeed = 0.01f;
+    public float waitTimer = 0.0f;
     private float waitTimerCount = 0.0f;
     private int targetNumber = 0;
 

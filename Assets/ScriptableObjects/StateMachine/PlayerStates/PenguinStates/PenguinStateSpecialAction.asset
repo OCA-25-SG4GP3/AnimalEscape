@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: PenguinStateSpecialAction
   m_EditorClassIdentifier: 
   _playerBase: {fileID: 0}
-  _slideSpeed: 8
+  _slideSpeed: 20
   _slideDuration: 0.8
