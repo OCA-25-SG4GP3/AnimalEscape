@@ -1017,18 +1017,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39b9e91e2671402458c6d9ef5556204e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Targets:
-  - {fileID: 1786979265286982258, guid: 5fe3a37514c402e4ba8b8f1e81f94bde, type: 3}
-  - {fileID: 8460430454786289905, guid: 9e28c18a186abb64e87cbfe79c6ef585, type: 3}
+  Targets: []
   CurrentTarget: {fileID: 0}
   CatchSlot: {fileID: 322551110205001273}
   AlertMark: {fileID: 6034243719339532902}
   PatrolSpots:
   - {fileID: 0}
   - {fileID: 0}
-  Jails:
   - {fileID: 0}
   - {fileID: 0}
+  Jails: []
   _currentState: {fileID: 0}
   DetectingState: {fileID: 11400000, guid: 1aedc55e540144348b89078b067d9c3b, type: 2}
   CarryCaughtState: {fileID: 11400000, guid: 092749a170c263045928e67a2417c894, type: 2}

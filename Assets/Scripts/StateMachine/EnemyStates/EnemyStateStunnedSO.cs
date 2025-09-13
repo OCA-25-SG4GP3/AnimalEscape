@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -6,18 +7,20 @@ using UnityEngine;
 public class EnemyStateStunnedSO : EnemyStateBaseSO
 {
     [SerializeField] Cooldown stunDur = new(2.0f);
-    [SerializeField,ReadOnly] EnemyStateBaseSO previousState;
-
+    EnemyStateBaseSO previousState = null;
     public override void EnterState()
     {
-        if(previousState != this) previousState = _logicController.CurrentState; //It shouldn't return from Stun state to Stun state, so we want to prevent infinite stun.
+        if (previousState == null || _logicController.CurrentState.GetType() != GetType())
+        {
+            previousState = _logicController.CurrentState; //It shouldn't return from Stun state to Stun state, so we want to prevent infinite stun.
+        }
         AgentHelper.Pause(_logicController.Agent);
         stunDur.StartCooldown();
     }
 
     public override void UpdateState()
     {
-        if (!stunDur.IsCooldown) //˜S‰®‚Ì‹ß‚­‚É“ž’…
+        if (!stunDur.IsCooldown)
         {
             _logicController.SetState(previousState);
             return;

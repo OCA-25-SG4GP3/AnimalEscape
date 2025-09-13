@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5494378211155465928}
   - component: {fileID: 4039879640372920924}
   m_Layer: 0
-  m_Name: VFX Particle System
+  m_Name: Star Pop Explode VFX
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -44,7 +44,7 @@ ParticleSystem:
   serializedVersion: 8
   lengthInSec: 0.05
   simulationSpeed: 2
-  stopAction: 0
+  stopAction: 2
   cullingMode: 0
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}

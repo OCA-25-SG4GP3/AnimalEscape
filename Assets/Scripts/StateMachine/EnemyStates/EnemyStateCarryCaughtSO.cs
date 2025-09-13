@@ -6,7 +6,7 @@ using System.Linq;
 public class EnemyStateCarryCaughtSO : EnemyStateBaseSO
 {
     [SerializeField, ReadOnly][Header("捕まえたオブジェクト")] private GameObject _caughtObject;
-    [SerializeField][Header("牢屋の半径。到着際、プレイヤーをドロップ")] private float jailCellRadius = 6.2f;
+    [SerializeField][Header("牢屋の半径。到着際、プレイヤーをドロップ")] private float jailCellRadius = 5.2f;
     Vector3 movePos;   // where agent should stop (edge of radius)
     Vector3 dropPos;
 
@@ -41,20 +41,33 @@ public class EnemyStateCarryCaughtSO : EnemyStateBaseSO
 
     void MoveToDropInClosestJail()
     {
-        SetClosestJail(); //store for dropping later to prevent accidents
+        Jail jailFound = FindClosestJail(); //store for dropping later to prevent accidents
+        if (!jailFound) return;
         AgentHelper.MoveTo(_logicController.Agent, movePos);
     }
 
-    void CheckJailExistence()
+    bool CheckJailExistence() //return success
     {
+        if (_logicController.Jails.Count == 0)
+        {
+            Debug.Log("牢屋の配列が0サイズ。");
+            return false;
+        }
         foreach (var Jail in _logicController.Jails)
         {
-            if (!Jail) Debug.Log("Jail is not assigned! 牢屋は設定されてない！");
+            if (!Jail)
+            {
+                Debug.Log("Jail is not assigned in the array! 牢屋配列に、牢屋が設定されてない！");
+                return false;
+            }
         }
+
+        return true;
     }
-    Jail SetClosestJail()
+    Jail FindClosestJail()
     {
-        CheckJailExistence(); //Debug checker
+        bool success = CheckJailExistence(); //Debug checker
+        if (!success) return null;
 
         List<Vector3> jailPositions = _logicController.Jails.Select(obj => obj.transform.position).ToList();
         Vector3 closestJailPos = Vector3Helper.GetClosest(_logicController.transform.position, jailPositions, out int index);
