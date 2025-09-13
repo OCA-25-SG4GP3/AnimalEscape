@@ -11,6 +11,8 @@ public class MonkeyThrow : MonoBehaviour
 
     void Update()
     {
+        cooldownText.text = throwCd.GetCooldownRemainingSecond().ToString("F2") + "s";
+
         if (Input.GetKeyDown(KeyCode.Keypad1))
         {
             if (!throwCd.IsCooldown)

@@ -14,7 +14,12 @@ public class PenguinControl : PlayerBase
     [SerializeField] private Transform _penguinModel;  // drag child object here in Inspector
     [SerializeField] private float _slideRotationAngle = 90f; // tilt penguin
     [SerializeField] private float _rotationSpeed = 5f;       // smooth rotation speed
+    [SerializeField] private GameObject _impactCollider;       // smooth rotation speed
+    [SerializeField] private GameObject _vfxObj;       // smooth rotation speed
+    private bool _hitOnce = false;
     private bool _isSliding = false;
+
+    public GameObject ImpactCollider => _impactCollider;
 
     [SerializeField] private TextMeshProUGUI _chargeText;
 
@@ -67,12 +72,29 @@ public class PenguinControl : PlayerBase
 
             if (_slowTime >= stopHoldTime)
             {
+                _impactCollider.SetActive(false);
+
                 _isSliding = false;
                 _slowTime = 0f;
             }
         }
 
     }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            _hitOnce = true;
+            ActivateVFX();
+        }
+    }
+
+    void ActivateVFX()
+    {
+        _vfxObj.SetActive(true);
+    }
+
     private void HandleChargeUI()
     {
         if (_chargeText == null) return;
@@ -92,7 +114,10 @@ public class PenguinControl : PlayerBase
     }
     public new void OnSpecialAction(InputAction.CallbackContext context)
     {
-        if (_cooldownTimer > 0f) return;
+        if (_cooldownTimer > 0f)
+        {
+            return;
+        }
 
 
         if (context.started)
@@ -118,6 +143,8 @@ public class PenguinControl : PlayerBase
             _rigidbody.AddForce(dashDir.normalized * dashForce, ForceMode.Impulse);
             _cooldownTimer = _dashCooldown;
             Debug.Log($"Penguin dashed with force {dashForce}!");
+            _impactCollider.SetActive(true);
+            _hitOnce = false;
         }
     }
     public bool CanDash => _cooldownTimer <= 0f;
