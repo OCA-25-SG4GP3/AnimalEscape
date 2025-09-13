@@ -1,4 +1,4 @@
-﻿using TMPro;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -7,15 +7,15 @@ using UnityEngine.Windows;
 public class PenguinControl : PlayerBase
 {
 
-    [SerializeField] private float _minDashForce = 5f;   // チャージ最小
-    [SerializeField] private float _maxDashForce = 20f;  // チャージ最大
-    [SerializeField] private float _maxChargeTime = 2f;  // 最大チャージ時間
-    [SerializeField] private float _dashCooldown = 5f; // ⏳ cooldown in seconds
+    [SerializeField] private float _minDashForce = 5f;   // ?��`?��?��?��[?��W?��ŏ�
+    [SerializeField] private float _maxDashForce = 20f;  // ?��`?��?��?��[?��W?��ő�
+    [SerializeField] private float _maxChargeTime = 2f;  // ?��ő�`?��?��?��[?��W?��?��?��?��
+    [SerializeField] private float _dashCooldown = 5f; // ? cooldown in seconds
     [SerializeField] private Transform _penguinModel;  // drag child object here in Inspector
     [SerializeField] private float _slideRotationAngle = 90f; // tilt penguin
     [SerializeField] private float _rotationSpeed = 5f;       // smooth rotation speed
-    [SerializeField] private GameObject _impactCollider;       // smooth rotation speed
-    [SerializeField] private GameObject _vfxObj;       // smooth rotation speed
+    [SerializeField] private GameObject _impactCollider;       
+    [SerializeField] private GameObject _vfxObjPrefab;       
     private bool _hitOnce = false;
     private bool _isSliding = false;
 
@@ -26,6 +26,11 @@ public class PenguinControl : PlayerBase
     private float _chargeTimer;
     private bool _isCharging;
     private float _cooldownTimer = 0f; // tracks remaining cooldown
+
+
+    public RopeHit targetBox;
+    public RopeAction2 Rope;
+    public LiftAction Lift;
 
 
     private void HandleSlideRotation()
@@ -48,10 +53,17 @@ public class PenguinControl : PlayerBase
     protected override void Update()
     {
         base.Update();
+
+        ProcessSlide();
+        ProcessRopeMechanic();
+    }
+
+    void ProcessSlide()
+    {
         // Countdown cooldown
         if (_cooldownTimer > 0)
             _cooldownTimer -= Time.deltaTime;
-        // 長押し中にチャージ時間を加算
+                // ���������Ƀ`���[�W���Ԃ����Z
         if (_isCharging)
         {
             _chargeTimer += Time.deltaTime;
@@ -78,11 +90,11 @@ public class PenguinControl : PlayerBase
                 _slowTime = 0f;
             }
         }
-
     }
 
-    void OnCollisionEnter(Collision collision)
+    protected override void OnCollisionEnter(Collision collision)
     {
+        base.OnCollisionEnter(collision); //
         if (collision.gameObject.CompareTag("Enemy"))
         {
             _hitOnce = true;
@@ -92,7 +104,8 @@ public class PenguinControl : PlayerBase
 
     void ActivateVFX()
     {
-        _vfxObj.SetActive(true);
+        GameObject inst = Instantiate(_vfxObjPrefab,transform.position,transform.rotation);
+        inst.SetActive(true);
     }
 
     private void HandleChargeUI()
@@ -111,6 +124,30 @@ public class PenguinControl : PlayerBase
         {
             _chargeText.text = "";
         }
+
+
+    }
+
+    void ProcessRopeMechanic()
+    {
+        if (!Lift || !Rope) return; //?��?��?��݂̃v?��?��?��g?��^?��C?��v?��́A?��?��?��΂炭Lift?��?��?��p?��?��?��܂�?��?��
+        //?A?N?V?????{?^?????????????
+        //if (_inputSystem.Penguin.<Keyboard>/ e.triggered )
+        //{
+        //???[?v???????????��E????��O??
+        if (targetBox.playerInside)
+        {
+            Lift.lift_flag = true;
+            Rope.rope_flag = true;
+            //Debug.Log("E?L?[?????F????v???C???[??????????O??o?????");
+        }
+        else
+        {
+            Lift.lift_flag = false;
+            Rope.rope_flag = false;
+            // Debug.Log("E?L?[?????F????N????????");
+        }
+        //}
     }
     public new void OnSpecialAction(InputAction.CallbackContext context)
     {
@@ -122,7 +159,7 @@ public class PenguinControl : PlayerBase
 
         if (context.started)
         {
-            // チャージ開始
+            // ?��`?��?��?��[?��W?��J?��n
             _isCharging = true;
             _chargeTimer = 0f;
             Debug.Log("Penguin charging!");
@@ -130,7 +167,7 @@ public class PenguinControl : PlayerBase
 
         if (context.canceled)
         {
-            // チャージ完了 → 突撃
+            // ?��`?��?��?��[?��W?��?��?��?�� ?��?�� ?��ˌ�
             _isCharging = false;
             _isSliding = true;
             float chargeRatio = _chargeTimer / _maxChargeTime;
@@ -138,7 +175,7 @@ public class PenguinControl : PlayerBase
 
             Vector3 dashDir = new Vector3(_moveInput.x, 0, _moveInput.y);
             if (dashDir == Vector3.zero)
-                dashDir = transform.forward; // 入力が無ければ前方向
+                dashDir = transform.forward; // ?��?��?��͂�?��?��?��?��?��?��ΑO?��?��?��?��
 
             _rigidbody.AddForce(dashDir.normalized * dashForce, ForceMode.Impulse);
             _cooldownTimer = _dashCooldown;
