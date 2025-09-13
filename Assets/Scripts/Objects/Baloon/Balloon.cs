@@ -2,23 +2,30 @@ using UnityEngine;
 
 public class Balloon : MonoBehaviour
 {
-    private bool _isLucky = false;       // “–‚½‚è•—‘D‚©‚Ç‚¤‚©
-    private GameObject _keyPrefab;       // Œ®ƒvƒŒƒnƒu
+    [SerializeField] private bool _isLucky = false;
+    private GameObject _keyPrefab;
 
-    // BalloonManager ‚©‚ç“–‚½‚è‚ğİ’è‚·‚é
+    // BalloonManager ã‹ã‚‰å½“ãŸã‚Šã‚’è¨­å®šã™ã‚‹
     public void SetAsLucky(GameObject key)
     {
         _isLucky = true;
         _keyPrefab = key;
     }
 
-    // ‘¼‚ÌƒIƒuƒWƒFƒNƒgi—á‚¦‚ÎShotj‚Æ‚Ô‚Â‚©‚Á‚½‚Æ‚«ŒÄ‚Î‚ê‚é
+    // ä»–ã®ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆï¼ˆä¾‹ãˆã°Shotï¼‰ã¨ã¶ã¤ã‹ã£ãŸã¨ãå‘¼ã°ã‚Œã‚‹
     void OnCollisionEnter(Collision collision)
     {
-        // ‚Ô‚Â‚©‚Á‚½‘Šè‚ª "Shot" ƒ^ƒO‚ğ‚Á‚Ä‚¢‚½‚ç
+        // ã¶ã¤ã‹ã£ãŸç›¸æ‰‹ãŒ "Shot" ã‚¿ã‚°ã‚’æŒã£ã¦ã„ãŸã‚‰
         if (collision.gameObject.CompareTag("Shot"))
         {
-            DestroyByPlayerShot(); //‚»‚Æ‚©‚çŒÄ‚Î‚ê‚é‰Â”\«‚ª‚ ‚é‚Ì‚ÅAŠÖ”‰»‚É‚µ‚Ü‚µ‚½iZanj
+            // å½“ãŸã‚Šé¢¨èˆ¹ãªã‚‰éµã‚’ç”Ÿæˆã™ã‚‹
+            if (_isLucky && _keyPrefab != null)
+            {
+                Instantiate(_keyPrefab, transform.position, Quaternion.identity);
+            }
+
+            // è‡ªåˆ†ï¼ˆé¢¨èˆ¹ï¼‰ã‚’å‰Šé™¤ã™ã‚‹
+            Destroy(gameObject);
         }
     }
 

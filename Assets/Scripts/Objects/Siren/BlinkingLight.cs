@@ -3,23 +3,23 @@ using UnityEngine;
 public class BlinkingLight : MonoBehaviour
 {
 
-    private Light redLight; // ƒ‰ƒCƒgƒRƒ“ƒ|[ƒlƒ“ƒg
-    public float blinkSpeed = 1f; // “_–Å‘¬“xi1•b‚Å1‰ñ“_–Åj
-    public float maxIntensity = 5f; // Å‘å‚ÌŒõ‚Ì‹­“x
-    public float minIntensity = 0f; // Å¬‚ÌŒõ‚Ì‹­“x
+    private Light redLight;
+    public float blinkSpeed = 1f;
+    public float maxIntensity = 5f;
+    public float minIntensity = 0f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        // ƒ‰ƒCƒg‚ğæ“¾
+        // ãƒ©ã‚¤ãƒˆã‚’å–å¾—
         redLight = GetComponent<Light>();
-        redLight.color = Color.red; // ƒ‰ƒCƒg‚ÌF‚ğÔ‚Éİ’è
+        redLight.color = Color.red; // ãƒ©ã‚¤ãƒˆã®è‰²ã‚’èµ¤ã«è¨­å®š
     }
 
     // Update is called once per frame
     void Update()
     {
-        // ŠÔŒo‰ß‚ÉŠî‚Ã‚¢‚ÄŒõ‚Ì‹­“x‚ğ•Ï‰»‚³‚¹‚é
+        // æ™‚é–“çµŒéã«åŸºã¥ã„ã¦å…‰ã®å¼·åº¦ã‚’å¤‰åŒ–ã•ã›ã‚‹
         redLight.intensity = Mathf.PingPong(Time.time * blinkSpeed, maxIntensity - minIntensity) + minIntensity;
     }
 }
