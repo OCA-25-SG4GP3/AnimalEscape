@@ -43,11 +43,13 @@ public class AILogicController : MonoBehaviour
 
     private void Start()
     {
-        FindJails();
-        SetState(PatrolState);
         Targets = GameObject.FindGameObjectsWithTag("Player");
-        //FindTargets();
-        //SetState(LoiterState);
+        SetState(LoiterState);
+        var jailobjs = GameObject.FindGameObjectsWithTag("Jail");
+        foreach (var jailobj in jailobjs)
+        {
+            Jails.Add(jailobj.GetComponent<Jail>());
+        }
     }
 
     void FindJails()
@@ -146,7 +148,8 @@ public class AILogicController : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Shot"))
+        Debug.Log(collision.collider);
+        if (collision.collider.CompareTag("Shot"))
         {
             Destroy(gameObject);
         }
