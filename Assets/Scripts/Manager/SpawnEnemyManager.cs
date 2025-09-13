@@ -68,7 +68,7 @@ public class SpawnEnemyManager : MonoBehaviour
 
     private void SpawnOne()
     {
-        var go = Instantiate(_enemyPrefab, _spawnPoint.position + new Vector3(0, 0, -20), _spawnPoint.rotation);
+        var go = Instantiate(_enemyPrefab, _spawnPoint.position + new Vector3(0, 0, -50), _spawnPoint.rotation);
         _currentCount++;
 
         // 敵が破壊/無効化されたらカウントを減らすサンプル（敵スクリプト側で呼ぶ想定）

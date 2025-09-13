@@ -9,10 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 76a6b0ab09bbf8f4fabbf7133a735212, type: 3}
-  m_Name: EnemyStateDetecting
+  m_Script: {fileID: 11500000, guid: 46cd2e22713d08d4ba0ceb8c26183a32, type: 3}
+  m_Name: OnGimmickClearEvent
   m_EditorClassIdentifier: 
-  Description: "AI is Detecting \u691C\u77E5\u3057\u305F"
-  _logicController: {fileID: 0}
-  _catchRange: 5
-  maxChaseDistance: 200
+  Description: 
