@@ -26,12 +26,12 @@ public class WarningLight : MonoBehaviour
 
     private void OnEnable()
     {
-        _onCageOpenEvent.OnEventInvoked += ClearAlarm;
+        _onCageOpenEvent.OnEventInvoked += TurnOff;
     }
 
     private void OnDisable()
     {
-        _onCageOpenEvent.OnEventInvoked -= ClearAlarm;
+        _onCageOpenEvent.OnEventInvoked -= TurnOff;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
