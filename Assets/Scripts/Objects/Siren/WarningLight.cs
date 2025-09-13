@@ -17,12 +17,13 @@ public class WarningLight : MonoBehaviour
 
     [SerializeField] private VoidEventSO _onCageOpenEvent;
     [SerializeField] private VoidEventSO _onAlertTriggerEvent;
+    [SerializeField] private VoidEventSO _onGimmickClearEvent;
     [SerializeField] private TransformEventSO _onEnemyTriggerEvent;
 
 
     private float blinkTimer = 0f;
-    private bool isActive = false; // 常時動作させるなら true
-    private bool alarmCleared = false;   // アイテムを取って警報解除されたか
+    [SerializeField] private bool isActive = false; // 常時動作させるなら true
+    [SerializeField] private bool alarmCleared = false;   // アイテムを取って警報解除されたか
 
     private void OnEnable()
     {
@@ -83,22 +84,28 @@ public class WarningLight : MonoBehaviour
         }
     }
 
-    // // プレイヤーが部屋から出たとき
-    // private void OnTriggerExit(Collider other)
-    // {
-    //     if (alarmCleared) return; //警報解除済みなら無視
-    //     // if (other.CompareTag("Player"))
-    //     // {
-    //     //     TurnOff();
-    //     // }
-    // }
+    // プレイヤーが部屋から出たとき
+    private void OnTriggerExit(Collider other)
+    {
+        //if (alarmCleared) return; //警報解除済みなら無視
+        //                          // if (other.CompareTag("Player"))
+        //                          // {
+        //                          //     TurnOff();
+        //                          // }
+        if (other.CompareTag("Player"))
+        {
+            if (!isActive && !alarmCleared)
+        {
+            _onGimmickClearEvent.InvokeEvent();
+            alarmCleared = true;
+        }
+        }
+    }
 
     // 外部から呼び出す（アイテム側から通知）
     public void ClearAlarm()
     {
         alarmCleared = true; //永久解除フラグON
-
-        alarmCleared = true;
         TurnOff();
         Debug.Log("アイテムを取った → 警報解除");
     }

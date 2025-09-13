@@ -35,7 +35,7 @@ public class EnemyStateCarryCaughtSO : EnemyStateBaseSO
 
     public void CatchObject()
     {
-        _caughtObject = _logicController.CurrentTarget;
+        _caughtObject = _logicController.CurrentTarget.transform.parent.gameObject;
         _caughtObject.GetComponent<PlayerInfo>().hasCaught = true;
     }
 
@@ -84,12 +84,12 @@ public class EnemyStateCarryCaughtSO : EnemyStateBaseSO
 
     void DropCaughtObject(Vector3 dropPos)
     {
-        _caughtObject.transform.position = dropPos;
+        _caughtObject.transform.parent.position = dropPos;
         _caughtObject = null;
     }
     void UpdateCatchedObjectPosRot()
     {
-        _caughtObject.transform.position = _logicController.CatchSlot.position;
-        _caughtObject.transform.rotation = _logicController.CatchSlot.rotation;
+        _caughtObject.transform.parent.position = _logicController.CatchSlot.position;
+        _caughtObject.transform.parent.rotation = _logicController.CatchSlot.rotation;
     }
 }
