@@ -1223,7 +1223,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f5ced4a40d8612d4b9f55be0e36d58fa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _enemyPrefab: {fileID: 3632063498514462046, guid: efa15e416822c6143a5246f027e249ca, type: 3}
+  _enemyPrefab: {fileID: 3632063498514462046, guid: 95b02ef49d3aa12488ba38bc95d60be1, type: 3}
   _spawnPoint: {fileID: 0}
   _spawnInterval: 3
   _maxEnemies: 0
