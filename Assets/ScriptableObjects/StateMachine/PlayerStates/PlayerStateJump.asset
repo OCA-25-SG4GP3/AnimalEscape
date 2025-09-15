@@ -12,4 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ee6993fd89a95549a8cafda25b922c3, type: 3}
   m_Name: PlayerStateJump
   m_EditorClassIdentifier: 
+  Description: 
   _playerBase: {fileID: 0}
+  _gravityMultiplier: 2

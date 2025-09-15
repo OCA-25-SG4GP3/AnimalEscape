@@ -1,8 +1,15 @@
+using System;
 using UnityEngine;
 
 public class OpeningCameraAction : MonoBehaviour
 {
-    Vector3 defaultSpeed = new Vector3(0.01f, 0.01f, 0.01f);
+    [SerializeField] private Camera _scenarioCamera;
+    [SerializeField] private VoidEventSO _onEnterGameEvent;
+    [SerializeField] private VoidEventSO _onFinishIntroEvent;
+
+    private bool _isStarted = false;
+
+    [SerializeField] private Vector3 _offsetPosition;
 
     public float cameraSpeed = 0.01f;
     public float waitTimer = 0.0f;
@@ -14,15 +21,34 @@ public class OpeningCameraAction : MonoBehaviour
     [SerializeField] GameObject pointC;
     [SerializeField] GameObject player;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void Awake()
     {
+        _scenarioCamera = GetComponent<Camera>();
+    }
+
+    private void OnEnable()
+    {
+        _onEnterGameEvent.OnEventInvoked += StartIntro;
+    }
+
+    private void OnDisable()
+    {
+        _onEnterGameEvent.OnEventInvoked -= StartIntro;
     }
 
     // Update is called once per frame
     void Update()
-    {       
-        SetCameraTarget();
+    {
+        if (_isStarted)
+        {
+            SetCameraTarget();
+        }
+    }
+
+    private void StartIntro()
+    {
+        _isStarted = true;
+        _scenarioCamera.enabled = true;
     }
 
     void SetCameraTarget()
@@ -32,9 +58,11 @@ public class OpeningCameraAction : MonoBehaviour
             case 0:
                 {
                     Vector3 current = transform.position;
-                    Vector3 target = new Vector3(pointA.transform.position.x,
-                        pointA.transform.position.y + 7.0f,
-                        pointA.transform.position.z - 7.0f);
+                    Vector3 target = new(
+                        pointA.transform.position.x + _offsetPosition.x,
+                        pointA.transform.position.y +_offsetPosition.y,
+                        pointA.transform.position.z + _offsetPosition.z
+                    );
                     float step = 3.0f * Time.deltaTime;
                     transform.position = Vector3.MoveTowards(current, target, cameraSpeed * 0.005f);
 
@@ -54,9 +82,11 @@ public class OpeningCameraAction : MonoBehaviour
             case 1:
                 {
                     Vector3 current = transform.position;
-                    Vector3 target = new Vector3(pointB.transform.position.x,
-                        pointB.transform.position.y + 7.0f,
-                        pointB.transform.position.z - 7.0f);
+                    Vector3 target = new(
+                        pointB.transform.position.x + _offsetPosition.x,
+                        pointB.transform.position.y +_offsetPosition.y,
+                        pointB.transform.position.z + _offsetPosition.z
+                    );
                     float step = 3.0f * Time.deltaTime;
                     transform.position = Vector3.MoveTowards(current, target, cameraSpeed * 0.005f);
 
@@ -74,9 +104,11 @@ public class OpeningCameraAction : MonoBehaviour
             case 2:
                 {
                     Vector3 current = transform.position;
-                    Vector3 target = new Vector3(pointC.transform.position.x,
-                        pointC.transform.position.y + 7.0f,
-                        pointC.transform.position.z - 7.0f);
+                    Vector3 target = new(
+                        pointC.transform.position.x + _offsetPosition.x,
+                        pointC.transform.position.y +_offsetPosition.y,
+                        pointC.transform.position.z + _offsetPosition.z
+                    );
                     float step = 3.0f * Time.deltaTime;
                     transform.position = Vector3.MoveTowards(current, target, cameraSpeed * 0.005f);
 
@@ -93,15 +125,20 @@ public class OpeningCameraAction : MonoBehaviour
                 break;
             case 3:
                 {
+                    player.transform.position = Camera.main.transform.position;
                     Vector3 current = transform.position;
-                    Vector3 target = new Vector3(player.transform.position.x,
-                        player.transform.position.y + 7.0f,
-                        player.transform.position.z - 7.0f);
+                    Vector3 target = player.transform.position;
                     float step = 3.0f * Time.deltaTime;
-                    transform.position = Vector3.MoveTowards(current, target, cameraSpeed * 0.005f);                   
+                    transform.position = Vector3.MoveTowards(current, target, cameraSpeed * 0.005f);
+
+                    if (transform.position == target)
+                    {
+                        _scenarioCamera.enabled = false;
+                        Camera.main.enabled = true;
+                        _onFinishIntroEvent.InvokeEvent();
+                    }
                 }
                 break;
         }
-
     }
 }

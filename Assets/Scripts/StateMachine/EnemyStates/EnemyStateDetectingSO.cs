@@ -4,7 +4,7 @@ using UnityEngine;
 public class EnemyStateDetectingSO : EnemyStateBaseSO
 {
     [SerializeField] private float _catchRange = 3.5f; //遠すぎたら、辞める。徘徊に戻す
-    [SerializeField] private float maxChaseDistance = 25.0f; //遠すぎたら、辞める。徘徊に戻す
+    [SerializeField] private float maxChaseDistance = 10.0f; //遠すぎたら、辞める。徘徊に戻す
 
     public override void EnterState()
     {
@@ -28,14 +28,14 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
             ChaseTarget(); //追いかける
             if (IsWithinCatchRange(_logicController.CurrentTarget))///捕獲の距離に入るかどうか
             {
-                _logicController.SetState(_logicController.CarryCaughtState);
+                _logicController.SetState(_logicController.CarryCaughtStateInstance);
                 // _logicController.CarryCaughtState.CatchObject(_logicController.currentTargetObj);
                 return;
             }
         }
         else
         {
-            _logicController.SetState(_logicController.PatrolState); //やめる。また巡回する。
+            _logicController.SetState(_logicController.LoiterStateInstance); //やめる。また巡回する。
             //SetAILogic(logicCon._aiLogicLoiter); //やめる。徘徊する。
         }
     }
