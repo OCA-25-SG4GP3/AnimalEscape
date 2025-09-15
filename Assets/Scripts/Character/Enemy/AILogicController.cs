@@ -27,24 +27,35 @@ public class AILogicController : MonoBehaviour
     [SerializeField] public EnemyStatePatrolSO PatrolState;
     [SerializeField] public EnemyStateStunnedSO StunState;
 
+    public EnemyStateDetectingSO DetectingStateInstance;
+    public EnemyStateCarryCaughtSO CarryCaughtStateInstance;
+    public EnemyStateLoiterSO LoiterStateInstance;
+    public EnemyStatePatrolSO PatrolStateInstance;
+    public EnemyStateStunnedSO StunStateInstance;
+
     // private Cooldown _aiTick = new(0.2f); //毎フレー�?をチェ�?クではなく、決めた時間にチェ�?ク
     [Header("視野関�?")]
     [SerializeField] private float _maxConeDistance = 20.0f;
     [SerializeField] private float _coneAngle = 50.0f;
     #endregion
 
-    [NonSerializedAttribute] public NavMeshAgent Agent;
+    public NavMeshAgent Agent;
 
     #region Unity
     private void Awake()
     {
         Agent = GetComponent<NavMeshAgent>();
+        DetectingStateInstance = Instantiate(DetectingState);
+        CarryCaughtStateInstance = Instantiate(CarryCaughtState);
+        LoiterStateInstance = Instantiate(LoiterState);
+        PatrolStateInstance = Instantiate(PatrolState);
+        StunStateInstance = Instantiate(StunState);
     }
 
     private void Start()
     {
         Targets = GameObject.FindGameObjectsWithTag("Player");
-        SetState(LoiterState);
+        SetState(LoiterStateInstance);
         var jailobjs = GameObject.FindGameObjectsWithTag("Jail");
         foreach (var jailobj in jailobjs)
         {

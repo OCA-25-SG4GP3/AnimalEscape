@@ -6,11 +6,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int _totalGimmickCount;
     [SerializeField] private int _clearedGimmickCount = 0;
     [SerializeField] private GameObject _exitArea;
+    [SerializeField] private VoidEventSO _onEnterGameEvent;
     [SerializeField] private VoidEventSO _onGimmickClearEvent;
     [SerializeField] private VoidEventSO _onAllGimmickClearEvent;
     [SerializeField] private VoidEventSO _onGameClearEvent;
 
-
+    private bool _gameCleared = false;
 
     private void OnEnable()
     {
@@ -28,6 +29,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         _totalGimmickCount = GameObject.FindGameObjectsWithTag("Gimmick").Length;
+        _onEnterGameEvent.InvokeEvent();
     }
 
     // Update is called once per frame
@@ -48,7 +50,8 @@ public class GameManager : MonoBehaviour
 
     private void GameClear()
     {
-        Debug.Log("GameClear");
-        SceneManager.LoadScene(1, LoadSceneMode.Additive);
+        if (_gameCleared) return;
+        SceneManager.LoadScene(2, LoadSceneMode.Additive);
+        _gameCleared = true;
     }
 }

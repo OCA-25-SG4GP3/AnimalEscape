@@ -5,9 +5,9 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/dev/BasicPlayerControl.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/dev/TempTitleScene.unity
+    guid: de780b718fb624e469dbc4fec3b29ab4
   - enabled: 1
     path: Assets/Scenes/dev/GameFlowPrototype.unity
     guid: 4b6c71ce94226e24ea977e7b7794d310

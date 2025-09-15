@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cc9b28d0395f0a489c71338e464e334, type: 3}
   m_Name: PenguinStateSpecialAction
   m_EditorClassIdentifier: 
+  Description: 
   _playerBase: {fileID: 0}
   _slideSpeed: 20
-  _slideDuration: 0.8
+  _slideDuration: 0.5

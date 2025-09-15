@@ -4,6 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "PlayerStateJumpSO", menuName = "State/PlayerState/PlayerStateJumpSO")]
 public class PlayerStateJumpSO : PlayerStateBaseSO
 {
+    [SerializeField] private float _gravityMultiplier;
     private bool _isJumping = false;
     public override void EnterState()
     {
@@ -23,9 +24,14 @@ public class PlayerStateJumpSO : PlayerStateBaseSO
 
     public override void FixedUpdateState()
     {
-        Vector3 direction = new(_playerBase.MoveInput.x, 0, _playerBase.MoveInput.y);
+        Vector2 direction = _playerBase.MoveInput;
         _playerBase.Move(direction);
         _playerBase.Rotate(direction);
+
+        if (_playerBase.Rigidbody.linearVelocity.y < 0)
+        {
+            _playerBase.Rigidbody.linearVelocity += _gravityMultiplier * Time.fixedDeltaTime * Physics.gravity.y * Vector3.up;
+        }
 
         if (_playerBase.IsGrounded && ElapsedTime > 0.05f)
         {
