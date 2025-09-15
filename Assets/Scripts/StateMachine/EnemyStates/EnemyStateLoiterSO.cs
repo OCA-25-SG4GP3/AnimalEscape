@@ -24,7 +24,7 @@ public class EnemyStateLoiterSO : EnemyStateBaseSO ///ランダム徘徊行動
         //プレイヤーを検知したら、SetState, return。
         if (FoundTarget())//検知した!!!
         {
-            _logicController.SetState(_logicController.DetectingState);
+            _logicController.SetState(_logicController.DetectingStateInstance);
             return;
         }
         ////////////////////////

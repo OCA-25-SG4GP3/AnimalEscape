@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.Experimental.GlobalIllumination;
 
 public class WarningLight : MonoBehaviour
 {
@@ -7,8 +8,9 @@ public class WarningLight : MonoBehaviour
     public float rotationSpeed = 100f; // 親ごと回転させる速度
 
     [Header("ライト設定")]
-    public Light spotLight;             // 回転させたい Spot Light
-    public Light pointLight;           // 点滅させたい Point Light
+    public Light _warningSpotLight;             // 回転させたい Spot Light
+    public Light _warningPointLight;           // 点滅させたい Point Light
+    public Light _spotLight;
     public float blinkInterval = 0.5f; // SpotLight の点滅間隔（秒）
 
     [Header("サウンド設定")]
@@ -39,9 +41,9 @@ public class WarningLight : MonoBehaviour
     void Start()
     {
         // 最初は両方消灯
-        if (pointLight != null) pointLight.enabled = false;
-        if (spotLight != null) spotLight.enabled = false;
-
+        if (_warningSpotLight != null) _warningSpotLight.enabled = false;
+        if (_warningPointLight != null) _warningPointLight.enabled = false;
+        _spotLight.enabled = false;
         if (audioSource != null)
         {
             audioSource.loop = true;      // ループ再生を有効化
@@ -56,17 +58,17 @@ public class WarningLight : MonoBehaviour
         if (!isActive) return;
 
         // spotLight だけ回転
-        if (spotLight != null)
+        if (_warningSpotLight != null)
         {
-            spotLight.transform.Rotate(Vector3.up * rotationSpeed * Time.deltaTime);
+            _warningSpotLight.transform.Rotate(rotationSpeed * Time.deltaTime * Vector3.up);
         }
         // pointLight の点滅
-        if (pointLight != null)
+        if (_warningPointLight != null)
         {
             blinkTimer += Time.deltaTime;
             if (blinkTimer >= blinkInterval)
             {
-                pointLight.enabled = !pointLight.enabled;
+                _warningPointLight.enabled = !_warningPointLight.enabled;
                 blinkTimer = 0f;
             }
         }
@@ -115,8 +117,10 @@ public class WarningLight : MonoBehaviour
     {
         if (alarmCleared) return; // 念のためチェック
         isActive = true;
-        if (pointLight != null) pointLight.enabled = true;
-        if (spotLight != null) spotLight.enabled = true;
+        if (_warningPointLight != null) _warningPointLight.enabled = true;
+        if (_warningSpotLight != null) _warningSpotLight.enabled = true;
+        _spotLight.enabled = true;
+        
         blinkTimer = 0f;
 
         if (audioSource != null && alarmSound != null)
@@ -131,9 +135,9 @@ public class WarningLight : MonoBehaviour
     public void TurnOff()
     {
         isActive = false;
-        if (pointLight != null) pointLight.enabled = false;
-        if (spotLight != null) spotLight.enabled = false;
-
+        if (_warningPointLight != null) _warningPointLight.enabled = false;
+        if (_warningSpotLight != null) _warningSpotLight.enabled = false;
+        _spotLight.enabled = false;
         if (audioSource != null && audioSource.isPlaying)
             audioSource.Stop();
 
@@ -144,7 +148,7 @@ public class WarningLight : MonoBehaviour
     public void StartLight()
     {
         isActive = true;
-        if (spotLight != null) spotLight.enabled = true;
+        if (_warningSpotLight != null) _warningSpotLight.enabled = true;
         blinkTimer = 0f;
 
         if (audioSource != null && alarmSound != null)
@@ -154,7 +158,7 @@ public class WarningLight : MonoBehaviour
     public void StopLight()
     {
         isActive = false;
-        if (spotLight != null) spotLight.enabled = false;
+        if (_warningSpotLight != null) _warningSpotLight.enabled = false;
     }
 
 }

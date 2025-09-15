@@ -18,7 +18,7 @@ public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパト�
         if (closestTarget)
         {
             _logicController.CurrentTarget = closestTarget;
-            _logicController.SetState(_logicController.DetectingState);
+            _logicController.SetState(_logicController.DetectingStateInstance);
             return;
         }
         else
