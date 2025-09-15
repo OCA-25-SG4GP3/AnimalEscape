@@ -11,6 +11,11 @@ public class PlayerInputManager : MonoBehaviour
     [SerializeField] private Transform[] _spawnPoints;
     [SerializeField] private CinemachineTargetGroup _targetGroup;
 
+
+    [Header("Listening to")]
+    [SerializeField] protected VoidEventSO _onEnterGameEvent;
+    [SerializeField] protected VoidEventSO _onFinishIntroEvent;
+
     private PlayerInput _player1;
     private PlayerInput _player2;
 
@@ -27,4 +32,29 @@ public class PlayerInputManager : MonoBehaviour
 
         _targetGroup.AddMember(_player2.transform, 1f, 2f);
     }
+
+    protected virtual void OnEnable()
+    {
+        _onEnterGameEvent.OnEventInvoked += DisableInput;
+        _onFinishIntroEvent.OnEventInvoked += EnableInput;
+    }
+
+    protected virtual void OnDisable()
+    {
+        _onEnterGameEvent.OnEventInvoked -= DisableInput;
+        _onFinishIntroEvent.OnEventInvoked -= EnableInput;
+    }
+
+        protected virtual void DisableInput()
+    {
+        _player1.enabled = false;
+        _player2.enabled = false;
+    }
+
+    protected virtual void EnableInput()
+    {
+        _player1.enabled = true;
+        _player2.enabled = true;
+    }
+
 }

@@ -23,7 +23,7 @@ public class EnemyStateCarryCaughtSO : EnemyStateBaseSO
         if (AgentHelper.HasArrivedSuccess(_logicController.Agent, jailCellRadius)) //牢屋の近くに到着
         {
             DropCaughtObject(dropPos);
-            _logicController.SetState(_logicController.PatrolState); //restore
+            _logicController.SetState(_logicController.LoiterStateInstance); //restore
         }
     }
 
@@ -35,7 +35,7 @@ public class EnemyStateCarryCaughtSO : EnemyStateBaseSO
 
     public void CatchObject()
     {
-        _caughtObject = _logicController.CurrentTarget.transform.parent.gameObject;
+        _caughtObject = _logicController.CurrentTarget;
         _caughtObject.GetComponent<PlayerInfo>().hasCaught = true;
     }
 
@@ -84,12 +84,12 @@ public class EnemyStateCarryCaughtSO : EnemyStateBaseSO
 
     void DropCaughtObject(Vector3 dropPos)
     {
-        _caughtObject.transform.parent.position = dropPos;
+        _caughtObject.transform.position = dropPos;
         _caughtObject = null;
     }
     void UpdateCatchedObjectPosRot()
     {
-        _caughtObject.transform.parent.position = _logicController.CatchSlot.position;
-        _caughtObject.transform.parent.rotation = _logicController.CatchSlot.rotation;
+        _caughtObject.transform.position = _logicController.CatchSlot.position;
+        _caughtObject.transform.rotation = _logicController.CatchSlot.rotation;
     }
 }

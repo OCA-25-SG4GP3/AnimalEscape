@@ -10,7 +10,7 @@ public class PlayerStateWalkSO : PlayerStateBaseSO
 
     public override void FixedUpdateState()
     {
-        Vector3 direction = new(_playerBase.MoveInput.x, 0, _playerBase.MoveInput.y);
+        Vector2 direction = _playerBase.MoveInput;
         _playerBase.Move(direction);
         _playerBase.Rotate(direction);
     }
