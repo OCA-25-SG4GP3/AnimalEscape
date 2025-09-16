@@ -17,15 +17,21 @@ public class WarningLight : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip alarmSound;
 
-    [SerializeField] private VoidEventSO _onCageOpenEvent;
+    [SerializeField] private IntEventSO _onCageOpenEvent;
     [SerializeField] private VoidEventSO _onAlertTriggerEvent;
     [SerializeField] private VoidEventSO _onGimmickClearEvent;
     [SerializeField] private TransformEventSO _onEnemyTriggerEvent;
+    [SerializeField] private AudioClipEventSO _playBGMEvent;
+    [SerializeField] private AudioClipEventSO _playSFXEvent;
+    [SerializeField] private VoidEventSO _stopSFXEvent;
+    [SerializeField] private AudioClip _gimmickBGM;
 
 
     private float blinkTimer = 0f;
     [SerializeField] private bool isActive = false; // 常時動作させるなら true
     [SerializeField] private bool alarmCleared = false;   // アイテムを取って警報解除されたか
+    [SerializeField] private int _gimmickID = 0;
+    [SerializeField] private GameObject _animal;
 
     private void OnEnable()
     {
@@ -98,19 +104,19 @@ public class WarningLight : MonoBehaviour
         {
             if (!isActive && !alarmCleared)
         {
-            _onGimmickClearEvent.InvokeEvent();
-            alarmCleared = true;
+            // _onGimmickClearEvent.InvokeEvent();
+            // alarmCleared = true;
         }
         }
     }
 
     // 外部から呼び出す（アイテム側から通知）
-    public void ClearAlarm()
-    {
-        alarmCleared = true; //永久解除フラグON
-        TurnOff();
-        Debug.Log("アイテムを取った → 警報解除");
-    }
+    // public void ClearAlarm()
+    // {
+    //     alarmCleared = true; //永久解除フラグON
+    //     TurnOff();
+    //     Debug.Log("アイテムを取った → 警報解除");
+    // }
 
     // 警告灯ON
     public void TurnOn()
@@ -125,22 +131,28 @@ public class WarningLight : MonoBehaviour
 
         if (audioSource != null && alarmSound != null)
         {
-            audioSource.clip = alarmSound;
-            if (!audioSource.isPlaying) audioSource.Play();
+            _playSFXEvent.InvokeEvent(alarmSound, true);
+            _playBGMEvent.InvokeEvent(_gimmickBGM, true);
+            // audioSource.clip = alarmSound;
+            // if (!audioSource.isPlaying) audioSource.Play();
         }
         Debug.Log("⚠ プレイヤーが部屋に入った → 警告灯ON");
     }
 
     // 警告灯OFF
-    public void TurnOff()
+    public void TurnOff(int id)
     {
         isActive = false;
         if (_warningPointLight != null) _warningPointLight.enabled = false;
         if (_warningSpotLight != null) _warningSpotLight.enabled = false;
         _spotLight.enabled = false;
-        if (audioSource != null && audioSource.isPlaying)
-            audioSource.Stop();
-
+        // if (audioSource != null && audioSource.isPlaying)
+            // audioSource.Stop();
+        _stopSFXEvent.InvokeEvent();
+        if (id != _gimmickID) return; // 違うギミックの解除通知なら無視
+        _animal.GetComponent<EscapeAnimalAction>().IsFree = true;
+        _onGimmickClearEvent.InvokeEvent();
+        alarmCleared = true;
         Debug.Log("✅ プレイヤーが部屋から出た → 警告灯OFF");
     }
 

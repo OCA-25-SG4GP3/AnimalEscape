@@ -14,12 +14,16 @@ public class PlayerStateJumpSO : PlayerStateBaseSO
         }
         _playerBase.Rigidbody.AddForce(Vector3.up * _playerBase.JumpPower, ForceMode.Impulse);
         _isJumping = true;
+        // _playerBase.Animator.SetBool("IsJumping", true);
+        if(_playerBase.Animator) _playerBase.Animator.Play("Jump");
         StartTimer();
     }
 
     public override void ExitState()
     {
         _isJumping = false;
+        if(_playerBase.Animator) _playerBase.Animator.Play("Idle");
+        // _playerBase.Animator.SetBool("IsJumping", true);
     }
 
     public override void FixedUpdateState()

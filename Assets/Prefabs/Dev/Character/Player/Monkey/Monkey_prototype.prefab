@@ -156,6 +156,7 @@ MonoBehaviour:
   _groundCheckDistance: 0.5
   _groundCheckOffset: 0.3
   _characterModel: {fileID: 2438383154707064496}
+  _animator: {fileID: 0}
   _currentState: {fileID: 0}
   _jumpStateSO: {fileID: 11400000, guid: 38d1aa3033ca7d64c87ff51e250d55d9, type: 2}
   _walkStateSO: {fileID: 11400000, guid: 0190ab7de8c85574c906f7a02a69ed35, type: 2}
@@ -307,7 +308,7 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
-  m_NeverAutoSwitchControlSchemes: 1
+  m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: Player2
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1

@@ -21,6 +21,8 @@ public class OpeningCameraAction : MonoBehaviour
     [SerializeField] GameObject pointC;
     [SerializeField] GameObject player;
 
+    private bool _isFinished = false;
+
     private void Awake()
     {
         _scenarioCamera = GetComponent<Camera>();
@@ -135,7 +137,11 @@ public class OpeningCameraAction : MonoBehaviour
                     {
                         _scenarioCamera.enabled = false;
                         Camera.main.enabled = true;
-                        _onFinishIntroEvent.InvokeEvent();
+                        if (!_isFinished)
+                        {
+                            _onFinishIntroEvent.InvokeEvent();
+                            _isFinished = true;
+                        }
                     }
                 }
                 break;
