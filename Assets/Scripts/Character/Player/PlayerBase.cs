@@ -12,6 +12,7 @@ public class PlayerBase : MonoBehaviour
     [SerializeField] protected float _groundCheckDistance = 0.01f;
     [SerializeField] private float _groundCheckOffset = 0.1f;
     [SerializeField] private Transform _characterModel;
+    [SerializeField] private Animator _animator;
 
     public float MoveSpeed { get; set; }
     public float WalkSpeed => _walkSpeed;
@@ -21,6 +22,7 @@ public class PlayerBase : MonoBehaviour
     public bool IsSpecialAction { get; set; }
 
     public Transform Model => _characterModel;
+    public Animator Animator => _animator;
 
     [Header("State Machine")]
     [SerializeField] protected PlayerStateBaseSO _currentState;
@@ -50,6 +52,7 @@ public class PlayerBase : MonoBehaviour
     protected virtual void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _animator = GetComponentInChildren<Animator>();
         MoveSpeed = _walkSpeed;
         _inputSystem = new InputSystem();
 

@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using UnityEditor;
 using UnityEngine;
@@ -10,6 +11,13 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField] private Slider _loadingBar;
     [SerializeField] private Text _progressText;
     [SerializeField, ReadOnly] private float _progress;
+    [SerializeField] private AudioClipEventSO _playBGMEvent;
+    [SerializeField] private AudioClip _titleBGM;
+
+    private void Start()
+    {
+        _playBGMEvent.InvokeEvent(_titleBGM, true);
+    }
 
     public async void StartGame()
     {
@@ -37,7 +45,6 @@ public class MainMenuManager : MonoBehaviour
     {
         _loadingBar.value = Mathf.MoveTowards(_loadingBar.value, _progress, Time.deltaTime);
         _progressText.text = string.Format("Loading {0}%", (int)(_loadingBar.value * 100));
-
     }
 
     public void QuitGame()
