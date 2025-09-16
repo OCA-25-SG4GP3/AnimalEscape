@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Description: "AI is Detecting \u691C\u77E5\u3057\u305F"
   _logicController: {fileID: 0}
-  _catchRange: 3.5
-  maxChaseDistance: 25
+  _catchRange: 2
+  maxChaseDistance: 500

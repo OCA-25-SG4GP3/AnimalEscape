@@ -1024,8 +1024,6 @@ MonoBehaviour:
   PatrolSpots:
   - {fileID: 0}
   - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   Jails: []
   _currentState: {fileID: 0}
   DetectingState: {fileID: 11400000, guid: 1aedc55e540144348b89078b067d9c3b, type: 2}
@@ -1033,8 +1031,14 @@ MonoBehaviour:
   LoiterState: {fileID: 11400000, guid: 5071331d00314ca46a79e77eeff5d47d, type: 2}
   PatrolState: {fileID: 11400000, guid: a42db6e8a31b2e04ea5e26698dd8025b, type: 2}
   StunState: {fileID: 11400000, guid: eef4550a3117f4f438aa2ee52ee04a53, type: 2}
-  _maxConeDistance: 20
+  DetectingStateInstance: {fileID: 0}
+  CarryCaughtStateInstance: {fileID: 0}
+  LoiterStateInstance: {fileID: 0}
+  PatrolStateInstance: {fileID: 0}
+  StunStateInstance: {fileID: 0}
+  _maxConeDistance: 100
   _coneAngle: 50
+  Agent: {fileID: 0}
 --- !u!136 &1637074052539321932
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -1703,7 +1707,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6034243719339532902}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1b4bd882c2e4ba7488b596b10d943699, type: 3}
   m_Name: 

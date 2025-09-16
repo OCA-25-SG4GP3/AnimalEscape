@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SpawnEnemyManager : MonoBehaviour
 {
-[Header("Spawn Settings")]
+    [Header("Spawn Settings")]
     [SerializeField] private GameObject _enemyPrefab;
     [SerializeField] private Transform _spawnPoint;
     [SerializeField, Min(0.05f)] private float _spawnInterval = 1f; // 秒
@@ -12,20 +12,8 @@ public class SpawnEnemyManager : MonoBehaviour
     [SerializeField] private TransformEventSO _onEnemySpawnEvent;
     [SerializeField] private VoidEventSO _onEnemyStopSpawnEvent;
 
-
     private bool _isSpawning = false;
     private int _currentCount = 0;
-
-    // private void Start()
-    // {
-    //     if (enemyPrefab == null || spawnPoint == null)
-    //     {
-    //         Debug.LogWarning("EnemySpawnerSimple: Prefab or spawnPoints not set.");
-    //         return;
-    //     }
-
-    //     StartSpawning();
-    // }
 
     private void OnEnable()
     {
@@ -68,17 +56,11 @@ public class SpawnEnemyManager : MonoBehaviour
 
     private void SpawnOne()
     {
-        var go = Instantiate(_enemyPrefab, _spawnPoint.position + new Vector3(0, 0, -20), _spawnPoint.rotation);
+        Instantiate(_enemyPrefab, _spawnPoint.position + new Vector3(0, -_spawnPoint.position.y, -50), _spawnPoint.rotation);
         _currentCount++;
 
         // 敵が破壊/無効化されたらカウントを減らすサンプル（敵スクリプト側で呼ぶ想定）
         // 例: Enemy.OnDie += () => _currentCount--;
         // ここでは簡単に、破棄時に減らすコンポーネントを付ける案を書いておくか検討してください.
-    }
-
-    // 敵が消えたときにSpawnerから呼べるように
-    public void NotifyEnemyRemoved()
-    {
-        _currentCount = Mathf.Max(0, _currentCount - 1);
     }
 }

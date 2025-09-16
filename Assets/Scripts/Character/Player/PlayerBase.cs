@@ -11,6 +11,8 @@ public class PlayerBase : MonoBehaviour
     [SerializeField] protected float _jumpPower;
     [SerializeField] protected float _groundCheckDistance = 0.01f;
     [SerializeField] private float _groundCheckOffset = 0.1f;
+    [SerializeField] private Transform _characterModel;
+    [SerializeField] private Animator _animator;
 
     public float MoveSpeed { get; set; }
     public float WalkSpeed => _walkSpeed;
@@ -19,7 +21,10 @@ public class PlayerBase : MonoBehaviour
     public float JumpPower => _jumpPower;
     public bool IsSpecialAction { get; set; }
 
-    [Header("States")]
+    public Transform Model => _characterModel;
+    public Animator Animator => _animator;
+
+    [Header("State Machine")]
     [SerializeField] protected PlayerStateBaseSO _currentState;
     [SerializeField] protected PlayerStateJumpSO _jumpStateSO;
     [SerializeField] protected PlayerStateWalkSO _walkStateSO;
@@ -40,9 +45,14 @@ public class PlayerBase : MonoBehaviour
 
     public bool IsGrounded => CheckIsGround();
 
+    [Header("Listening to")]
+    [SerializeField] protected VoidEventSO _onEnterGameEvent;
+    [SerializeField] protected VoidEventSO _onFinishIntroEvent;
+
     protected virtual void Awake()
     {
         _rigidbody = GetComponent<Rigidbody>();
+        _animator = GetComponentInChildren<Animator>();
         MoveSpeed = _walkSpeed;
         _inputSystem = new InputSystem();
 
@@ -57,11 +67,15 @@ public class PlayerBase : MonoBehaviour
     protected virtual void OnEnable()
     {
         _inputSystem.Enable();
+        _onEnterGameEvent.OnEventInvoked += DisableInput;
+        _onFinishIntroEvent.OnEventInvoked += EnableInput;
     }
 
     protected virtual void OnDisable()
     {
         _inputSystem.Disable();
+        _onEnterGameEvent.OnEventInvoked -= DisableInput;
+        _onFinishIntroEvent.OnEventInvoked -= EnableInput;
     }
 
     protected virtual void Start()
@@ -82,6 +96,7 @@ public class PlayerBase : MonoBehaviour
 
     protected virtual void FixedUpdate()
     {
+        Rigidbody.linearVelocity = new Vector3(0, Rigidbody.linearVelocity.y, 0);
         _currentState.FixedUpdateState();
     }
 
@@ -170,18 +185,16 @@ public class PlayerBase : MonoBehaviour
         return Physics.Raycast(origin, Vector3.down, _groundCheckDistance);
     }
 
-    public virtual void Move(Vector3 direction)
+    public virtual void Move(Vector2 direction)
     {
-        direction.Normalize();
-        _rigidbody.MovePosition(transform.position + MoveSpeed * Time.fixedDeltaTime * direction);
+        Rigidbody.linearVelocity = new Vector3(MoveSpeed * direction.x, Rigidbody.linearVelocity.y, MoveSpeed * direction.y);
     }
 
-    public virtual void Rotate(Vector3 direction)
+    public virtual void Rotate(Vector2 direction)
     {
-        if (direction == Vector3.zero) return;
-        direction.Normalize();
-        Quaternion targetRotation = Quaternion.LookRotation(direction);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, _rotateSpeed * Time.deltaTime);
+        if (direction == Vector2.zero) return;
+        Quaternion targetRotation = Quaternion.LookRotation(new(direction.x, 0, direction.y));
+        _characterModel.rotation = Quaternion.Slerp(_characterModel.rotation, targetRotation, _rotateSpeed * Time.deltaTime);
     }
 
     protected virtual void Jump()
@@ -196,7 +209,7 @@ public class PlayerBase : MonoBehaviour
 
     protected virtual void SwitchGroundState()
     {
-       
+
         if (IsSpecialAction)
         {
             _currentState = _specialActionStateInstance;
@@ -228,5 +241,15 @@ public class PlayerBase : MonoBehaviour
             key.Use();
             Destroy(key.gameObject);
         }
+    }
+
+    protected virtual void DisableInput()
+    {
+        _inputSystem.Disable();
+    }
+
+    protected virtual void EnableInput()
+    {
+        _inputSystem.Enable();
     }
 }
