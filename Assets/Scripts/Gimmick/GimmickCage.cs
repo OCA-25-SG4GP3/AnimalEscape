@@ -3,9 +3,9 @@ using UnityEngine;
 public class GimmickCage : MonoBehaviour
 {
     [SerializeField] private VoidEventSO _onPickupKeyEvent;
-    [SerializeField] private VoidEventSO _onCageOpenEvent;
+    [SerializeField] private IntEventSO _onCageOpenEvent;
     [SerializeField] private bool _canOpen = false;
-
+    [SerializeField] private int _gimmickID = 0;
     public const int MAX_TIME = 3;
     public float time = 0;
 
@@ -26,7 +26,7 @@ public class GimmickCage : MonoBehaviour
     {
         if (time >= MAX_TIME)
         {
-            _onCageOpenEvent.InvokeEvent();
+            _onCageOpenEvent.InvokeEvent(_gimmickID);
             Destroy(gameObject);
         }
 

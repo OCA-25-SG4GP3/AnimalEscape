@@ -7,16 +7,16 @@ using UnityEngine.Windows;
 public class PenguinControl : PlayerBase
 {
 
-    [SerializeField] private float _minDashForce = 5f;   // ?��`?��?��?��[?��W?��ŏ�
-    [SerializeField] private float _maxDashForce = 20f;  // ?��`?��?��?��[?��W?��ő�
+    // [SerializeField] private float _minDashForce = 5f;   // ?��`?��?��?��[?��W?��ŏ�
+    // [SerializeField] private float _maxDashForce = 20f;  // ?��`?��?��?��[?��W?��ő�
     [SerializeField] private float _maxChargeTime = 2f;  // ?��ő�`?��?��?��[?��W?��?��?��?��
-    [SerializeField] private float _dashCooldown = 5f; // ? cooldown in seconds
+    // [SerializeField] private float _dashCooldown = 5f; // ? cooldown in seconds
     [SerializeField] private Transform _penguinModel;  // drag child object here in Inspector
     [SerializeField] private float _slideRotationAngle = 90f; // tilt penguin
     [SerializeField] private float _rotationSpeed = 5f;       // smooth rotation speed
-    [SerializeField] private GameObject _impactCollider;       
-    [SerializeField] private GameObject _vfxObjPrefab;       
-    private bool _hitOnce = false;
+    [SerializeField] private GameObject _impactCollider;
+    [SerializeField] private GameObject _vfxObjPrefab;
+    // private bool _hitOnce = false;
     private bool _isSliding = false;
 
     public GameObject ImpactCollider => _impactCollider;
@@ -26,12 +26,6 @@ public class PenguinControl : PlayerBase
     private float _chargeTimer;
     private bool _isCharging;
     private float _cooldownTimer = 0f; // tracks remaining cooldown
-
-
-    public RopeHit targetBox;
-    public RopeAction2 Rope;
-    public LiftAction Lift;
-
 
     private void HandleSlideRotation()
     {
@@ -54,16 +48,15 @@ public class PenguinControl : PlayerBase
     {
         base.Update();
 
-        ProcessSlide();
-        ProcessRopeMechanic();
+        // ProcessSlide();
+        // ProcessRopeMechanic();
     }
 
     void ProcessSlide()
     {
         // Countdown cooldown
-        if (_cooldownTimer > 0)
-            _cooldownTimer -= Time.deltaTime;
-                // ���������Ƀ`���[�W���Ԃ����Z
+        if (_cooldownTimer > 0) _cooldownTimer -= Time.deltaTime;
+
         if (_isCharging)
         {
             _chargeTimer += Time.deltaTime;
@@ -92,12 +85,11 @@ public class PenguinControl : PlayerBase
         }
     }
 
-    protected override void OnCollisionEnter(Collision collision)
+    protected void OnTriggerEnter(Collider collision)
     {
-        base.OnCollisionEnter(collision); //
         if (collision.gameObject.CompareTag("Enemy"))
         {
-            _hitOnce = true;
+            // _hitOnce = true;
             ActivateVFX();
         }
     }
@@ -128,62 +120,41 @@ public class PenguinControl : PlayerBase
 
     }
 
-    void ProcessRopeMechanic()
-    {
-        if (!Lift || !Rope) return; //?��?��?��݂̃v?��?��?��g?��^?��C?��v?��́A?��?��?��΂炭Lift?��?��?��p?��?��?��܂�?��?��
-        //?A?N?V?????{?^?????????????
-        //if (_inputSystem.Penguin.<Keyboard>/ e.triggered )
-        //{
-        //???[?v???????????��E????��O??
-        if (targetBox.playerInside)
-        {
-            Lift.lift_flag = true;
-            Rope.rope_flag = true;
-            //Debug.Log("E?L?[?????F????v???C???[??????????O??o?????");
-        }
-        else
-        {
-            Lift.lift_flag = false;
-            Rope.rope_flag = false;
-            // Debug.Log("E?L?[?????F????N????????");
-        }
-        //}
-    }
-    public new void OnSpecialAction(InputAction.CallbackContext context)
-    {
-        if (_cooldownTimer > 0f)
-        {
-            return;
-        }
+    // public new void OnSpecialAction(InputAction.CallbackContext context)
+    // {
+    //     if (_cooldownTimer > 0f)
+    //     {
+    //         return;
+    //     }
 
 
-        if (context.started)
-        {
-            // ?��`?��?��?��[?��W?��J?��n
-            _isCharging = true;
-            _chargeTimer = 0f;
-            Debug.Log("Penguin charging!");
-        }
+    //     if (context.started)
+    //     {
+    //         // ?��`?��?��?��[?��W?��J?��n
+    //         _isCharging = true;
+    //         _chargeTimer = 0f;
+    //         Debug.Log("Penguin charging!");
+    //     }
 
-        if (context.canceled)
-        {
-            // ?��`?��?��?��[?��W?��?��?��?�� ?��?�� ?��ˌ�
-            _isCharging = false;
-            _isSliding = true;
-            float chargeRatio = _chargeTimer / _maxChargeTime;
-            float dashForce = Mathf.Lerp(_minDashForce, _maxDashForce, chargeRatio);
+    //     if (context.canceled)
+    //     {
+    //         // ?��`?��?��?��[?��W?��?��?��?�� ?��?�� ?��ˌ�
+    //         _isCharging = false;
+    //         _isSliding = true;
+    //         float chargeRatio = _chargeTimer / _maxChargeTime;
+    //         float dashForce = Mathf.Lerp(_minDashForce, _maxDashForce, chargeRatio);
 
-            Vector3 dashDir = new Vector3(_moveInput.x, 0, _moveInput.y);
-            if (dashDir == Vector3.zero)
-                dashDir = transform.forward; // ?��?��?��͂�?��?��?��?��?��?��ΑO?��?��?��?��
+    //         Vector3 dashDir = new Vector3(_moveInput.x, 0, _moveInput.y);
+    //         if (dashDir == Vector3.zero)
+    //             dashDir = transform.forward; // ?��?��?��͂�?��?��?��?��?��?��ΑO?��?��?��?��
 
-            _rigidbody.AddForce(dashDir.normalized * dashForce, ForceMode.Impulse);
-            _cooldownTimer = _dashCooldown;
-            Debug.Log($"Penguin dashed with force {dashForce}!");
-            _impactCollider.SetActive(true);
-            _hitOnce = false;
-        }
-    }
+    //         _rigidbody.AddForce(dashDir.normalized * dashForce, ForceMode.Impulse);
+    //         _cooldownTimer = _dashCooldown;
+    //         Debug.Log($"Penguin dashed with force {dashForce}!");
+    //         _impactCollider.SetActive(true);
+    //         _hitOnce = false;
+    //     }
+    // }
     public bool CanDash => _cooldownTimer <= 0f;
     public float CooldownRemaining => Mathf.Max(0f, _cooldownTimer);
 }

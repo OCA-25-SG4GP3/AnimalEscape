@@ -4,27 +4,27 @@ using System.Collections;
 public class EscapeAnimalAction : MonoBehaviour
 {
     //=============================================
-    public bool IsFree = false;  //“®•¨‚ªÜ‚©‚ço‚Ä‚¢‚é‚©‚Ç‚¤‚©
+    public bool IsFree = false;  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½oï¿½Ä‚ï¿½ï¿½é‚©ï¿½Ç‚ï¿½ï¿½ï¿½
     public float MoveSpeed = 0.1f;
     public float EscapeSpeed = 6.0f;
     public float ChangeInterval = 3.0f;
     private Vector3 moveDirection;
     //==============================================
-    // ‘O‰ñ‚Ìs“®itrue=ˆÚ“®, false=’â~j
+    // ï¿½Oï¿½ï¿½Ìsï¿½ï¿½ï¿½itrue=ï¿½Ú“ï¿½, false=ï¿½ï¿½~ï¿½j
     private bool wasMoving = false;
-    // Ÿ‚Ìs“®‚Ü‚Å‚Ìc‚èŠÔ
+    // ï¿½ï¿½ï¿½Ìsï¿½ï¿½ï¿½Ü‚Å‚Ìcï¿½èï¿½ï¿½
     private float timer;
     //==============================================
-    // s“®‚ğŠJn‚·‚é”ÍˆÍ‚Ì’†S“_
+    // ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½nï¿½ï¿½ï¿½ï¿½ÍˆÍ‚Ì’ï¿½ï¿½Sï¿½_
     //public Transform CenterPoint;
-    // s“®‚ğŠJn‚·‚é”ÍˆÍ‚Ì”¼Œa
+    // ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½Jï¿½nï¿½ï¿½ï¿½ï¿½ÍˆÍ‚Ì”ï¿½ï¿½a
     public float EscapeRadius = 15.0f;
-    // GoalƒIƒuƒWƒFƒNƒg‚ÌTransform
+    // Goalï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ï¿½Transform
     private Transform goalTransform;
-    // ’Eoˆ—‚ªŠ®—¹‚µ‚½‚©‚Ç‚¤‚©‚Ìƒtƒ‰ƒO
+    // ï¿½Eï¿½oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½ï¿½Ìƒtï¿½ï¿½ï¿½O
     private bool hasEscaped = false;
     //==============================================
-    // ©g‚ğ”jŠü‚·‚é‹——£
+    // ï¿½ï¿½ï¿½gï¿½ï¿½jï¿½ï¿½ï¿½ï¿½ï¿½é‹—ï¿½ï¿½
     public float destructionDistance = 2.0f;
     //==============================================
 
@@ -32,10 +32,10 @@ public class EscapeAnimalAction : MonoBehaviour
     void Start()
     {
         //=================================================================
-        // ‰Šúƒ^ƒCƒ}[‚ğİ’è
+        // ï¿½ï¿½ï¿½ï¿½ï¿½^ï¿½Cï¿½}ï¿½[ï¿½ï¿½İ’ï¿½
         timer = ChangeInterval;
         //=================================================================
-        // "Goal"ƒ^ƒO‚ÌƒIƒuƒWƒFƒNƒg‚ğ’T‚µ‚Äæ“¾
+        // "Goal"ï¿½^ï¿½Oï¿½ÌƒIï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ï¿½Tï¿½ï¿½ï¿½Äæ“¾
         GameObject goalObject = GameObject.FindGameObjectWithTag("Goal");
         if (goalObject != null)
         {
@@ -43,135 +43,136 @@ public class EscapeAnimalAction : MonoBehaviour
         }
         else
         {
-            Debug.LogError("GoalƒIƒuƒWƒFƒNƒg‚ªŒ©‚Â‚©‚è‚Ü‚¹‚ñB");
+            Debug.LogError("Goalï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ï¿½ï¿½ï¿½ï¿½Â‚ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½B");
         }
     }
     // Update is called once per frame
     void Update()
     {
-        //“®•¨‚ªŸB‚©‚ço‚Ä‚¢‚È‚¢‚È‚ç
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Bï¿½ï¿½ï¿½ï¿½oï¿½Ä‚ï¿½ï¿½È‚ï¿½ï¿½È‚ï¿½
         if (!IsFree)
         {
             CageAnimalAct();
         }
         else
         {
-            // ŸB‚©‚ço‚ÄA‚©‚ÂGoalƒIƒuƒWƒFƒNƒg‚ª‘¶İ‚·‚éê‡
+            // ï¿½Bï¿½ï¿½ï¿½ï¿½oï¿½ÄAï¿½ï¿½ï¿½ï¿½Goalï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ï¿½ï¿½ï¿½ï¿½İ‚ï¿½ï¿½ï¿½ê‡
             if (goalTransform != null)
             {
-                // “¦‚°‚ç‚ê‚Ä‚È‚¢ê‡ŸB‚©‚ç‚Ì’Eoˆ—
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚È‚ï¿½ï¿½ê‡ï¿½Bï¿½ï¿½ï¿½ï¿½Ì’Eï¿½oï¿½ï¿½ï¿½ï¿½
                 if (!hasEscaped)
                 {
-                    EscapeFromRange();
+                    hasEscaped = true;
+                    // EscapeFromRange();
                 }
-                // “¦‚°‚ê‚Ä‚éê‡ƒS[ƒ‹‚Ö‚Ì’ÇÕˆ—
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ê‡ï¿½Sï¿½[ï¿½ï¿½ï¿½Ö‚Ì’ÇÕï¿½ï¿½ï¿½
                 else
                 {
                     MoveToGoal();
                 }
             }
         }
-        //ƒS[ƒ‹‚É“’…‚µ‚½‚ç©g‚ğ”jŠü‚·‚éˆ—
+        //ï¿½Sï¿½[ï¿½ï¿½ï¿½É“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ç©ï¿½gï¿½ï¿½jï¿½ï¿½ï¿½ï¿½ï¿½éˆï¿½ï¿½
         MoveToDestory();
     }
 
-    // w’è”ÍˆÍ‚©‚ç‚Ì’Eoˆ—
+    // ï¿½wï¿½ï¿½ÍˆÍ‚ï¿½ï¿½ï¿½Ì’Eï¿½oï¿½ï¿½ï¿½ï¿½
     private void EscapeFromRange()
     {
-        // ’†S“_‚©‚çŠO‚Öƒ[ƒv‚·‚éƒ‰ƒ“ƒ_ƒ€‚È•ûŒü‚ğŒvZ
+        // ï¿½ï¿½ï¿½Sï¿½_ï¿½ï¿½ï¿½ï¿½Oï¿½Öƒï¿½ï¿½[ï¿½vï¿½ï¿½ï¿½éƒ‰ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½È•ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½vï¿½Z
         Vector3 randomDirection = Random.onUnitSphere;
-        // Y²‚Ì•ûŒü‚Í0‚É‚µ‚Ä’n–Ê‚ğˆÚ“®‚·‚é‚æ‚¤‚É‚·‚é
+        // Yï¿½ï¿½ï¿½Ì•ï¿½ï¿½ï¿½ï¿½ï¿½0ï¿½É‚ï¿½ï¿½Ä’nï¿½Ê‚ï¿½ï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½æ‚¤ï¿½É‚ï¿½ï¿½ï¿½
         randomDirection.y = 0;
         randomDirection.Normalize();
 
-        // ’†S“_‚©‚çw’è‚³‚ê‚½”¼Œa‚ÌŠO‘¤‚Éƒ[ƒv‚·‚éˆÊ’u‚ğŒˆ’è
+        // ï¿½ï¿½ï¿½Sï¿½_ï¿½ï¿½ï¿½ï¿½wï¿½è‚³ï¿½ê‚½ï¿½ï¿½ï¿½aï¿½ÌŠOï¿½ï¿½ï¿½Éƒï¿½ï¿½[ï¿½vï¿½ï¿½ï¿½ï¿½Ê’uï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         //Vector3 warpPosition = CenterPoint.position + randomDirection * EscapeRadius;
         Vector3 warpPosition = transform.position + randomDirection * EscapeRadius;
 
-        // ƒIƒuƒWƒFƒNƒg‚ğV‚µ‚¢ˆÊ’u‚ÖuŠÔˆÚ“®‚³‚¹‚é
+        // ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½Ê’uï¿½Öuï¿½ÔˆÚ“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         transform.position = new Vector3(warpPosition.x, 1.5f, warpPosition.z);
 
-        // ƒ[ƒvŠ®—¹ƒtƒ‰ƒO‚ğ—§‚Ä‚é
+        // ï¿½ï¿½ï¿½[ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½tï¿½ï¿½ï¿½Oï¿½ğ—§‚Ä‚ï¿½
         IsFree = true;
         hasEscaped = true;
-        Debug.Log("”ÍˆÍŠO‚Ö‚Ìƒ[ƒv‚ªŠ®—¹‚µ‚Ü‚µ‚½B");
+        Debug.Log("ï¿½ÍˆÍŠOï¿½Ö‚Ìƒï¿½ï¿½[ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B");
     }
 
-    // GoalƒIƒuƒWƒFƒNƒg‚Ö‚ÌˆÚ“®ˆ—
+    // Goalï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½Ö‚ÌˆÚ“ï¿½ï¿½ï¿½ï¿½ï¿½
     private void MoveToGoal()
     {
-        // Goal‚Ö‚Ì•ûŒü‚ğŒvZ
+        // Goalï¿½Ö‚Ì•ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½vï¿½Z
         Vector3 directionToGoal = (goalTransform.position - transform.position).normalized;
-        // ‚»‚Ì•ûŒü‚ÉˆÚ“®
+        // ï¿½ï¿½ï¿½Ì•ï¿½ï¿½ï¿½ï¿½ÉˆÚ“ï¿½
         transform.position += directionToGoal * EscapeSpeed * Time.deltaTime;
     }
 
-    //ƒS[ƒ‹‚É’…‚¢‚½‚ç©g‚ğ”jŠü‚·‚éˆ—
+    //ï¿½Sï¿½[ï¿½ï¿½ï¿½É’ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ç©ï¿½gï¿½ï¿½jï¿½ï¿½ï¿½ï¿½ï¿½éˆï¿½ï¿½
     void MoveToDestory()
     {
-        // ©g‚ÆƒS[ƒ‹ƒIƒuƒWƒFƒNƒg‚Ì‹——£‚ğŒvZ
+        // ï¿½ï¿½ï¿½gï¿½ÆƒSï¿½[ï¿½ï¿½ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½Ì‹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½vï¿½Z
         float distanceToGoal = Vector3.Distance(transform.position, goalTransform.position);
 
-        // ‹——£‚ªw’è‚µ‚½’lˆÈ‰º‚É‚È‚Á‚½‚ç©g‚ğ”jŠü
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½wï¿½è‚µï¿½ï¿½ï¿½lï¿½È‰ï¿½ï¿½É‚È‚ï¿½ï¿½ï¿½ï¿½ç©ï¿½gï¿½ï¿½jï¿½ï¿½
         if (distanceToGoal <= destructionDistance)
         {
-            // ©g‚ğ”jŠü
+            // ï¿½ï¿½ï¿½gï¿½ï¿½jï¿½ï¿½
             Destroy(gameObject);
-            Debug.Log("ƒS[ƒ‹‚É“’B‚µ‚½‚½‚ßAƒIƒuƒWƒFƒNƒg‚ğ”jŠü‚µ‚Ü‚µ‚½B");
+            Debug.Log("ï¿½Sï¿½[ï¿½ï¿½ï¿½É“ï¿½ï¿½Bï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ßAï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ï¿½jï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½B");
         }
     }
 
     private void DecideNextAction()
     {
-        // Ÿ‚Ìs“®‚ªuˆÚ“®v‚É‚È‚éŠm—¦
+        // ï¿½ï¿½ï¿½Ìsï¿½ï¿½ï¿½ï¿½ï¿½uï¿½Ú“ï¿½ï¿½vï¿½É‚È‚ï¿½mï¿½ï¿½
         float moveChance = 0.5f;
 
-        // ‚à‚µ‘O‰ñ‚Ìs“®‚ªu’â~v‚¾‚Á‚½ê‡AŸ‚Ìs“®‚ªuˆÚ“®v‚É‚È‚éŠm—¦‚ğ‚‚­‚·‚é
+        // ï¿½ï¿½ï¿½ï¿½ï¿½Oï¿½ï¿½Ìsï¿½ï¿½ï¿½ï¿½ï¿½uï¿½ï¿½~ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‡ï¿½Aï¿½ï¿½ï¿½Ìsï¿½ï¿½ï¿½ï¿½ï¿½uï¿½Ú“ï¿½ï¿½vï¿½É‚È‚ï¿½mï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (!wasMoving)
         {
-            moveChance = 0.8f; // —áF’â~‚ÌŒã‚Í80%‚ÌŠm—¦‚ÅˆÚ“®
+            moveChance = 0.8f; // ï¿½ï¿½Fï¿½ï¿½~ï¿½ÌŒï¿½ï¿½80%ï¿½ÌŠmï¿½ï¿½ï¿½ÅˆÚ“ï¿½
         }
-        // Šm—¦‚ÉŠî‚Ã‚¢‚Äs“®‚ğŒˆ’è
+        // ï¿½mï¿½ï¿½ï¿½ÉŠï¿½Ã‚ï¿½ï¿½Äsï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (Random.value < moveChance)
         {
-            // ˆÚ“®‚·‚éê‡
-            // V‚µ‚¢ƒ‰ƒ“ƒ_ƒ€‚ÈˆÚ“®•ûŒü‚ğŒˆ’è
+            // ï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½ê‡
+            // ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ÈˆÚ“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             moveDirection = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
             wasMoving = true;
-            //Debug.Log("ˆÚ“®‚µ‚Ü‚·"); //ˆê’UÁ‚µ‚Ü‚·(Zan)
+            //Debug.Log("ï¿½Ú“ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½"); //ï¿½ï¿½Uï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½(Zan)
         }
         else
         {
-            // ’â~‚·‚éê‡
-            // ˆÚ“®•ûŒü‚ğƒ[ƒ‚É‚·‚é
+            // ï¿½ï¿½~ï¿½ï¿½ï¿½ï¿½ê‡
+            // ï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½É‚ï¿½ï¿½ï¿½
             moveDirection = Vector3.zero;
             wasMoving = false;
-            //Debug.Log("’â~‚µ‚Ü‚·"); //ˆê’UÁ‚µ‚Ü‚·(Zan)
+            //Debug.Log("ï¿½ï¿½~ï¿½ï¿½ï¿½Ü‚ï¿½"); //ï¿½ï¿½Uï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½(Zan)
         }
     }
     void CageAnimalAct()
     {
-        // ƒ^ƒCƒ}[‚ğŒ¸‚ç‚·
+        // ï¿½^ï¿½Cï¿½}ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ç‚·
         timer -= Time.deltaTime;
 
-        // ƒ^ƒCƒ}[‚ª0ˆÈ‰º‚É‚È‚Á‚½‚çV‚µ‚¢s“®‚ğŒˆ’è‚·‚é
+        // ï¿½^ï¿½Cï¿½}ï¿½[ï¿½ï¿½0ï¿½È‰ï¿½ï¿½É‚È‚ï¿½ï¿½ï¿½ï¿½ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½è‚·ï¿½ï¿½
         if (timer <= 0)
         {
             DecideNextAction();
-            // ƒ^ƒCƒ}[‚ğƒŠƒZƒbƒg
+            // ï¿½^ï¿½Cï¿½}ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Zï¿½bï¿½g
             timer = ChangeInterval;
         }
-        // Œ»İ‚ÌˆÚ“®•ûŒü‚ÉŠî‚Ã‚¢‚ÄƒIƒuƒWƒFƒNƒg‚ğˆÚ“®‚³‚¹‚é
+        // ï¿½ï¿½ï¿½İ‚ÌˆÚ“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÉŠï¿½Ã‚ï¿½ï¿½ÄƒIï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ï¿½ï¿½Ú“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
         transform.position += moveDirection * MoveSpeed * Time.deltaTime;
     }
     void OnCollisionEnter(Collision collision)
     {
-        //"Wall"‚ÆÕ“Ë‚µ‚½‚ç
-        // Õ“Ë‚µ‚½ƒIƒuƒWƒFƒNƒg‚Ìƒ^ƒO‚ª "Wall" ‚Å‚ ‚é‚©ƒ`ƒFƒbƒN
+        //"Wall"ï¿½ÆÕ“Ë‚ï¿½ï¿½ï¿½ï¿½ï¿½
+        // ï¿½Õ“Ë‚ï¿½ï¿½ï¿½ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½Ìƒ^ï¿½Oï¿½ï¿½ "Wall" ï¿½Å‚ï¿½ï¿½é‚©ï¿½`ï¿½Fï¿½bï¿½N
         if (collision.gameObject.CompareTag("Wall"))
         {
-            // X²‚ÆZ²‚ÌˆÚ“®•ûŒü‚ğ”½“]         
+            // Xï¿½ï¿½ï¿½ï¿½Zï¿½ï¿½ï¿½ÌˆÚ“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ğ”½“]         
             moveDirection.x *= -1.0f;
             moveDirection.z *= -1.0f;
         }
