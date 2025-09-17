@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.UI;
 
 public class SoundManager : MonoBehaviour
 {
@@ -8,6 +10,20 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioClipEventSO _playSFXEvent;
     [SerializeField] private VoidEventSO _stopBGMEvent;
     [SerializeField] private VoidEventSO _stopSFXEvent;
+    [SerializeField] private VoidEventSO _onOpenOptionMenuEvent;
+    [SerializeField] private GameObject _optionMenu;
+    [SerializeField] private Slider _bgmVolumeSlider;
+    [SerializeField] private Slider _sfxVolumeSlider;
+    [Header("Temp")]
+    [SerializeField] private GameObject _eventSystem;
+
+    private void Awake()
+    {
+        DontDestroyOnLoad(this);
+        DontDestroyOnLoad(_eventSystem);
+        _bgmVolumeSlider.value = _bgmAudioSource.volume;
+        _sfxVolumeSlider.value = _sfxAudioSource.volume;
+    }
 
     private void OnEnable()
     {
@@ -15,6 +31,7 @@ public class SoundManager : MonoBehaviour
         _playSFXEvent.OnEventInvoked += PlaySFX;
         _stopBGMEvent.OnEventInvoked += StopBGM;
         _stopSFXEvent.OnEventInvoked += StopSFX;
+        _onOpenOptionMenuEvent.OnEventInvoked += OpenOptionMenu;
     }
 
     private void OnDisable()
@@ -23,6 +40,21 @@ public class SoundManager : MonoBehaviour
         _playSFXEvent.OnEventInvoked -= PlaySFX;
         _stopBGMEvent.OnEventInvoked -= StopBGM;
         _stopSFXEvent.OnEventInvoked -= StopSFX;
+        _onOpenOptionMenuEvent.OnEventInvoked -= OpenOptionMenu;
+    }
+
+    private void OnApplicationFocus(bool hasFocus)
+    {
+        if (!hasFocus)
+        {
+            _bgmAudioSource.mute = true;
+            _sfxAudioSource.mute = true;
+        }
+        else
+        {
+            _bgmAudioSource.mute = false;
+            _sfxAudioSource.mute = false;
+        }
     }
 
     private void PlayBGM(AudioClip clip, bool isLoop)
@@ -50,6 +82,12 @@ public class SoundManager : MonoBehaviour
         }
     }
 
+    private void OpenOptionMenu()
+    {
+        _optionMenu.SetActive(true);
+        _bgmVolumeSlider.Select();
+    }
+
     private void StopBGM()
     {
         _bgmAudioSource.Stop();
@@ -60,17 +98,13 @@ public class SoundManager : MonoBehaviour
         _sfxAudioSource.Stop();
     }
 
-    private void OnApplicationFocus(bool hasFocus)
+    public void ChangeBGMVolume()
     {
-        if (!hasFocus)
-        {
-            _bgmAudioSource.mute = true;
-            _sfxAudioSource.mute = true;
-        }
-        else
-        {
-            _bgmAudioSource.mute = false;
-            _sfxAudioSource.mute = false;
-        }
+        _bgmAudioSource.volume = _bgmVolumeSlider.value;
+    }
+
+    public void ChangeSEVolume()
+    {
+        _sfxAudioSource.volume = _sfxVolumeSlider.value;
     }
 }

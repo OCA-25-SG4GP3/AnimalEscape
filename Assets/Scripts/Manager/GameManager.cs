@@ -15,6 +15,8 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AudioClip _mainBGM;
     [SerializeField] private AudioClip _gameClearBGM;
     [SerializeField] private AudioClipEventSO _playBGMEvent;
+    [SerializeField] private VoidEventSO _onOpenOptionMenuEvent;
+    [SerializeField] private VoidEventSO _onCloseOptionMenuEvent;
 
     private bool _gameCleared = false;
     private bool _startTimer = false;
@@ -25,6 +27,7 @@ public class GameManager : MonoBehaviour
         _onFinishIntroEvent.OnEventInvoked += StartTimer;
         _onGimmickClearEvent.OnEventInvoked += GimmickClear;
         _onGameClearEvent.OnEventInvoked += GameClear;
+        _onCloseOptionMenuEvent.OnEventInvoked += OnCloseOptionMenu;
     }
 
     private void OnDisable()
@@ -32,6 +35,7 @@ public class GameManager : MonoBehaviour
         _onFinishIntroEvent.OnEventInvoked -= StartTimer;
         _onGimmickClearEvent.OnEventInvoked -= GimmickClear;
         _onGameClearEvent.OnEventInvoked -= GameClear;
+        _onCloseOptionMenuEvent.OnEventInvoked -= OnCloseOptionMenu;
     }
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -48,13 +52,16 @@ public class GameManager : MonoBehaviour
         if (_startTimer)
         {
             _elapsedTime += Time.deltaTime;
-            Debug.Log($"elapsed Time: {_elapsedTime} seconds");
-
         }
 
         if (_clearedGimmickCount >= _totalGimmickCount)
         {
             _onAllGimmickClearEvent.InvokeEvent();
+        }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            _onOpenOptionMenuEvent.InvokeEvent();
         }
     }
 
@@ -79,5 +86,10 @@ public class GameManager : MonoBehaviour
         _gameCleared = true;
         _playBGMEvent.InvokeEvent(_gameClearBGM, false);
         SceneManager.LoadScene(2, LoadSceneMode.Additive);
+    }
+
+    private void OnCloseOptionMenu()
+    {
+        //
     }
 }

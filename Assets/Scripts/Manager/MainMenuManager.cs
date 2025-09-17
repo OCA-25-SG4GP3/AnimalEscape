@@ -13,10 +13,28 @@ public class MainMenuManager : MonoBehaviour
     [SerializeField, ReadOnly] private float _progress;
     [SerializeField] private AudioClipEventSO _playBGMEvent;
     [SerializeField] private AudioClip _titleBGM;
+    [SerializeField] private VoidEventSO _onCloseOptionMenuEvent;
+    [SerializeField] private Button _optionButton;
+
+    private void OnEnable()
+    {
+        _onCloseOptionMenuEvent.OnEventInvoked += OnOptionClose;
+    }
+
+    private void OnDisable()
+    {
+        _onCloseOptionMenuEvent.OnEventInvoked -= OnOptionClose;
+    }
 
     private void Start()
     {
         _playBGMEvent.InvokeEvent(_titleBGM, true);
+    }
+
+    private void Update()
+    {
+        _loadingBar.value = Mathf.MoveTowards(_loadingBar.value, _progress, Time.deltaTime);
+        _progressText.text = string.Format("Loading {0}%", (int)(_loadingBar.value * 100));
     }
 
     public async void StartGame()
@@ -41,12 +59,6 @@ public class MainMenuManager : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        _loadingBar.value = Mathf.MoveTowards(_loadingBar.value, _progress, Time.deltaTime);
-        _progressText.text = string.Format("Loading {0}%", (int)(_loadingBar.value * 100));
-    }
-
     public void QuitGame()
     {
         Application.Quit();
@@ -56,5 +68,10 @@ public class MainMenuManager : MonoBehaviour
             EditorApplication.ExitPlaymode();
         }
 #endif
+    }
+
+    private void OnOptionClose()
+    {
+        _optionButton.Select();
     }
 }
