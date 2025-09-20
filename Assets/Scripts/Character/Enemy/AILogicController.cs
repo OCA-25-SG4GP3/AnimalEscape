@@ -55,7 +55,7 @@ public class AILogicController : MonoBehaviour
     private void Start()
     {
         Targets = GameObject.FindGameObjectsWithTag("Player");
-        SetState(LoiterStateInstance);
+        if(_currentState == null) SetState(LoiterStateInstance); //default setting
         var jailobjs = GameObject.FindGameObjectsWithTag("Jail");
         foreach (var jailobj in jailobjs)
         {
