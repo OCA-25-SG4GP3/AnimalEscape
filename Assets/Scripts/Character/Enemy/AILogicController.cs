@@ -16,8 +16,8 @@ public class AILogicController : MonoBehaviour
     [SerializeField] public GameObject AlertMark; //"!!!" �?キス�?
     [SerializeField] public List<Transform> PatrolSpots;
 
-       
-     [HeaderAttribute("牢屋がインスペクタで設定されない場合、自動的にStartで設定されます。")] [SerializeField] public List<Jail> Jails; ///牢�?
+
+    [HeaderAttribute("牢屋がインスペクタで設定されない場合、自動的にStartで設定されます。")][SerializeField] public List<Jail> Jails;
 
     [Header("今�?�行動は")]
     [SerializeField] private EnemyStateBaseSO _currentState; public EnemyStateBaseSO CurrentState => _currentState;
@@ -26,12 +26,14 @@ public class AILogicController : MonoBehaviour
     [SerializeField] public EnemyStateLoiterSO LoiterState;
     [SerializeField] public EnemyStatePatrolSO PatrolState;
     [SerializeField] public EnemyStateStunnedSO StunState;
+    [SerializeField] public EnemyStateFleeSO FleeState;
 
     public EnemyStateDetectingSO DetectingStateInstance;
     public EnemyStateCarryCaughtSO CarryCaughtStateInstance;
     public EnemyStateLoiterSO LoiterStateInstance;
     public EnemyStatePatrolSO PatrolStateInstance;
     public EnemyStateStunnedSO StunStateInstance;
+    public EnemyStateFleeSO FleeStateInstance;
 
     // private Cooldown _aiTick = new(0.2f); //毎フレー�?をチェ�?クではなく、決めた時間にチェ�?ク
     [Header("視野関�?")]
@@ -55,7 +57,9 @@ public class AILogicController : MonoBehaviour
     private void Start()
     {
         Targets = GameObject.FindGameObjectsWithTag("Player");
-        if(_currentState == null) SetState(LoiterStateInstance); //default setting
+
+        if (_currentState == null) SetState(FleeState); //for flee testing. Will flee on the opposite direction from target (player), with a cone tolerance.
+
         var jailobjs = GameObject.FindGameObjectsWithTag("Jail");
         foreach (var jailobj in jailobjs)
         {
@@ -118,9 +122,9 @@ public class AILogicController : MonoBehaviour
     {
         Func<GameObject, bool> isIgnore = (obj) => //すでに牢屋に入ったら、チェックしない。
         {
-             var playerInfo = obj.GetComponent<PlayerInfo>();
-             if (!playerInfo) Debug.LogWarning("This [" + obj.name + "] has no PlayerInfo!");
-             return playerInfo.hasCaught;
+            var playerInfo = obj.GetComponent<PlayerInfo>();
+            if (!playerInfo) Debug.LogWarning("This [" + obj.name + "] has no PlayerInfo!");
+            return playerInfo.hasCaught;
         };
         if (Targets.Length > 0)
             return ConeHelper.CheckClosestTargetInCone //視野角に、チェ�?ク
