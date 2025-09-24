@@ -4,11 +4,11 @@ using UnityEngine;
 public class EnemyStateBaseSO : StateBaseSO
 {
     [SerializeField] protected AILogicController _logicController;
+    public GameObject Owner => _logicController.gameObject;
     public virtual void SetLogicController(AILogicController logicController)
     {
         _logicController = logicController;
     }
-
     public override void EnterState()
     {
     }
