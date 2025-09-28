@@ -21,7 +21,7 @@ public struct ConeInfo
 
 public static class ConeHelper
 {
-    public static GameObject CheckClosestTargetInCone(ConeInfo coneInfo, List<GameObject> targetsToCheck, Func<GameObject, bool> predToIgnoreElem = null)
+    public static GameObject CheckClosestTargetInCone(ConeInfo coneInfo, GameObject[] targetsToCheck, Func<GameObject, bool> predToIgnoreElem = null)
     {
         //準備したオブジェクトリストから、視野角にいるかどうかをチェック。
         //いたら、保存。
@@ -29,6 +29,7 @@ public static class ConeHelper
         float closestDistanceFound = float.MaxValue;
         foreach (GameObject potentialTarget in targetsToCheck)
         {
+            if (potentialTarget == null) { Debug.Log("Targetsがないです。インスペクターにつけてください。チェックを無視します。"); continue; }
             if (predToIgnoreElem != null && predToIgnoreElem(potentialTarget)) continue;
             Vector3 toTarget = potentialTarget.transform.position - coneInfo.coneMiddle;
             float distance = toTarget.magnitude;

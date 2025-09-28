@@ -359,6 +359,17 @@ public partial class @InputSystem: IInputActionCollection2, IDisposable
                     ""action"": ""SpecialAction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b2f2d4b8-0596-4e4e-8ff1-db79ea27427e"",
+                    ""path"": ""<Keyboard>/leftShift"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": "";Player1"",
+                    ""action"": ""SpecialAction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
