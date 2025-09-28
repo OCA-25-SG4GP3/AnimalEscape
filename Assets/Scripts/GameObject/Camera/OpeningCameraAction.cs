@@ -7,20 +7,20 @@ public class OpeningCameraAction : MonoBehaviour
     [SerializeField] private VoidEventSO _onEnterGameEvent;
     [SerializeField] private VoidEventSO _onFinishIntroEvent;
 
-    private bool _isStarted = false;
-
     [SerializeField] private Vector3 _offsetPosition;
 
-    public float cameraSpeed = 0.01f;
-    public float waitTimer = 0.0f;
-    private float waitTimerCount = 0.0f;
+    private bool _isStarted = false;
+
+    [SerializeField] public float cameraSpeed;
+    [SerializeField] public float waitTimer;
+
+    public GameObject pointA;
+    public GameObject pointB;
+    public GameObject pointC;
+    public GameObject player;
+
+    private float waitTimerCount;
     private int targetNumber = 0;
-
-    [SerializeField] GameObject pointA;
-    [SerializeField] GameObject pointB;
-    [SerializeField] GameObject pointC;
-    [SerializeField] GameObject player;
-
     private bool _isFinished = false;
 
     private void Awake()
@@ -38,13 +38,12 @@ public class OpeningCameraAction : MonoBehaviour
         _onEnterGameEvent.OnEventInvoked -= StartIntro;
     }
 
-    // Update is called once per frame
     void Update()
     {
         if (_isStarted)
         {
             SetCameraTarget();
-        }
+        }        
     }
 
     private void StartIntro()
@@ -53,98 +52,45 @@ public class OpeningCameraAction : MonoBehaviour
         _scenarioCamera.enabled = true;
     }
 
-    void SetCameraTarget()
-    {
+    private void SetCameraTarget()
+    {     
         switch (targetNumber)
         {
             case 0:
-                {
-                    Vector3 current = transform.position;
-                    Vector3 target = new(
-                        pointA.transform.position.x + _offsetPosition.x,
-                        pointA.transform.position.y +_offsetPosition.y,
-                        pointA.transform.position.z + _offsetPosition.z
-                    );
-                    float step = 3.0f * Time.deltaTime;
-                    transform.position = Vector3.MoveTowards(current, target, cameraSpeed * 0.005f);
-
-                    if (transform.position == target)
-                    {
-                        waitTimerCount += 0.1f;
-                        if (waitTimerCount >= waitTimer)
-                        {
-                            targetNumber++;
-                            waitTimerCount = 0.0f;
-                        }
-
-                    }
-                }
+                MoveToTarget(pointA);
                 break;
 
             case 1:
-                {
-                    Vector3 current = transform.position;
-                    Vector3 target = new(
-                        pointB.transform.position.x + _offsetPosition.x,
-                        pointB.transform.position.y +_offsetPosition.y,
-                        pointB.transform.position.z + _offsetPosition.z
-                    );
-                    float step = 3.0f * Time.deltaTime;
-                    transform.position = Vector3.MoveTowards(current, target, cameraSpeed * 0.005f);
-
-                    if (transform.position == target)
-                    {
-                        waitTimerCount += 0.1f;
-                        if (waitTimerCount >= waitTimer)
-                        {
-                            targetNumber++;
-                            waitTimerCount = 0.0f;
-                        }
-                    }
-                }
+                MoveToTarget(pointB);
                 break;
+
             case 2:
-                {
-                    Vector3 current = transform.position;
-                    Vector3 target = new(
-                        pointC.transform.position.x + _offsetPosition.x,
-                        pointC.transform.position.y +_offsetPosition.y,
-                        pointC.transform.position.z + _offsetPosition.z
-                    );
-                    float step = 3.0f * Time.deltaTime;
-                    transform.position = Vector3.MoveTowards(current, target, cameraSpeed * 0.005f);
-
-                    if (transform.position == target)
-                    {
-                        waitTimerCount += 0.1f;
-                        if (waitTimerCount >= waitTimer)
-                        {
-                            targetNumber++;
-                            waitTimerCount = 0.0f;
-                        }
-                    }
-                }
+                MoveToTarget(pointC);
                 break;
-            case 3:
-                {
-                    player.transform.position = Camera.main.transform.position;
-                    Vector3 current = transform.position;
-                    Vector3 target = player.transform.position;
-                    float step = 3.0f * Time.deltaTime;
-                    transform.position = Vector3.MoveTowards(current, target, cameraSpeed * 0.005f);
 
-                    if (transform.position == target)
-                    {
-                        _scenarioCamera.enabled = false;
-                        Camera.main.enabled = true;
-                        if (!_isFinished)
-                        {
-                            _onFinishIntroEvent.InvokeEvent();
-                            _isFinished = true;
-                        }
-                    }
-                }
+            case 3:               
+                MoveToTarget(player);
                 break;
+        }
+    }
+
+    private void MoveToTarget(GameObject targetPoint)
+    {
+        Vector3 current = transform.position;
+        Vector3 target = targetPoint.transform.position + _offsetPosition;
+
+        transform.position = Vector3.MoveTowards(current, target, cameraSpeed * 0.005f);
+
+        //目標に到達したら
+        if (transform.position == target )
+        {
+            waitTimerCount += Time.deltaTime;
+            //止まるカウントを過ぎたら
+            if (waitTimerCount >= waitTimer)
+            {
+                targetNumber++;
+                waitTimerCount = 0.0f;
+            }
         }
     }
 }

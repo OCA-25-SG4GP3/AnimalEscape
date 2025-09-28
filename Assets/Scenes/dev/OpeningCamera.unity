@@ -599,8 +599,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7348eb0a381e53d4597c2074592e5ab2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraSpeed: 3
-  waitTimer: 100
+  _scenarioCamera: {fileID: 816026044}
+  _onEnterGameEvent: {fileID: 0}
+  _onFinishIntroEvent: {fileID: 0}
+  _offsetPosition: {x: 0, y: 7, z: -7}
+  cameraSpeed: 5
+  waitTimer: 3
   pointA: {fileID: 325525465}
   pointB: {fileID: 449962442}
   pointC: {fileID: 1036736884}
