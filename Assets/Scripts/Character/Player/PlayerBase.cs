@@ -90,13 +90,13 @@ public class PlayerBase : MonoBehaviour
 
     protected virtual void Update()
     {
-        SwitchState();
+        //SwitchState(); //Disabled because it does not work with rotating platform (TODO need fix)
         _currentState.UpdateState();
     }
 
     protected virtual void FixedUpdate()
     {
-        Rigidbody.linearVelocity = new Vector3(0, Rigidbody.linearVelocity.y, 0);
+        //Rigidbody.linearVelocity = new Vector3(0, Rigidbody.linearVelocity.y, 0); //Disabled because it does not work with rotating platform (TODO need fix)
         _currentState.FixedUpdateState();
     }
 

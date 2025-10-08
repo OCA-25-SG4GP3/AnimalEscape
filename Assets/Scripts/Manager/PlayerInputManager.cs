@@ -21,16 +21,24 @@ public class PlayerInputManager : MonoBehaviour
 
     private void Awake()
     {
+        if (_playerPrefab.Length < 1 || _spawnPoints.Length < 1)
+        {
+            Debug.LogError("Need at least 1 prefab and 1 spawn point.");
+            return;
+        }
+
         _player1 = PlayerInput.Instantiate(_playerPrefab[0], controlScheme: "Player1", pairWithDevices: new[] { Keyboard.current });
         _player1.transform.position = _spawnPoints[0].position;
-
         _targetGroup.AddMember(_player1.transform, 1f, 2f);
 
-        _player2 = PlayerInput.Instantiate(_playerPrefab[1], controlScheme: "Player2", pairWithDevices: new[] { Keyboard.current });
-        _player2.transform.position = _spawnPoints[1].position;
-
-        _targetGroup.AddMember(_player2.transform, 1f, 2f);
+        if (_playerPrefab.Length >= 2 && _spawnPoints.Length >= 2)
+        {
+            _player2 = PlayerInput.Instantiate(_playerPrefab[1], controlScheme: "Player2", pairWithDevices: new[] { Keyboard.current });
+            _player2.transform.position = _spawnPoints[1].position;
+            _targetGroup.AddMember(_player2.transform, 1f, 2f);
+        }
     }
+
 
     protected virtual void OnEnable()
     {
