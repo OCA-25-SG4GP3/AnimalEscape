@@ -2127,6 +2127,7 @@ GameObject:
   - component: {fileID: -5675027205415781985}
   - component: {fileID: 5560204684647898678}
   - component: {fileID: 1302303980124285876}
+  - component: {fileID: -912640767434729747}
   m_Layer: 7
   m_Name: Penguin_prototype
   m_TagString: Player
@@ -2188,12 +2189,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8460430454786289905}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d995b6f6d69ac2d409b1a4668390e7d6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _walkSpeed: 20
+  _walkSpeed: 3
   _rotateSpeed: 10
   _jumpPower: 70
   _groundCheckDistance: 0.5
@@ -2207,13 +2208,13 @@ MonoBehaviour:
   _specialActionStateSO: {fileID: 11400000, guid: 39fd0f2a6edf50146b34681aff4ef3c4, type: 2}
   _onEnterGameEvent: {fileID: 11400000, guid: 2d9dfe56189f5074199858f13d3bf9be, type: 2}
   _onFinishIntroEvent: {fileID: 11400000, guid: 0143d1210c6cb324f8444a3a01da18e6, type: 2}
-  _maxChargeTime: 1.5
   _penguinModel: {fileID: 8610540033777356204}
   _slideRotationAngle: 90
   _rotationSpeed: 5
   _impactCollider: {fileID: 6437768521902360824}
   _vfxObjPrefab: {fileID: 4841759713630215894, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
   _chargeText: {fileID: 7385856075692521777}
+  _maxChargeTime: 1.5
   stopSpeed: 0.5
   stopHoldTime: 0.1
 --- !u!114 &-5675027205415781985
@@ -2223,7 +2224,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8460430454786289905}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
@@ -2410,6 +2411,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasCaught: 0
+--- !u!114 &-912640767434729747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8460430454786289905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3f3f4dcb03d10c54f9d47219dfa74213, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 5
+  jumpForce: 7
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  groundCheckRadius: 0.3
 --- !u!1 &8503673188557875781
 GameObject:
   m_ObjectHideFlags: 0

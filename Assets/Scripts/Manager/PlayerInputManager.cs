@@ -29,6 +29,7 @@ public class PlayerInputManager : MonoBehaviour
 
         _player1 = PlayerInput.Instantiate(_playerPrefab[0], controlScheme: "Player1", pairWithDevices: new[] { Keyboard.current });
         _player1.transform.position = _spawnPoints[0].position;
+        _player1.transform.Rotate(0,180,0); //face camera
         _targetGroup.AddMember(_player1.transform, 1f, 2f);
 
         if (_playerPrefab.Length >= 2 && _spawnPoints.Length >= 2)
