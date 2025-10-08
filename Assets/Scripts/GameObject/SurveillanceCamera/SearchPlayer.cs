@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SearchPlayer : MonoBehaviour
 {
-    public float angle = 45f;
+    public float Angle = 45f;
 
     private void OnTriggerStay(Collider other)
     {
@@ -16,7 +16,7 @@ public class SearchPlayer : MonoBehaviour
             Vector3 posDelta = other.transform.position - transform.position;
             float playerAngle = Vector3.Angle(transform.forward, posDelta);
 
-            if (playerAngle < angle) //player_angleがangleに収まっているかどうか
+            if (playerAngle < Angle) //player_angleがangleに収まっているかどうか
             {
                 Debug.Log("監視カメラがプレイヤーを発見しました！");
                 ////オブジェクトの色を赤に変更する
