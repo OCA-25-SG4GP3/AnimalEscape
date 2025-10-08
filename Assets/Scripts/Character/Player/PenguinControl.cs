@@ -4,7 +4,6 @@ using UnityEngine.InputSystem;
 
 public class PenguinControl : PlayerBase
 {
-    [SerializeField] private float _walkSpeed = 5f;
     [SerializeField] private Transform _penguinModel;
     [SerializeField] private float _slideRotationAngle = 90f;
     [SerializeField] private float _rotationSpeed = 5f;
