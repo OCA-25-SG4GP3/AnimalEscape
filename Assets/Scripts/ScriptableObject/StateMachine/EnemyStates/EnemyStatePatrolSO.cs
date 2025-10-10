@@ -15,9 +15,9 @@ public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパト�
     public override void UpdateState()
     {
         GameObject closestTarget = _logicController.CheckUncaughtTargetsInCone();
-        if (closestTarget)
+        if (closestTarget || _logicController.infiniteDetectionRange)
         {
-            _logicController.CurrentTarget = closestTarget;
+            if(closestTarget) _logicController.CurrentTarget = closestTarget;
             _logicController.SetState(_logicController.DetectingStateInstance);
             return;
         }
@@ -31,7 +31,6 @@ public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパト�
                     //if (AgentHelper.HasArrivedSuccess(_logicController.Agent))
                     if (_logicController.rbNavMesh.HasArrived())
                     {
-                        Debug.Log("Has arrived!");
                         _mode = 1;
                     }
                     break;
