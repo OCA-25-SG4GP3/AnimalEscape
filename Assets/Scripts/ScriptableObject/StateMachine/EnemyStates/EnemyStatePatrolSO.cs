@@ -5,10 +5,10 @@ public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパト�
 {
     private Transform _currentPatrolSpotT;
     private int _mode = 0;
-    [Header("現在のパトロールイン�?�?クス")] private int _patrolIndex = 0;
+    private int _patrolIndex = 0;
     public override void EnterState()
     {
-        GetClosestPatrolSpot(out int nextIndex); //最も近いパトロール場所に巡回し始め�?
+        GetClosestPatrolSpot(out int nextIndex);
         _patrolIndex = nextIndex;
     }
 
@@ -28,15 +28,18 @@ public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパト�
             switch (_mode)
             {
                 case 0: //Moving 
-                    if (AgentHelper.HasArrivedSuccess(_logicController.Agent))
+                    //if (AgentHelper.HasArrivedSuccess(_logicController.Agent))
+                    if (_logicController.rbNavMesh.HasArrived())
                     {
+                        Debug.Log("Has arrived!");
                         _mode = 1;
                     }
                     break;
 
                 case 1://Recalculate next spot
                     ChangeToNextPatrol();
-                    AgentHelper.MoveTo(_logicController.Agent, _currentPatrolSpotT.position);
+                    //AgentHelper.MoveTo(_logicController.Agent, _currentPatrolSpotT.position);
+                    _logicController.rbNavMesh.MoveTo(_currentPatrolSpotT.position);
                     _mode = 0;
                     break;
             }
@@ -59,7 +62,7 @@ public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパト�
 
         for (int i = 0; i < _logicController.PatrolSpots.Count; i++)
         {
-            if (_logicController.PatrolSpots[i] == null)  //Sometimes not needed when debug | �?バッグの時にたまに要らな�?
+            if (_logicController.PatrolSpots[i] == null)
             { Debug.Log("����ꏊ���k��!"); continue; }
 
             float dist = Vector3.SqrMagnitude(_logicController.PatrolSpots[i].position - myPos);

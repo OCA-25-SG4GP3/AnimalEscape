@@ -33,7 +33,7 @@ public class EnemyStateCarryCaughtSO : EnemyStateBaseSO
 
     public override void ExitState()
     {
-        AgentHelper.ClearPath(_logicController.Agent);
+        _logicController.rbNavMesh.ClearPath();
         if (_caughtObject) DropCaughtObject(_logicController.transform.position);
     }
 

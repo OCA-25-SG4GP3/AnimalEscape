@@ -49,7 +49,8 @@ public class EnemyStateFleeSO : EnemyStateBaseSO
         //    return;
         //}
 
-        if (AgentHelper.HasArrivedSuccess(_logicController.Agent)) //return to loiter on escape success or hit a wall (reach the end but not success)
+        //if (AgentHelper.HasArrivedSuccess(_logicController.Agent)) //return to loiter on escape success or hit a wall (reach the end but not success)
+        if (_logicController.rbNavMesh.HasArrived()) //return to loiter on escape success or hit a wall (reach the end but not success)
         {
             _logicController.SetState(_logicController.LoiterState);
         }
@@ -61,7 +62,8 @@ public class EnemyStateFleeSO : EnemyStateBaseSO
 
     void SetFleePoint(Vector3 fleePoint)
     {
-        AgentHelper.MoveTo(_logicController.Agent, fleePoint);
+        //AgentHelper.MoveTo(_logicController.Agent, fleePoint);
+        _logicController.rbNavMesh.MoveTo(fleePoint);
     }
 
 }
