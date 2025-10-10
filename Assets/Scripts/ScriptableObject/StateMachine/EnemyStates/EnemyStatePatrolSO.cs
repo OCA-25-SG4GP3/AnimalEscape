@@ -1,14 +1,14 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "EnemyStatePatrolSO", menuName = "State/EnemyState/EnemyStatePatrolSO")]
-public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパトロール / 巡回
+public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパトロール / 巡�?
 {
     private Transform _currentPatrolSpotT;
     private int _mode = 0;
-    [Header("現在のパトロールインデックス")] private int _patrolIndex = 0;
+    [Header("現在のパトロールイン�?�?クス")] private int _patrolIndex = 0;
     public override void EnterState()
     {
-        GetClosestPatrolSpot(out int nextIndex); //最も近いパトロール場所に巡回し始める
+        GetClosestPatrolSpot(out int nextIndex); //最も近いパトロール場所に巡回し始め�?
         _patrolIndex = nextIndex;
     }
 
@@ -59,8 +59,8 @@ public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパト�
 
         for (int i = 0; i < _logicController.PatrolSpots.Count; i++)
         {
-            if (_logicController.PatrolSpots[i] == null)  //Sometimes not needed when debug | デバッグの時にたまに要らない
-            { Debug.Log("パトロールSpotsがないです。インスペクターにつけてください。チェックを無視します。"); continue; }
+            if (_logicController.PatrolSpots[i] == null)  //Sometimes not needed when debug | �?バッグの時にたまに要らな�?
+            { Debug.Log("����ꏊ���k��!"); continue; }
 
             float dist = Vector3.SqrMagnitude(_logicController.PatrolSpots[i].position - myPos);
             if (dist < closestDist)

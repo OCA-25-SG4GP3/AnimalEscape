@@ -3,8 +3,8 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EnemyStateDetectingSO", menuName = "State/EnemyState/EnemyStateDetectingSO")]
 public class EnemyStateDetectingSO : EnemyStateBaseSO
 {
-    [SerializeField] private float _catchRange = 3.5f; //遠すぎたら、辞める。徘徊に戻す
-    [SerializeField] private float maxChaseDistance = 10.0f; //遠すぎたら、辞める。徘徊に戻す
+    [SerializeField] private float _catchRange = 3.5f; //�?すぎたら、辞める。徘徊に戻�?
+    [SerializeField] private float maxChaseDistance = 10.0f; //�?すぎたら、辞める。徘徊に戻�?
 
     public override void EnterState()
     {
@@ -14,7 +14,7 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
     public override void UpdateState()
     {
         //////////////////////////////////
-        //他の候補したオブジェクトの中、もっと近いターゲットがいれば、それを今のターゲットにする
+        //他�?�候補したオブジェクト�?�中、もっと近いターゲ�?トが�?れ�?�、それを今�?�ターゲ�?トにする
         GameObject closerFoundObject = _logicController.CheckUncaughtTargetsInCone();
 
         if (closerFoundObject)
@@ -25,18 +25,19 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
 
         if (_logicController.CurrentTarget && IsTargetClose(maxChaseDistance))
         {
-            ChaseTarget(); //追いかける
-            if (IsWithinCatchRange(_logicController.CurrentTarget))///捕獲の距離に入るかどうか
+            ChaseTarget(); //追�?かけ�?
+            if (IsWithinCatchRange(_logicController.CurrentTarget))///捕獲の距離に入るかど�?�?
             {
-                _logicController.SetState(_logicController.CarryCaughtStateInstance);
+                Debug.Log("GAME OVER!");
+                //_logicController.SetState(_logicController.CarryCaughtStateInstance);
                 // _logicController.CarryCaughtState.CatchObject(_logicController.currentTargetObj);
                 return;
             }
         }
         else
         {
-            _logicController.SetState(_logicController.LoiterStateInstance); //やめる。また巡回する。
-            //SetAILogic(logicCon._aiLogicLoiter); //やめる。徘徊する。
+            _logicController.SetState(_logicController.LoiterStateInstance); //�?める。また巡回する�?
+            //SetAILogic(logicCon._aiLogicLoiter); //�?める。徘徊する�?
         }
     }
 
@@ -53,7 +54,7 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
         Vector3 center = _logicController.transform.position;
         float radius = maxChaseDistance;
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(center, radius); //ターゲットが逃げる距離
+        Gizmos.DrawWireSphere(center, radius); //ターゲ�?トが�?げる距離
 
         ConeHelper.DrawConeGizmo(_logicController.GetConeInfo());
     }

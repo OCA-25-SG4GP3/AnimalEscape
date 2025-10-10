@@ -17,23 +17,31 @@ public class AILogicController : MonoBehaviour
     [SerializeField] public List<Transform> PatrolSpots;
 
 
-    [HeaderAttribute("牢屋がインスペクタで設定されない場合、自動的にStartで設定されます。")][SerializeField] public List<Jail> Jails;
+    //[HeaderAttribute("牢屋がインスペクタで設定されない場合、自動的にStartで設定されます。")][SerializeField] public List<Jail> Jails;
 
-    [Header("今�?�行動は")]
+
+    [SerializeField]
+    public enum SelectedState
+    {
+        Empty, Detecting, Loiter, Patrol, Flee
+    }
+
+    [Header("開始行動")] SelectedState selectedState = SelectedState.Empty;
+
     [SerializeField] private EnemyStateBaseSO _currentState; public EnemyStateBaseSO CurrentState => _currentState;
     [SerializeField] public EnemyStateDetectingSO DetectingState;
-    [SerializeField] public EnemyStateCarryCaughtSO CarryCaughtState;
+    //[SerializeField] public EnemyStateCarryCaughtSO CarryCaughtState;
     [SerializeField] public EnemyStateLoiterSO LoiterState;
     [SerializeField] public EnemyStatePatrolSO PatrolState;
     [SerializeField] public EnemyStateStunnedSO StunState;
     [SerializeField] public EnemyStateFleeSO FleeState;
 
     public EnemyStateDetectingSO DetectingStateInstance;
-    public EnemyStateCarryCaughtSO CarryCaughtStateInstance;
+    //public EnemyStateCarryCaughtSO CarryCaughtStateInstance;
     public EnemyStateLoiterSO LoiterStateInstance;
     public EnemyStatePatrolSO PatrolStateInstance;
     public EnemyStateStunnedSO StunStateInstance;
-    public EnemyStateFleeSO FleeStateInstance;
+    public EnemyStateFleeSO FleeStateInstance; //Will flee on the opposite direction from target (player), with a cone tolerance.
 
     // private Cooldown _aiTick = new(0.2f); //毎フレー�?をチェ�?クではなく、決めた時間にチェ�?ク
     [Header("視野関�?")]
@@ -41,42 +49,62 @@ public class AILogicController : MonoBehaviour
     [SerializeField] private float _coneAngle = 50.0f;
     #endregion
 
-    public NavMeshAgent Agent;
+    public NavMeshAgent Agent; 
 
     #region Unity
     private void Awake()
     {
         Agent = GetComponent<NavMeshAgent>();
         DetectingStateInstance = Instantiate(DetectingState);
-        CarryCaughtStateInstance = Instantiate(CarryCaughtState);
+        //CarryCaughtStateInstance = Instantiate(CarryCaughtState);
         LoiterStateInstance = Instantiate(LoiterState);
         PatrolStateInstance = Instantiate(PatrolState);
         StunStateInstance = Instantiate(StunState);
+
+        switch (selectedState)
+        {
+            case SelectedState.Empty:
+                SetState(null);
+                break;
+            case SelectedState.Detecting:
+                SetState(DetectingState);
+                break;
+            case SelectedState.Loiter:
+                SetState(LoiterState);
+                break;
+            case SelectedState.Patrol:
+                SetState(PatrolState);
+                break;
+            case SelectedState.Flee:
+                SetState(FleeState);
+                break;
+        }
     }
 
     private void Start()
     {
         Targets = GameObject.FindGameObjectsWithTag("Player");
 
-        if (_currentState == null) SetState(FleeState); //for flee testing. Will flee on the opposite direction from target (player), with a cone tolerance.
+        if (_currentState == null) SetState(PatrolStateInstance); //for flee testing. 
 
-        var jailobjs = GameObject.FindGameObjectsWithTag("Jail");
-        foreach (var jailobj in jailobjs)
-        {
-            Jails.Add(jailobj.GetComponent<Jail>());
-        }
+        //var jailobjs = GameObject.FindGameObjectsWithTag("Jail");
+        //foreach (var jailobj in jailobjs)
+        //{
+        //    Jails.Add(jailobj.GetComponent<Jail>());
+        //}
     }
 
+    [System.Obsolete("Jail has been removed from the game")]
     void FindJails()
     {
-        if (Jails.Count == 0) //auto assign when not assigned manually.
-        {
-            Jail[] jails = FindObjectsByType<Jail>(FindObjectsSortMode.None);
-            foreach (var jail in jails)
-            {
-                Jails.Add(jail);
-            }
-        }
+        //    if (Jails.Count == 0) //auto assign when not assigned manually.
+        //    {
+        //        Jail[] jails = FindObjectsByType<Jail>(FindObjectsSortMode.None);
+        //        foreach (var jail in jails)
+        //        {
+        //            Jails.Add(jail);
+        //        }
+        //    }
     }
     [System.Obsolete("Already replaced in Start()")]
     void FindTargets()
@@ -110,6 +138,7 @@ public class AILogicController : MonoBehaviour
         //前�?�AIを終わらせ�?
         if (_currentState != null) _currentState.ExitState();
 
+        if (!newState) return;
         //新しいAIがエンター
         newState.SetLogicController(this);
         newState.EnterState();
