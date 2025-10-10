@@ -16,11 +16,10 @@ public class SpinnerMovingPlatform : MonoBehaviour
 
     void FixedUpdate()
     {
-        // Calculate rotation this frame
         Quaternion delta = Quaternion.Euler(rotationSpeed * Time.fixedDeltaTime);
         targetRotation *= delta;
-
-        // Use MoveRotation for physics interaction
+        targetRotation.Normalize(); // keep it unit length
         rb.MoveRotation(targetRotation);
     }
+
 }

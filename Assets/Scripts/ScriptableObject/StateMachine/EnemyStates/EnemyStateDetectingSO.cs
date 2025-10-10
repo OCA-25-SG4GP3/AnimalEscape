@@ -3,14 +3,18 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EnemyStateDetectingSO", menuName = "State/EnemyState/EnemyStateDetectingSO")]
 public class EnemyStateDetectingSO : EnemyStateBaseSO
 {
-    [SerializeField] private float _catchRange = 3.5f; //�?すぎたら、辞める。徘徊に戻�?
-    [SerializeField] private float maxChaseDistance = 4.0f; //�?すぎたら、辞める。徘徊に戻�?
+    [SerializeField] private float _catchRange = 3.5f;
+    [SerializeField] private float maxChaseDistance = 4.0f;
+    bool infiniteDetectionRange = false;
 
     public override void EnterState()
     {
         _logicController.AlertMark.SetActive(true);
     }
-
+  public void SetInfiniteDetectionRange(bool isEnabled)
+    {
+        infiniteDetectionRange = isEnabled;
+    }
     public override void UpdateState()
     {
         //////////////////////////////////
@@ -23,7 +27,7 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
         }
         //////////////////////////////////
 
-        if (_logicController.CurrentTarget && IsTargetClose(maxChaseDistance))
+        if (_logicController.CurrentTarget && (IsTargetClose(maxChaseDistance) || infiniteDetectionRange))
         {
             SetChaseTargetPos(); //追�?かけ�?
             if (IsWithinCatchRange(_logicController.CurrentTarget))///捕獲の距離に入るかど�?�?
@@ -68,18 +72,17 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
 
     private Vector3 lastChaseTargetPos;
 
-private void SetChaseTargetPos()
-{
-    Vector3 targetPos = _logicController.CurrentTarget.transform.position;
-
-    // Only recalc path if target moved significantly
-    if ((targetPos - lastChaseTargetPos).sqrMagnitude > 0.1f)
+    private void SetChaseTargetPos()
     {
-        _logicController.rbNavMesh.MoveTo(targetPos);
-        lastChaseTargetPos = targetPos;
-        Debug.Log("Chasing to : " + targetPos);
+        Vector3 targetPos = _logicController.CurrentTarget.transform.position;
+
+        // Only recalc path if target moved significantly
+        if ((targetPos - lastChaseTargetPos).sqrMagnitude > 0.1f)
+        {
+            _logicController.rbNavMesh.MoveTo(targetPos);
+            lastChaseTargetPos = targetPos;
+        }
     }
-}
 
     private bool IsTargetClose(float maxDistance)
     {

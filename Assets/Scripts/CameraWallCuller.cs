@@ -36,12 +36,8 @@ public class CameraWallCuller : MonoBehaviour
         // Cast ray and collect all walls along the path
         RaycastHit[] hits = Physics.RaycastAll(transform.position, dir, distance, wallLayer);
         Debug.DrawLine(transform.position, target.position, Color.green, 1f); // visualize the ray
-        Debug.Log("Hit count: " + hits.Length);
         foreach (var hit in hits)
         {
-            Debug.Log("Hit object: " + hit.collider.name);
-
-            print("hits");
             Renderer rend = hit.collider.GetComponent<Renderer>();
             if (!rend) continue;
 
