@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
 public class AILogicController : MonoBehaviour
 {
     #region Serialized
@@ -12,21 +11,17 @@ public class AILogicController : MonoBehaviour
     [HeaderAttribute("がインスペクタで設定されない場合、自動的にStartで設定されます。")][SerializeField] public GameObject[] Targets; //TODO move this to singular data in gamemanager
     [Header("ターゲ�?ト中オブジェク�?")]
     [SerializeField] public GameObject CurrentTarget; //ターゲ�?ト中オブジェク�?
-    [Header("捕獲ネットのスロット場所")][SerializeField] public Transform CatchSlot;
+    [Header("捕獲ネットのスロット場所")][SerializeField] public Transform CatchSlot; //Probably not needed anymore
     [SerializeField] public GameObject AlertMark; //"!!!" �?キス�?
     [SerializeField] public List<Transform> PatrolSpots;
+    Rigidbody rb;
 
-
-    //[HeaderAttribute("牢屋がインスペクタで設定されない場合、自動的にStartで設定されます。")][SerializeField] public List<Jail> Jails;
-
-
-    [SerializeField]
     public enum SelectedState
     {
         Empty, Detecting, Loiter, Patrol, Flee
     }
 
-    [Header("開始行動")] SelectedState selectedState = SelectedState.Empty;
+    [SerializeField][Header("開始行動")] SelectedState selectedState = SelectedState.Empty;
 
     [SerializeField] private EnemyStateBaseSO _currentState; public EnemyStateBaseSO CurrentState => _currentState;
     [SerializeField] public EnemyStateDetectingSO DetectingState;
@@ -49,12 +44,16 @@ public class AILogicController : MonoBehaviour
     [SerializeField] private float _coneAngle = 50.0f;
     #endregion
 
-    public NavMeshAgent Agent; 
+    //public NavMeshAgent Agent; //We want rigidbody so we won't directly use this
+    [NonSerializedAttribute] public RigidbodyNavMesh rbNavMesh;
+    [SerializeField] private GameObject modelObj;
 
     #region Unity
     private void Awake()
     {
-        Agent = GetComponent<NavMeshAgent>();
+        rb = GetComponent<Rigidbody>();
+        rbNavMesh = GetComponent<RigidbodyNavMesh>();
+
         DetectingStateInstance = Instantiate(DetectingState);
         //CarryCaughtStateInstance = Instantiate(CarryCaughtState);
         LoiterStateInstance = Instantiate(LoiterState);
@@ -79,51 +78,33 @@ public class AILogicController : MonoBehaviour
                 SetState(FleeState);
                 break;
         }
+
+
     }
 
     private void Start()
     {
         Targets = GameObject.FindGameObjectsWithTag("Player");
-
-        if (_currentState == null) SetState(PatrolStateInstance); //for flee testing. 
-
-        //var jailobjs = GameObject.FindGameObjectsWithTag("Jail");
-        //foreach (var jailobj in jailobjs)
-        //{
-        //    Jails.Add(jailobj.GetComponent<Jail>());
-        //}
     }
 
-    [System.Obsolete("Jail has been removed from the game")]
-    void FindJails()
-    {
-        //    if (Jails.Count == 0) //auto assign when not assigned manually.
-        //    {
-        //        Jail[] jails = FindObjectsByType<Jail>(FindObjectsSortMode.None);
-        //        foreach (var jail in jails)
-        //        {
-        //            Jails.Add(jail);
-        //        }
-        //    }
-    }
-    [System.Obsolete("Already replaced in Start()")]
-    void FindTargets()
-    {
-        //if (Targets.Count == 0) //auto assign when not assigned manually.
-        //{
-        //    PlayerInfo[] playerInfos = FindObjectsByType<PlayerInfo>(FindObjectsSortMode.None);
-        //    foreach (var info in playerInfos)
-        //    {
-        //        Targets.Add(info.gameObject);
-        //    }
-        //}
-    }
     void Update()
     {
-        if (!Agent) Debug.LogWarning("NavMeshAgentが持ってな�?オブジェクトです�?");
+        if (_currentState) _currentState.UpdateState();
 
-        _currentState.UpdateState();
+        Vector3 moveDir = rbNavMesh.GetNextDirection();
+        RotateYTo(moveDir);
     }
+
+    private void RotateYTo(Vector3 moveDir)
+    {
+        moveDir.y = 0f; // ignore vertical
+        if (moveDir.sqrMagnitude > 0.001f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(moveDir, Vector3.up);
+            modelObj.transform.rotation = Quaternion.Slerp(modelObj.transform.rotation, targetRot, Time.deltaTime * 5f);
+        }
+    }
+
     private void OnDrawGizmos()
     {
         if (_currentState)
@@ -190,11 +171,12 @@ public class AILogicController : MonoBehaviour
         return false;
     }
 
+
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log(collision.collider);
         if (collision.collider.CompareTag("Shot"))
         {
+            Debug.Log(collision.collider);
             Destroy(gameObject);
         }
     }

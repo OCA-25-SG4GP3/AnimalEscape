@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Spinner : MonoBehaviour
+public class SpinnerMovingPlatform : MonoBehaviour
 {
     [SerializeField] Vector3 rotationSpeed = new Vector3(0, 90, 0); // degrees per second
     Rigidbody rb;

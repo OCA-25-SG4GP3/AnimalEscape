@@ -14,7 +14,7 @@ public class EnemyStateStunnedSO : EnemyStateBaseSO
         {
             previousState = _logicController.CurrentState; //It shouldn't return from Stun state to Stun state, so we want to prevent infinite stun.
         }
-        AgentHelper.Pause(_logicController.Agent);
+        _logicController.rbNavMesh.Pause();
         stunDur.StartCooldown();
     }
 
@@ -29,7 +29,7 @@ public class EnemyStateStunnedSO : EnemyStateBaseSO
 
     public override void ExitState()
     {
-        AgentHelper.Resume(_logicController.Agent);
+        _logicController.rbNavMesh.Resume();
     }
 
 }

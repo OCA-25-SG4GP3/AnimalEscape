@@ -4,7 +4,7 @@ using UnityEngine;
 public class EnemyStateDetectingSO : EnemyStateBaseSO
 {
     [SerializeField] private float _catchRange = 3.5f; //�?すぎたら、辞める。徘徊に戻�?
-    [SerializeField] private float maxChaseDistance = 10.0f; //�?すぎたら、辞める。徘徊に戻�?
+    [SerializeField] private float maxChaseDistance = 4.0f; //�?すぎたら、辞める。徘徊に戻�?
 
     public override void EnterState()
     {
@@ -25,7 +25,7 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
 
         if (_logicController.CurrentTarget && IsTargetClose(maxChaseDistance))
         {
-            ChaseTarget(); //追�?かけ�?
+            SetChaseTargetPos(); //追�?かけ�?
             if (IsWithinCatchRange(_logicController.CurrentTarget))///捕獲の距離に入るかど�?�?
             {
                 Debug.Log("GAME OVER!");
@@ -36,15 +36,16 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
         }
         else
         {
-            _logicController.SetState(_logicController.LoiterStateInstance); //�?める。また巡回する�?
-            //SetAILogic(logicCon._aiLogicLoiter); //�?める。徘徊する�?
+            _logicController.SetState(_logicController.LoiterStateInstance); //
+            //SetAILogic(logicCon._aiLogicLoiter); //
         }
     }
 
     public override void ExitState()
     {
         _logicController.AlertMark.SetActive(false);
-        AgentHelper.ClearPath(_logicController.Agent); //Stop chasing after losing target
+        //AgentHelper.ClearPath(_logicController.Agent); //Stop chasing after losing target
+        _logicController.rbNavMesh.ClearPath();
     }
 
     public override void DrawStateGizmo()
@@ -65,11 +66,20 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
         return Vector3.Distance(objectToCheck.transform.position, _logicController.transform.position) <= _catchRange;
     }
 
-    private void ChaseTarget()
+    private Vector3 lastChaseTargetPos;
+
+private void SetChaseTargetPos()
+{
+    Vector3 targetPos = _logicController.CurrentTarget.transform.position;
+
+    // Only recalc path if target moved significantly
+    if ((targetPos - lastChaseTargetPos).sqrMagnitude > 0.1f)
     {
-        Vector3 targetPos = _logicController.CurrentTarget.transform.position;
-        AgentHelper.MoveTo(_logicController.Agent, targetPos);
+        _logicController.rbNavMesh.MoveTo(targetPos);
+        lastChaseTargetPos = targetPos;
+        Debug.Log("Chasing to : " + targetPos);
     }
+}
 
     private bool IsTargetClose(float maxDistance)
     {
