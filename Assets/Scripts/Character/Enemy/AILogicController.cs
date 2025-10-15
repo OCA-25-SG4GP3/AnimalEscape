@@ -70,12 +70,12 @@ public class AILogicController : MonoBehaviour
     public void SetInfiniteDetectionRange(bool isEnabled)
     {
         infiniteDetectionRange = isEnabled;
-        CurrentTarget = PlayerInfo.GetAny().gameObject;
+        CurrentTarget = PlayerInfoSystem.GetAny().gameObject;
     }
     private void Start()
     {
         Targets = GameObject.FindGameObjectsWithTag("Player");
-        SetInfiniteDetectionRange(infiniteDetectionRange);
+        //SetInfiniteDetectionRange(infiniteDetectionRange);
     }
 
     void Update()

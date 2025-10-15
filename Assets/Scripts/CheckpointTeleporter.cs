@@ -3,34 +3,37 @@ using System.Collections.Generic;
 
 public class CheckpointTeleporter : MonoBehaviour
 {
-    public List<Transform> checkpoints; // assign in inspector
+    [SerializeField][HeaderAttribute("場所の空っぽオブジェクト")] public List<Transform> checkpoints; // assign in inspector
     private int currentIndex = 0;
-    public Transform player; // assign the player transform
 
     void Start()
     {
-        
+
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.L))
         {
-            if(!player) player = GameObject.FindGameObjectWithTag("Player").transform;
-            TeleportToNextCheckpoint();
+            var playerInfos = PlayerInfoSystem.GetPlayerInfos();
+            foreach (PlayerInfo playerInfo in playerInfos)
+            {
+                TeleportToNextCheckpoint(playerInfo.transform);
+                // Increment index and loop back to 0 if past last
+            }
+            currentIndex++;
+            if (currentIndex >= checkpoints.Count)
+                currentIndex = 0;
         }
     }
 
-    void TeleportToNextCheckpoint()
+    void TeleportToNextCheckpoint(Transform playerT)
     {
-        if (checkpoints.Count == 0 || player == null) return;
+        if (checkpoints.Count == 0 || playerT == null) return;
 
         // Teleport player to current checkpoint
-        player.position = checkpoints[currentIndex].position;
+        playerT.position = checkpoints[currentIndex].position;
 
-        // Increment index and loop back to 0 if past last
-        currentIndex++;
-        if (currentIndex >= checkpoints.Count)
-            currentIndex = 0;
+
     }
 }
