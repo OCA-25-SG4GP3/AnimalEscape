@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using static UnityEditor.VersionControl.Asset;
 
 public class PlayerBase : MonoBehaviour
 {

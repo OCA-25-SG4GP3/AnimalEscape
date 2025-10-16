@@ -38,16 +38,6 @@ public class AnimalControlSimple : MonoBehaviour
         moveSpeed = baseMoveSpeed;
     }
 
-    void Update()
-    {
-        // input
-        UpdateInput();
-
-        if (Input.GetKeyDown(inputKeys.jump)) isJumpRequested = true;
-
-        TurnToLookDir(inputDir);
-        UpdateAnimator();
-    }
 
     private void UpdateInput()
     {
@@ -63,16 +53,49 @@ public class AnimalControlSimple : MonoBehaviour
 
         isJumpRequested = Input.GetKeyDown(inputKeys.jump);
     }
+    [SerializeField] private float jumpBufferTime = 0.15f; // store input
+    [SerializeField] private float coyoteTime = 0.1f;      // allow jump after leaving ground
+
+    private float jumpBufferCounter = 0f;
+    private float coyoteCounter = 0f;
+
+    void Update()
+    {
+        UpdateInput();
+        // Jump input
+        if (Input.GetKeyDown(inputKeys.jump))
+            jumpBufferCounter = jumpBufferTime;
+        else
+            jumpBufferCounter -= Time.deltaTime;
+
+        // Update coyote
+        coyoteCounter = isGrounded ? coyoteTime : coyoteCounter - Time.deltaTime;
+
+        TurnToLookDir(inputDir);
+        UpdateAnimator();
+    }
+
     void FixedUpdate()
     {
-        moveSpeed = playerInfoSystem.GetDistanceAffectedPlayerSpeed(baseMoveSpeed); // always use baseMoveSpeed
-
+        moveSpeed = playerInfoSystem.GetDistanceAffectedPlayerSpeed(baseMoveSpeed);
         CheckGround();
         Move();
         Jump();
     }
 
+    void Jump()
+    {
+        // Can jump if we pressed jump recently OR within coyote time
+        if (jumpBufferCounter > 0f && coyoteCounter > 0f)
+        {
+            Vector3 vel = rb.linearVelocity;
+            vel.y = jumpForce;
+            rb.linearVelocity = vel;
 
+            jumpBufferCounter = 0f; // consume input
+            coyoteCounter = 0f;     // consume coyote
+        }
+    }
 
     void CheckGround()
     {
@@ -91,22 +114,13 @@ public class AnimalControlSimple : MonoBehaviour
 
     void Move()
     {
+        if (rb.isKinematic) return;
         Vector3 vel = rb.linearVelocity;
         vel.x = inputDir.x * moveSpeed;
         vel.z = inputDir.z * moveSpeed;
         rb.linearVelocity = vel;
     }
 
-    void Jump()
-    {
-        if (isJumpRequested && isGrounded)
-        {
-            Vector3 vel = rb.linearVelocity;
-            vel.y = jumpForce;
-            rb.linearVelocity = vel;
-        }
-        isJumpRequested = false;
-    }
 
     void TurnToLookDir(Vector3 dir)
     {

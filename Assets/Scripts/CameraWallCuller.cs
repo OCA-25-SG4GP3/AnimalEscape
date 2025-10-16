@@ -6,13 +6,11 @@ using UnityEngine.Rendering;
 public class CameraWallCuller : MonoBehaviour
 {
     [SerializeField, Header("自動的にプレイヤータグを見つけます")] private Transform[] targets;
-    [SerializeField] private LayerMask wallLayer1;
-    [SerializeField] private LayerMask wallLayer2;
+    [SerializeField] private LayerMask wallLayer;
 
     private Dictionary<Renderer, ShadowCastingMode> hiddenWalls = new();
     private HashSet<Renderer> currentFrameHits = new();
-    private List<Collider> triggerHits1 = new();
-    private List<Collider> triggerHits2 = new();
+    private List<Collider> triggerHits = new();
 
     void Start()
     {
@@ -40,17 +38,13 @@ public class CameraWallCuller : MonoBehaviour
             Vector3 dir = target.position - transform.position;
             float distance = dir.magnitude;
 
-            // Raycast for both wall layers
-            RaycastHit[] hits1 = Physics.RaycastAll(transform.position, dir, distance, wallLayer1);
-            foreach (var hit in hits1) AddHit(hit.collider);
-
-            RaycastHit[] hits2 = Physics.RaycastAll(transform.position, dir, distance, wallLayer2);
-            foreach (var hit in hits2) AddHit(hit.collider);
+            // Raycast for the wall layer
+            RaycastHit[] hits = Physics.RaycastAll(transform.position, dir, distance, wallLayer);
+            foreach (var hit in hits) AddHit(hit.collider);
         }
 
-        // Trigger hits for both layers
-        foreach (var col in triggerHits1) AddHit(col);
-        foreach (var col in triggerHits2) AddHit(col);
+        // Trigger hits
+        foreach (var col in triggerHits) AddHit(col);
 
         // Apply ShadowsOnly for all hits this frame
         foreach (var rend in currentFrameHits) HideWallRenderer(rend);
@@ -70,24 +64,17 @@ public class CameraWallCuller : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (((1 << other.gameObject.layer) & wallLayer1) != 0)
+        if (((1 << other.gameObject.layer) & wallLayer) != 0)
         {
-            if (!triggerHits1.Contains(other))
-                triggerHits1.Add(other);
-        }
-        else if (((1 << other.gameObject.layer) & wallLayer2) != 0)
-        {
-            if (!triggerHits2.Contains(other))
-                triggerHits2.Add(other);
+            if (!triggerHits.Contains(other))
+                triggerHits.Add(other);
         }
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (((1 << other.gameObject.layer) & wallLayer1) != 0)
-            triggerHits1.Remove(other);
-        else if (((1 << other.gameObject.layer) & wallLayer2) != 0)
-            triggerHits2.Remove(other);
+        if (((1 << other.gameObject.layer) & wallLayer) != 0)
+            triggerHits.Remove(other);
     }
 
     private void AddHit(Collider col)
