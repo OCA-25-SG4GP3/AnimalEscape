@@ -18,5 +18,3 @@ public class InspectorReadOnlyDrawer : PropertyDrawer
     }
 }
 #endif
-
-public class ReadOnlyAttribute : PropertyAttribute  { } //adding Attribute in the back of the name will add itself to the Attributes list

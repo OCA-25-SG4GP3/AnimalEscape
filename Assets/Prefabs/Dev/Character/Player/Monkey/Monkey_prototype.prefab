@@ -396,6 +396,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   groundCheckRadius: 0.3
+  jumpBufferTime: 0.15
+  coyoteTime: 0.1
 --- !u!1 &1820811013730780516
 GameObject:
   m_ObjectHideFlags: 0
