@@ -12,4 +12,27 @@ public class PlayerInfo : MonoBehaviour
         else cooldownText.text = "";
         cooldownText.gameObject.GetComponent<TMP_CharBounce>().SetOriginalText(cooldownText.text);
     }
+
+    private float lastY;
+    private bool isFalling = false;
+    void Start()
+    {
+        lastY = transform.position.y;
+    }
+
+    void FixedUpdate()
+    {
+        FixedUpdateIsFalling();
+    }
+
+    private void FixedUpdateIsFalling()
+    {
+        float currentY = transform.position.y;
+        float diff = currentY - lastY;
+        float minFall = 0.001f; // ignore tiny movement
+        isFalling = diff < -minFall;
+        lastY = currentY;
+    }
+
+    public bool IsFallingDown() => isFalling;
 }

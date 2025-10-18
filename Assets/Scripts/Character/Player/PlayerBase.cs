@@ -19,7 +19,7 @@ public class PlayerBase : MonoBehaviour
     public bool IsJumping { get; set; }
     public float JumpPower => _jumpPower;
     public bool IsSpecialAction { get; set; }
-
+   
     public Transform Model => _characterModel;
     public Animator Animator => _animator;
 
