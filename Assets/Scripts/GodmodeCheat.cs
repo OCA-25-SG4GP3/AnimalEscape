@@ -39,6 +39,7 @@ public class GodmodeCheat : MonoBehaviour
             godmode = !godmode;
             for (int i = 0; i < playerRBs.Length; i++)
             {
+                if (!playerRBs[i]) continue;
                 playerRBs[i].useGravity = !godmode;
                 playerRBs[i].isKinematic = godmode;
                 playerCols[i].enabled = !godmode;

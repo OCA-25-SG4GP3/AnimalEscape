@@ -69,7 +69,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1806455d629c0e40aaaed07133c7591, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pairPanel: {fileID: 0}
+  meshRen: {fileID: 4010875617694740844}
   isStepped: 0
 --- !u!95 &5468122513018524495
 Animator:
