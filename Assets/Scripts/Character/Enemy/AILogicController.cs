@@ -18,7 +18,7 @@ public class AILogicController : MonoBehaviour
 
     public enum SelectedState
     {
-        Empty, Standby, Detecting, Loiter, Patrol, Flee
+        Empty, Standby, Detecting, Loiter, Patrol, Flee, InfiniteChase
     }
 
     [SerializeField][Header("開始行動")] SelectedState selectedState = SelectedState.Empty;
@@ -31,6 +31,7 @@ public class AILogicController : MonoBehaviour
     [SerializeField] public EnemyStatePatrolSO PatrolState;
     [SerializeField] public EnemyStateStunnedSO StunState;
     [SerializeField] public EnemyStateFleeSO FleeState;
+    [SerializeField] public EnemyStateInfiniteChaseSO InfiniteChase;
 
     public EnemyStateStandbySO StandbyStateInstance;
     public EnemyStateDetectingSO DetectingStateInstance;
@@ -39,9 +40,8 @@ public class AILogicController : MonoBehaviour
     public EnemyStatePatrolSO PatrolStateInstance;
     public EnemyStateStunnedSO StunStateInstance;
     public EnemyStateFleeSO FleeStateInstance; //Will flee on the opposite direction from target (player), with a cone tolerance.
+    public EnemyStateInfiniteChaseSO InfiniteChaseInstance;
 
-    // private Cooldown _aiTick = new(0.2f); //毎フレー?��?をチェ?��?クではなく、決めた時間にチェ?��?ク
-    [Header("視野関?��?")]
     [SerializeField] private float _maxConeDistance = 20.0f;
     [SerializeField] private float _coneAngle = 50.0f;
     #endregion
@@ -63,6 +63,7 @@ public class AILogicController : MonoBehaviour
         PatrolStateInstance = Instantiate(PatrolState);
         StunStateInstance = Instantiate(StunState);
         FleeStateInstance = Instantiate(FleeState);
+        InfiniteChaseInstance = Instantiate(InfiniteChase);
 
         RefreshStateFromEnum();
 
@@ -132,6 +133,9 @@ public class AILogicController : MonoBehaviour
                 break;
             case SelectedState.Flee:
                 SetState(FleeStateInstance);
+                break;
+            case SelectedState.InfiniteChase:
+                SetState(InfiniteChaseInstance);
                 break;
         }
     }

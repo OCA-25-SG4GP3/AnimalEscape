@@ -149,7 +149,7 @@ Transform:
   m_GameObject: {fileID: 3632063498514462046}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -7.87}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -190,6 +190,7 @@ MonoBehaviour:
   PatrolSpots:
   - {fileID: 0}
   - {fileID: 0}
+  infiniteDetectionRange: 0
   selectedState: 0
   _currentState: {fileID: 0}
   DetectingState: {fileID: 11400000, guid: 1aedc55e540144348b89078b067d9c3b, type: 2}
@@ -198,12 +199,14 @@ MonoBehaviour:
   PatrolState: {fileID: 11400000, guid: a42db6e8a31b2e04ea5e26698dd8025b, type: 2}
   StunState: {fileID: 11400000, guid: eef4550a3117f4f438aa2ee52ee04a53, type: 2}
   FleeState: {fileID: 11400000, guid: 764df4a31d6de734fb328742f432984d, type: 2}
+  InfiniteChase: {fileID: 11400000, guid: 5d7540e95285e8b44aa66b8e8626c52a, type: 2}
   StandbyStateInstance: {fileID: 0}
   DetectingStateInstance: {fileID: 0}
   LoiterStateInstance: {fileID: 0}
   PatrolStateInstance: {fileID: 0}
   StunStateInstance: {fileID: 0}
   FleeStateInstance: {fileID: 0}
+  InfiniteChaseInstance: {fileID: 0}
   _maxConeDistance: 100
   _coneAngle: 50
   modelObj: {fileID: 7560801226757808094}

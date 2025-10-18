@@ -1,10 +1,13 @@
+using System;
 using UnityEngine;
 
 public class ColorPanelPuzzle : MonoBehaviour
 {
     ColorPanelManager colorPanelManager;
-    [SerializeField] private ColorPanelPuzzle pairPanel;
     Animator animator;
+    [SerializeField] public MeshRenderer meshRen;
+    [NonSerializedAttribute] public Material panelMaterial;
+    public bool upSide = true; //is this upside or downside (to prevent double press / exploit)
 
     public bool isStepped = false; //“¥‚Ü‚¦‚½‚©‚Ç‚¤‚©
 
@@ -12,13 +15,8 @@ public class ColorPanelPuzzle : MonoBehaviour
     {
         colorPanelManager = FindAnyObjectByType<ColorPanelManager>();
         animator = GetComponent<Animator>();
-    }
-
-
-    // Update is called once per frame
-    void Update()
-    {
-
+        panelMaterial = meshRen.material;
+        colorPanelManager.RegisterPanel(this);
     }
 
     void OnTriggerEnter(Collider other)
@@ -28,15 +26,12 @@ public class ColorPanelPuzzle : MonoBehaviour
             //TODO need cache to reduce lag ?
             var playerInfo = other.GetComponent<PlayerInfo>();
             if (!playerInfo.IsFallingDown()) return;
+            
             print("pressed");
             isStepped = true;
             animator.Play("ColorPanelPressedAnim");
-            if (pairPanel.isStepped)
-            {
-                colorPanelManager.AccumulatePoint();
-                Destroy(pairPanel.gameObject);
-                Destroy(gameObject);
-            }
+            colorPanelManager.PanelStepped(this);
+
         }
     }
 
@@ -47,6 +42,7 @@ public class ColorPanelPuzzle : MonoBehaviour
             if (!isStepped) return;
             isStepped = false;
             animator.Play("ColorPanelReleasedAnim");
+            colorPanelManager.PanelReleased(this);
         }
     }
 
