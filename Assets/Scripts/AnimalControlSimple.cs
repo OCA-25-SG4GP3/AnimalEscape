@@ -25,8 +25,7 @@ public class AnimalControlSimple : MonoBehaviour
     Rigidbody rb;
     bool isGrounded;
     Vector3 inputDir;
-    bool isJumpRequested = false;
-
+ 
     void Awake()
     {
         animator = GetComponentInChildren<Animator>();
@@ -51,7 +50,6 @@ public class AnimalControlSimple : MonoBehaviour
 
         inputDir = new Vector3(h, 0f, v).normalized;
 
-        isJumpRequested = Input.GetKeyDown(inputKeys.jump);
     }
     [SerializeField] private float jumpBufferTime = 0.15f; // store input
     [SerializeField] private float coyoteTime = 0.1f;      // allow jump after leaving ground
