@@ -3,22 +3,27 @@ using UnityEngine;
 
 public class PlayerDistanceManager : MonoBehaviour
 {
-    [SerializeField] private Transform _player1;
-    [SerializeField] private Transform _player2;
-    [SerializeField] private float _maxDistance = 15f;
+    [SerializeField] Transform _player1;
+    [SerializeField] Transform _player2;
+    [SerializeField] float _maxDistance = 15f;
 
-    private void Start()
+    void Start()
     {
-        if (_player1 == null || _player2 == null)
+        var group = GetComponent<CinemachineTargetGroup>();
+        if (group != null)
         {
-            var target = GetComponent<CinemachineTargetGroup>();
-            _player1 = target.Targets[0].Object;
-            _player2 = target.Targets[1].Object;
+            if (_player1 == null && group.Targets.Count > 0)
+                _player1 = group.Targets[0].Object;
+            if (_player2 == null && group.Targets.Count > 1)
+                _player2 = group.Targets[1].Object;
         }
     }
 
-    private void LateUpdate()
+    void LateUpdate()
     {
+        // If only one player → do nothing
+        if (_player1 == null || _player2 == null) return;
+
         Vector3 dir = _player2.position - _player1.position;
         float distance = dir.magnitude;
 
@@ -26,8 +31,7 @@ public class PlayerDistanceManager : MonoBehaviour
         {
             Vector3 midpoint = (_player1.position + _player2.position) / 2f;
             dir.Normalize();
-            
-            // プレイヤー同士の距離が最大距離を超えた場合、2人の位置を最大距離内に収めるよう調整する
+
             _player1.position = midpoint - dir * _maxDistance / 2f;
             _player2.position = midpoint + dir * _maxDistance / 2f;
         }

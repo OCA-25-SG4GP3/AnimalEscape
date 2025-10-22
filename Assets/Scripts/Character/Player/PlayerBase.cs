@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
-using static UnityEditor.VersionControl.Asset;
 
 public class PlayerBase : MonoBehaviour
 {
@@ -20,7 +19,7 @@ public class PlayerBase : MonoBehaviour
     public bool IsJumping { get; set; }
     public float JumpPower => _jumpPower;
     public bool IsSpecialAction { get; set; }
-
+   
     public Transform Model => _characterModel;
     public Animator Animator => _animator;
 
@@ -90,13 +89,13 @@ public class PlayerBase : MonoBehaviour
 
     protected virtual void Update()
     {
-        SwitchState();
+        //SwitchState(); //Disabled because it does not work with rotating platform (TODO need fix)
         _currentState.UpdateState();
     }
 
     protected virtual void FixedUpdate()
     {
-        Rigidbody.linearVelocity = new Vector3(0, Rigidbody.linearVelocity.y, 0);
+        //Rigidbody.linearVelocity = new Vector3(0, Rigidbody.linearVelocity.y, 0); //Disabled because it does not work with rotating platform (TODO need fix)
         _currentState.FixedUpdateState();
     }
 
