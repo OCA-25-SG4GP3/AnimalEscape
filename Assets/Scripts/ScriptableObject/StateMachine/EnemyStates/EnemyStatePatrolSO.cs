@@ -1,23 +1,23 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "EnemyStatePatrolSO", menuName = "State/EnemyState/EnemyStatePatrolSO")]
-public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパトロール / 巡回
+public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパトロール / 巡�?
 {
     private Transform _currentPatrolSpotT;
     private int _mode = 0;
-    [Header("現在のパトロールインデックス")] private int _patrolIndex = 0;
+    private int _patrolIndex = 0;
     public override void EnterState()
     {
-        GetClosestPatrolSpot(out int nextIndex); //最も近いパトロール場所に巡回し始める
+        GetClosestPatrolSpot(out int nextIndex);
         _patrolIndex = nextIndex;
     }
 
     public override void UpdateState()
     {
         GameObject closestTarget = _logicController.CheckUncaughtTargetsInCone();
-        if (closestTarget)
+        if (closestTarget || _logicController.infiniteDetectionRange)
         {
-            _logicController.CurrentTarget = closestTarget;
+            if(closestTarget) _logicController.CurrentTarget = closestTarget;
             _logicController.SetState(_logicController.DetectingStateInstance);
             return;
         }
@@ -28,7 +28,8 @@ public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパト�
             switch (_mode)
             {
                 case 0: //Moving 
-                    if (AgentHelper.HasArrivedSuccess(_logicController.Agent))
+                    //if (AgentHelper.HasArrivedSuccess(_logicController.Agent))
+                    if (_logicController.rbNavMesh.HasArrived())
                     {
                         _mode = 1;
                     }
@@ -36,7 +37,8 @@ public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパト�
 
                 case 1://Recalculate next spot
                     ChangeToNextPatrol();
-                    AgentHelper.MoveTo(_logicController.Agent, _currentPatrolSpotT.position);
+                    //AgentHelper.MoveTo(_logicController.Agent, _currentPatrolSpotT.position);
+                    _logicController.rbNavMesh.MoveTo(_currentPatrolSpotT.position);
                     _mode = 0;
                     break;
             }
@@ -59,8 +61,8 @@ public class EnemyStatePatrolSO : EnemyStateBaseSO ///決めた場所にパト�
 
         for (int i = 0; i < _logicController.PatrolSpots.Count; i++)
         {
-            if (_logicController.PatrolSpots[i] == null)  //Sometimes not needed when debug | デバッグの時にたまに要らない
-            { Debug.Log("パトロールSpotsがないです。インスペクターにつけてください。チェックを無視します。"); continue; }
+            if (_logicController.PatrolSpots[i] == null)
+            { Debug.Log("����ꏊ���k��!"); continue; }
 
             float dist = Vector3.SqrMagnitude(_logicController.PatrolSpots[i].position - myPos);
             if (dist < closestDist)

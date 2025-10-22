@@ -3,99 +3,100 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-[RequireComponent(typeof(NavMeshAgent))]
 public class AILogicController : MonoBehaviour
 {
     #region Serialized
-    [Header("何かをしたい、その候補ターゲット (複数) (尾行、など)")]
 
-    [HeaderAttribute("がインスペクタで設定されない場合、自動的にStartで設定されます。")][SerializeField] public GameObject[] Targets; //TODO move this to singular data in gamemanager
-    [Header("ターゲ�?ト中オブジェク�?")]
-    [SerializeField] public GameObject CurrentTarget; //ターゲ�?ト中オブジェク�?
-    [Header("捕獲ネットのスロット場所")][SerializeField] public Transform CatchSlot;
-    [SerializeField] public GameObject AlertMark; //"!!!" �?キス�?
+    [SerializeField] public GameObject[] Targets; //TODO move this to singular data in gamemanager
+
+    [SerializeField] public GameObject CurrentTarget; //ターゲ?��?ト中オブジェク?��?
+    [SerializeField] public Transform CatchSlot; //Probably not needed anymore
+    [SerializeField] public GameObject AlertMark; //"!!!" ?��?キス?��?
     [SerializeField] public List<Transform> PatrolSpots;
+    Rigidbody rb;
+    [SerializeField] public bool infiniteDetectionRange = false;
 
+    public enum SelectedState
+    {
+        Empty, Standby, Detecting, Loiter, Patrol, Flee, InfiniteChase
+    }
 
-    [HeaderAttribute("牢屋がインスペクタで設定されない場合、自動的にStartで設定されます。")][SerializeField] public List<Jail> Jails;
+    [SerializeField][Header("開始行動")] SelectedState selectedState = SelectedState.Empty;
 
-    [Header("今�?�行動は")]
     [SerializeField] private EnemyStateBaseSO _currentState; public EnemyStateBaseSO CurrentState => _currentState;
     [SerializeField] public EnemyStateDetectingSO DetectingState;
-    [SerializeField] public EnemyStateCarryCaughtSO CarryCaughtState;
+    //[SerializeField] public EnemyStateCarryCaughtSO CarryCaughtState;
+    [SerializeField] public EnemyStateStandbySO StandbyState;
     [SerializeField] public EnemyStateLoiterSO LoiterState;
     [SerializeField] public EnemyStatePatrolSO PatrolState;
     [SerializeField] public EnemyStateStunnedSO StunState;
     [SerializeField] public EnemyStateFleeSO FleeState;
+    [SerializeField] public EnemyStateInfiniteChaseSO InfiniteChase;
 
+    public EnemyStateStandbySO StandbyStateInstance;
     public EnemyStateDetectingSO DetectingStateInstance;
-    public EnemyStateCarryCaughtSO CarryCaughtStateInstance;
+    //public EnemyStateCarryCaughtSO CarryCaughtStateInstance;
     public EnemyStateLoiterSO LoiterStateInstance;
     public EnemyStatePatrolSO PatrolStateInstance;
     public EnemyStateStunnedSO StunStateInstance;
-    public EnemyStateFleeSO FleeStateInstance;
+    public EnemyStateFleeSO FleeStateInstance; //Will flee on the opposite direction from target (player), with a cone tolerance.
+    public EnemyStateInfiniteChaseSO InfiniteChaseInstance;
 
-    // private Cooldown _aiTick = new(0.2f); //毎フレー�?をチェ�?クではなく、決めた時間にチェ�?ク
-    [Header("視野関�?")]
     [SerializeField] private float _maxConeDistance = 20.0f;
     [SerializeField] private float _coneAngle = 50.0f;
     #endregion
 
-    public NavMeshAgent Agent;
+    //public NavMeshAgent Agent; //We want rigidbody so we won't directly use this
+    [NonSerializedAttribute] public RigidbodyNavMesh rbNavMesh;
+    [SerializeField] private GameObject modelObj;
 
     #region Unity
     private void Awake()
     {
-        Agent = GetComponent<NavMeshAgent>();
+        rb = GetComponent<Rigidbody>();
+        rbNavMesh = GetComponent<RigidbodyNavMesh>();
+
+        StandbyStateInstance = Instantiate(StandbyState);
         DetectingStateInstance = Instantiate(DetectingState);
-        CarryCaughtStateInstance = Instantiate(CarryCaughtState);
+        //CarryCaughtStateInstance = Instantiate(CarryCaughtState);
         LoiterStateInstance = Instantiate(LoiterState);
         PatrolStateInstance = Instantiate(PatrolState);
         StunStateInstance = Instantiate(StunState);
-    }
+        FleeStateInstance = Instantiate(FleeState);
+        InfiniteChaseInstance = Instantiate(InfiniteChase);
 
+        RefreshStateFromEnum();
+
+    }
+    public void SetInfiniteDetectionRange(bool isEnabled)
+    {
+        infiniteDetectionRange = isEnabled;
+        CurrentTarget = PlayerInfoSystem.GetAny().gameObject;
+    }
     private void Start()
     {
         Targets = GameObject.FindGameObjectsWithTag("Player");
-
-        if (_currentState == null) SetState(FleeState); //for flee testing. Will flee on the opposite direction from target (player), with a cone tolerance.
-
-        var jailobjs = GameObject.FindGameObjectsWithTag("Jail");
-        foreach (var jailobj in jailobjs)
-        {
-            Jails.Add(jailobj.GetComponent<Jail>());
-        }
+        //SetInfiniteDetectionRange(infiniteDetectionRange);
     }
 
-    void FindJails()
-    {
-        if (Jails.Count == 0) //auto assign when not assigned manually.
-        {
-            Jail[] jails = FindObjectsByType<Jail>(FindObjectsSortMode.None);
-            foreach (var jail in jails)
-            {
-                Jails.Add(jail);
-            }
-        }
-    }
-    [System.Obsolete("Already replaced in Start()")]
-    void FindTargets()
-    {
-        //if (Targets.Count == 0) //auto assign when not assigned manually.
-        //{
-        //    PlayerInfo[] playerInfos = FindObjectsByType<PlayerInfo>(FindObjectsSortMode.None);
-        //    foreach (var info in playerInfos)
-        //    {
-        //        Targets.Add(info.gameObject);
-        //    }
-        //}
-    }
     void Update()
     {
-        if (!Agent) Debug.LogWarning("NavMeshAgentが持ってな�?オブジェクトです�?");
+        if (_currentState) _currentState.UpdateState();
 
-        _currentState.UpdateState();
+        Vector3 moveDir = rbNavMesh.GetNextDirection();
+        RotateYTo(moveDir);
     }
+
+    private void RotateYTo(Vector3 moveDir)
+    {
+        moveDir.y = 0f; // ignore vertical
+        if (moveDir.sqrMagnitude > 0.001f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(moveDir, Vector3.up);
+            modelObj.transform.rotation = Quaternion.Slerp(modelObj.transform.rotation, targetRot, Time.deltaTime * 5f);
+        }
+    }
+
     private void OnDrawGizmos()
     {
         if (_currentState)
@@ -105,33 +106,68 @@ public class AILogicController : MonoBehaviour
     }
     #endregion
 
+    public void SetStateByEnum(SelectedState newSelectedState)
+    {
+        selectedState = newSelectedState;
+        RefreshStateFromEnum();
+    }
+
+    private void RefreshStateFromEnum()
+    {
+        switch (selectedState)
+        {
+            case SelectedState.Empty:
+                SetState(null);
+                break;
+            case SelectedState.Standby:
+                SetState(StandbyStateInstance);
+                break;
+            case SelectedState.Detecting:
+                SetState(DetectingStateInstance);
+                break;
+            case SelectedState.Loiter:
+                SetState(LoiterStateInstance);
+                break;
+            case SelectedState.Patrol:
+                SetState(PatrolStateInstance);
+                break;
+            case SelectedState.Flee:
+                SetState(FleeStateInstance);
+                break;
+            case SelectedState.InfiniteChase:
+                SetState(InfiniteChaseInstance);
+                break;
+        }
+    }
+
     public void SetState(EnemyStateBaseSO newState)
     {
-        //前�?�AIを終わらせ�?
+        //前�??��AIを終わらせ?��?
         if (_currentState != null) _currentState.ExitState();
 
+        if (!newState) return;
         //新しいAIがエンター
         newState.SetLogicController(this);
         newState.EnterState();
 
-        //前�?�AIを上書�?
+        //前�??��AIを上書?��?
         _currentState = newState;
     }
 
-    public GameObject CheckUncaughtTargetsInCone() //捕まえらな�?も�?�をチェ�?ク
+    public GameObject CheckUncaughtTargetsInCone() //捕まえらな?��?も�??��をチェ?��?ク
     {
-        Func<GameObject, bool> isIgnore = (obj) => //すでに牢屋に入ったら、チェックしない。
+        Func<GameObject, bool> isIgnore = (obj) => //すでに牢屋に入ったら、チェ�?クしな�?�?
         {
             var playerInfo = obj.GetComponent<PlayerInfo>();
             if (!playerInfo) Debug.LogWarning("This [" + obj.name + "] has no PlayerInfo!");
             return playerInfo.hasCaught;
         };
         if (Targets.Length > 0)
-            return ConeHelper.CheckClosestTargetInCone //視野角に、チェ�?ク
+            return ConeHelper.CheckClosestTargetInCone //視野角に、チェ?��?ク
           (
             GetConeInfo(),
             Targets,
-            isIgnore //捕まえたも�?�を除外す�?
+            isIgnore //捕まえたも�??��を除外す?��?
           );
         else
             return null;
@@ -148,7 +184,7 @@ public class AILogicController : MonoBehaviour
         return coneInfo;
     }
 
-    bool IsOnSight(Vector3 targetPos) //直線に�?る、ものがな�?か�? (障害物がある�?)
+    bool IsOnSight(Vector3 targetPos) //直線に?��?る、ものがな?��?か�? (障害物がある�?)
     {
         Vector3 dir = targetPos - transform.position;
         Ray ray = new Ray(transform.position, dir);
@@ -161,11 +197,12 @@ public class AILogicController : MonoBehaviour
         return false;
     }
 
+
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log(collision.collider);
         if (collision.collider.CompareTag("Shot"))
         {
+            Debug.Log(collision.collider);
             Destroy(gameObject);
         }
     }

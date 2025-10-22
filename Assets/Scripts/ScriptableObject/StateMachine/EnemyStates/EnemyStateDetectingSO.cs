@@ -3,18 +3,22 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EnemyStateDetectingSO", menuName = "State/EnemyState/EnemyStateDetectingSO")]
 public class EnemyStateDetectingSO : EnemyStateBaseSO
 {
-    [SerializeField] private float _catchRange = 3.5f; //遠すぎたら、辞める。徘徊に戻す
-    [SerializeField] private float maxChaseDistance = 10.0f; //遠すぎたら、辞める。徘徊に戻す
+    [SerializeField] private float _catchRange = 3.5f;
+    [SerializeField] private float maxChaseDistance = 4.0f;
+    bool infiniteDetectionRange = false;
 
     public override void EnterState()
     {
         _logicController.AlertMark.SetActive(true);
     }
-
+  public void SetInfiniteDetectionRange(bool isEnabled)
+    {
+        infiniteDetectionRange = isEnabled;
+    }
     public override void UpdateState()
     {
         //////////////////////////////////
-        //他の候補したオブジェクトの中、もっと近いターゲットがいれば、それを今のターゲットにする
+        //他�?�候補したオブジェクト�?�中、もっと近いターゲ�?トが�?れ�?�、それを今�?�ターゲ�?トにする
         GameObject closerFoundObject = _logicController.CheckUncaughtTargetsInCone();
 
         if (closerFoundObject)
@@ -23,27 +27,29 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
         }
         //////////////////////////////////
 
-        if (_logicController.CurrentTarget && IsTargetClose(maxChaseDistance))
+        if (_logicController.CurrentTarget && (IsTargetClose(maxChaseDistance) || infiniteDetectionRange))
         {
-            ChaseTarget(); //追いかける
-            if (IsWithinCatchRange(_logicController.CurrentTarget))///捕獲の距離に入るかどうか
+            SetChaseTargetPos(); //追�?かけ�?
+            if (IsWithinCatchRange(_logicController.CurrentTarget))///捕獲の距離に入るかど�?�?
             {
-                _logicController.SetState(_logicController.CarryCaughtStateInstance);
+                Debug.Log("GAME OVER!");
+                //_logicController.SetState(_logicController.CarryCaughtStateInstance);
                 // _logicController.CarryCaughtState.CatchObject(_logicController.currentTargetObj);
                 return;
             }
         }
         else
         {
-            _logicController.SetState(_logicController.LoiterStateInstance); //やめる。また巡回する。
-            //SetAILogic(logicCon._aiLogicLoiter); //やめる。徘徊する。
+            _logicController.SetState(_logicController.LoiterStateInstance); //
+            //SetAILogic(logicCon._aiLogicLoiter); //
         }
     }
 
     public override void ExitState()
     {
         _logicController.AlertMark.SetActive(false);
-        AgentHelper.ClearPath(_logicController.Agent); //Stop chasing after losing target
+        //AgentHelper.ClearPath(_logicController.Agent); //Stop chasing after losing target
+        _logicController.rbNavMesh.ClearPath();
     }
 
     public override void DrawStateGizmo()
@@ -53,7 +59,7 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
         Vector3 center = _logicController.transform.position;
         float radius = maxChaseDistance;
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(center, radius); //ターゲットが逃げる距離
+        Gizmos.DrawWireSphere(center, radius); //ターゲ�?トが�?げる距離
 
         ConeHelper.DrawConeGizmo(_logicController.GetConeInfo());
     }
@@ -64,10 +70,18 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
         return Vector3.Distance(objectToCheck.transform.position, _logicController.transform.position) <= _catchRange;
     }
 
-    private void ChaseTarget()
+    private Vector3 lastChaseTargetPos;
+
+    private void SetChaseTargetPos()
     {
         Vector3 targetPos = _logicController.CurrentTarget.transform.position;
-        AgentHelper.MoveTo(_logicController.Agent, targetPos);
+
+        // Only recalc path if target moved significantly
+        if ((targetPos - lastChaseTargetPos).sqrMagnitude > 0.1f)
+        {
+            _logicController.rbNavMesh.MoveTo(targetPos);
+            lastChaseTargetPos = targetPos;
+        }
     }
 
     private bool IsTargetClose(float maxDistance)
