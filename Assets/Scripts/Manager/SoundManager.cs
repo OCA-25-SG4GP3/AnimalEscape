@@ -25,6 +25,11 @@ public class SoundManager : MonoBehaviour
         _stopSFXEvent.OnEventInvoked -= StopSFX;
     }
 
+    private void Start()
+    {
+        DontDestroyOnLoad(this);
+    }
+
     private void PlayBGM(AudioClip clip, bool isLoop)
     {
         if (_bgmAudioSource.clip == clip) return;

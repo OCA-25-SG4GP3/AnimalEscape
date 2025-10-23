@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.Threading.Tasks;
 
 public class StageManager : MonoBehaviour
 {
@@ -8,8 +9,14 @@ public class StageManager : MonoBehaviour
     private bool _stageCleared = false;
     [SerializeField] private VoidEventSO _stageClearEvent;
     [SerializeField] private ClearTime _clearTimeSO;
-
+    [SerializeField] private AudioClip _mainBGM;
+    [SerializeField] private AudioClip _gameClearBGM;
     [SerializeField] private RankingManager _rankingManager;
+    [SerializeField] private AudioClipEventSO _playBGMEvent;
+
+    [SerializeField] private bool _isLoading = false;
+    [SerializeField] private GameObject _loadingScreen;
+    [SerializeField, ReadOnly] private float _progress;
 
     void OnEnable()
     {
@@ -25,6 +32,7 @@ public class StageManager : MonoBehaviour
     void Start()
     {
         _startTimer = true;
+        _playBGMEvent.InvokeEvent(_mainBGM, true);
     }
 
     // Update is called once per frame
@@ -33,6 +41,48 @@ public class StageManager : MonoBehaviour
         if (_startTimer)
         {
             _elapsedTime += Time.deltaTime;
+        }
+
+        if (_stageCleared)
+        {
+            if (Input.GetKeyDown(KeyCode.Space) && !_isLoading)
+            {
+                _isLoading = true;
+                LoadNextScene();
+            }
+        }
+    }
+
+    async void LoadNextScene()
+    {
+        int currentIndex = SceneManager.GetActiveScene().buildIndex;
+        var x = SceneUtility.GetScenePathByBuildIndex(currentIndex + 1);
+        Debug.Log(x);
+        AsyncOperation loadingScene;
+        if (x == "")
+        {
+            loadingScene = SceneManager.LoadSceneAsync(0);
+        }
+        else
+        {
+            loadingScene = SceneManager.LoadSceneAsync(currentIndex+1);
+        }
+        loadingScene.allowSceneActivation = false;
+
+        _loadingScreen.SetActive(true);
+        while (!loadingScene.isDone)
+        {
+            Debug.Log($"Loading progress: {loadingScene.progress * 100}%");
+            _progress = loadingScene.progress;
+
+            if (loadingScene.progress >= 0.9f)
+            {
+                _progress = 1;
+                await Task.Delay(1000);
+
+                loadingScene.allowSceneActivation = true;
+            }
+            await Task.Yield();
         }
     }
 
@@ -45,6 +95,6 @@ public class StageManager : MonoBehaviour
 
         _rankingManager.AddTime(_elapsedTime);
         _rankingManager.ShowRanking();
-        // SceneManager.LoadScene(2, LoadSceneMode.Additive);
+        _playBGMEvent.InvokeEvent(_gameClearBGM, false);
     }
 }
