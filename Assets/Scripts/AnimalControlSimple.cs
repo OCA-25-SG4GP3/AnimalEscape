@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.Splines;
+using UnityEngine.UIElements;
 
 
 [System.Serializable]
@@ -25,7 +27,9 @@ public class AnimalControlSimple : MonoBehaviour
     Rigidbody rb;
     bool isGrounded;
     Vector3 inputDir;
- 
+
+    public GameObject effectFab;
+
     void Awake()
     {
         animator = GetComponentInChildren<Animator>();
@@ -57,12 +61,15 @@ public class AnimalControlSimple : MonoBehaviour
     private float jumpBufferCounter = 0f;
     private float coyoteCounter = 0f;
 
-    void Update()
+    void Update() //hayai
     {
         UpdateInput();
         // Jump input
         if (Input.GetKeyDown(inputKeys.jump))
+        {
             jumpBufferCounter = jumpBufferTime;
+            isHitGroundOnce = false;
+        }
         else
             jumpBufferCounter -= Time.deltaTime;
 
@@ -75,7 +82,8 @@ public class AnimalControlSimple : MonoBehaviour
 
     void FixedUpdate()
     {
-        moveSpeed = playerInfoSystem.GetDistanceAffectedPlayerSpeed(baseMoveSpeed);
+        moveSpeed = baseMoveSpeed;
+        //moveSpeed = playerInfoSystem.GetDistanceAffectedPlayerSpeed(baseMoveSpeed);
         CheckGround();
         Move();
         Jump();
@@ -95,16 +103,22 @@ public class AnimalControlSimple : MonoBehaviour
         }
     }
 
+    bool isHitGroundOnce = false;
+
     void CheckGround()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, groundCheckRadius, groundMask);
-        isGrounded = false;
 
+        isGrounded = false;
         foreach (Collider hit in hits)
         {
-            if (hit.gameObject != gameObject) // ignore self
+            if (hit.gameObject != gameObject && isHitGroundOnce == false) // ignore self
             {
                 isGrounded = true;
+                isHitGroundOnce = true;
+
+                GameObject effect = Instantiate(effectFab, transform.position, transform.rotation);
+
                 break;
             }
         }
