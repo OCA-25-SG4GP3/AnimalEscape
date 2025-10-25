@@ -17,5 +17,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/dev/MAP (40x40).unity
     guid: 7e7a1d44a64351e4b87e41b60c665563
+  - enabled: 1
+    path: Assets/Scenes/dev/OptionTest.unity
+    guid: c842c029657b9f443953ce98d32fee3e
+  - enabled: 1
+    path: Assets/Scenes/dev/OptionMenu.unity
+    guid: 95bbab808f5003c4fa0ac3f6e0a7f0e0
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
