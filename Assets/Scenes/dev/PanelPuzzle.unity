@@ -898,7 +898,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   timeText: {fileID: 892523005}
-  totalTime: 120
+  totalTime: 2
   addTimePerRoom: 30
   zookeeperPrefab: {fileID: 3632063498514462046, guid: 95b02ef49d3aa12488ba38bc95d60be1, type: 3}
   spawnTs:
