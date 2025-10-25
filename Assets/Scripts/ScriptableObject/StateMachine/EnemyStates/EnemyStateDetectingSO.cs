@@ -1,5 +1,8 @@
 using UnityEngine;
 
+//EnemyStateDetectingSO.cs → 敵がプレイヤーを発見・探知中の状態
+
+
 [CreateAssetMenu(fileName = "EnemyStateDetectingSO", menuName = "State/EnemyState/EnemyStateDetectingSO")]
 public class EnemyStateDetectingSO : EnemyStateBaseSO
 {
