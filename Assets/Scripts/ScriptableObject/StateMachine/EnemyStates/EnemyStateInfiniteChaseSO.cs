@@ -1,5 +1,8 @@
 using UnityEngine;
 
+//EnemyStateInfiniteChaseSO.cs ¨ “G‚ª–³ŒÀ‚É’ÇÕ‚ğ‘±‚¯‚éó‘Ô
+
+
 [CreateAssetMenu(fileName = "EnemyStateInfiniteChaseSO", menuName = "State/EnemyState/EnemyStateInfiniteChaseSO")]
 public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 {
