@@ -22,7 +22,7 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 
             if (IsWithinCatchRange(closestTarget))
             {
-                Debug.Log("GAME OVER!");
+                Debug.Log("‚Â‚©‚Ü‚Á‚½!");
                 Destroy(closestTarget);
                 // Handle catch logic
                 return;
