@@ -10,7 +10,7 @@ public class GameClearManager : MonoBehaviour
     private void Start()
     {
         Debug.Log($"Clear Time: {_clearTimeSO.TimeInSeconds} seconds");
-        _clearTimeText.text = $"使用時間\n{_clearTimeSO.TimeInSeconds:F2}s";
+        if(_clearTimeText) _clearTimeText.text = $"使用時間\n{_clearTimeSO.TimeInSeconds:F2}s";
     }
 
     void OnCollisionEnter(Collision collision)

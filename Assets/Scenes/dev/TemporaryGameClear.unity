@@ -331,6 +331,7 @@ GameObject:
   - component: {fileID: 756888241}
   - component: {fileID: 756888240}
   - component: {fileID: 756888239}
+  - component: {fileID: 756888242}
   m_Layer: 5
   m_Name: Button (Legacy)
   m_TagString: Untagged
@@ -402,16 +403,16 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 762078065}
+      - m_Target: {fileID: 756888242}
         m_TargetAssemblyTypeName: ButtonSceneChanger, Assembly-CSharp
         m_MethodName: ChangeScene
-        m_Mode: 1
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: TemporaryTitle
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &756888240
@@ -452,51 +453,19 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 756888237}
   m_CullTransparentMesh: 1
---- !u!1 &762078064
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 762078066}
-  - component: {fileID: 762078065}
-  m_Layer: 0
-  m_Name: ButtonSceneChange
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &762078065
+--- !u!114 &756888242
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 762078064}
+  m_GameObject: {fileID: 756888237}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: d7efec759e7df614eaea0178fbf6eb1b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextSceneName: TemporaryTitle
---- !u!4 &762078066
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 762078064}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 16.11795, y: 0.5445337, z: 11.168587}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  nextSceneName: NextScene
 --- !u!1 &789964042
 GameObject:
   m_ObjectHideFlags: 0
@@ -629,7 +598,7 @@ MonoBehaviour:
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
   m_ScreenMatchMode: 0
-  m_MatchWidthOrHeight: 0
+  m_MatchWidthOrHeight: 0.5
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
@@ -858,4 +827,3 @@ SceneRoots:
   - {fileID: 353966650}
   - {fileID: 14647622}
   - {fileID: 841214344}
-  - {fileID: 762078066}
