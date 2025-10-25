@@ -17,9 +17,12 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/Scenes/dev/MAP (40x40).unity
     guid: 7e7a1d44a64351e4b87e41b60c665563
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/dev/TemporaryTitle.unity
     guid: b344bfff6f4148645b1cc3caeaf6f611
+  - enabled: 1
+    path: Assets/Scenes/dev/Title.unity
+    guid: 140e53e48f9eea44b98fcad072d42141
   - enabled: 1
     path: Assets/Scenes/dev/PanelPuzzle.unity
     guid: 3467fb6d9e9124b458b667031269c241
