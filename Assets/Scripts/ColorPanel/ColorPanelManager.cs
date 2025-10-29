@@ -12,6 +12,11 @@ public class GateAndButtonsRequired
 }
 public class ColorPanelManager : MonoBehaviour
 {
+    //このギミックは、色で分けるではないです。
+    //まずは、
+    //1.「マテリアルは同じですか？」からチェックする。
+    //2.「両方は、上側と下側ですか？。同じ側なら、だめ。」
+
     [SerializeField] private List<GateAndButtonsRequired> gatesInOrder = new(); //If these objects are activated together, trigger the event 
     [SerializeField] private ColorPanelRoomTimer colorPanelRoomTimer;
     [SerializeField] private CinemachineCamera cm;
