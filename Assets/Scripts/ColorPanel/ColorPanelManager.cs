@@ -50,7 +50,7 @@ public class ColorPanelManager : MonoBehaviour
             {
                 ColorPanelPuzzle panelA = activePanels[i];
                 ColorPanelPuzzle panelB = activePanels[j];
-                if (panelA.panelMaterial.name == panelB.panelMaterial.name)
+                if (panelA.correctPanelMaterial.name == panelB.correctPanelMaterial.name)
                 {
                     if (IsSameSide(panelA, panelB)) return;
                     // Matched pair!
