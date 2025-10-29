@@ -94,9 +94,9 @@ public class ColorPanelManager : MonoBehaviour
         GameObject gate = gatesInOrder[curentGateIndex].gate;
         cm.Follow = gatesInOrder[curentGateIndex].cameraFollowObjectT;
         colorPanelRoomTimer.AddTime();
-        Destroy(gate);
+        //Destroy(gate);
+        gate.GetComponent<Animator>().Play("GateLift");
         curentGateIndex++;
-
     }
 
 }
