@@ -1,4 +1,7 @@
 using UnityEngine;
+//EnemyStatePatrolSO.cs ¨ “G‚ª„‰ñ‚µ‚Ä‚¢‚éó‘Ô
+
+
 
 [CreateAssetMenu(fileName = "EnemyStatePatrolSO", menuName = "State/EnemyState/EnemyStatePatrolSO")]
 public class EnemyStatePatrolSO : EnemyStateBaseSO ///æ±ºã‚ãŸå ´æ‰€ã«ãƒ‘ãƒˆãƒ­ãƒ¼ãƒ« / å·¡å›?

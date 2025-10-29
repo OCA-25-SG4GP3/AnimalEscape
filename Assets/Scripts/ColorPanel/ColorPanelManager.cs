@@ -12,6 +12,11 @@ public class GateAndButtonsRequired
 }
 public class ColorPanelManager : MonoBehaviour
 {
+    //このギミックは、色で分けるではないです。
+    //まずは、
+    //1.「マテリアルは同じですか？」からチェックする。
+    //2.「両方は、上側と下側ですか？。同じ側なら、だめ。」
+
     [SerializeField] private List<GateAndButtonsRequired> gatesInOrder = new(); //If these objects are activated together, trigger the event 
     [SerializeField] private ColorPanelRoomTimer colorPanelRoomTimer;
     [SerializeField] private CinemachineCamera cm;
@@ -45,7 +50,7 @@ public class ColorPanelManager : MonoBehaviour
             {
                 ColorPanelPuzzle panelA = activePanels[i];
                 ColorPanelPuzzle panelB = activePanels[j];
-                if (panelA.panelMaterial.name == panelB.panelMaterial.name)
+                if (panelA.correctPanelMaterial.name == panelB.correctPanelMaterial.name)
                 {
                     if (IsSameSide(panelA, panelB)) return;
                     // Matched pair!
@@ -89,9 +94,9 @@ public class ColorPanelManager : MonoBehaviour
         GameObject gate = gatesInOrder[curentGateIndex].gate;
         cm.Follow = gatesInOrder[curentGateIndex].cameraFollowObjectT;
         colorPanelRoomTimer.AddTime();
-        Destroy(gate);
+        //Destroy(gate);
+        gate.GetComponent<Animator>().Play("GateLift");
         curentGateIndex++;
-
     }
 
 }
