@@ -1,3 +1,4 @@
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,11 +17,28 @@ public class OptionReturn : MonoBehaviour
 
         Debug.Log($"前のシーンの名前: {beforeSceneName}");       
     }
-    public void OnClick()
+    public void LoadBeforeScene()
     {        
         //前回のシーンをロードする
         SceneManager.LoadScene(beforeSceneName);
         // （オプション）データを受け取ったらPlayerPrefsから削除することが推奨されます
         PlayerPrefs.DeleteKey(BEFORE_SCENE_KEY);
+    }
+
+    public void OptionToEnd()
+    {
+    #if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;//ゲームプレイ終了
+    #else
+        Application.Quit();//ゲームプレイ終了
+    #endif
+        Debug.Log("ゲームを終了します");
+    }
+    public void OptionToTitle()
+    {
+        //前回のシーンをロードする
+        SceneManager.LoadScene("Title");
+
+        Debug.Log("タイトル画面に移動します");
     }
 }
