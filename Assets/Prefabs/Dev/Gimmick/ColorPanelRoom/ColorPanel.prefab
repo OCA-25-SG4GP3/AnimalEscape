@@ -70,6 +70,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshRen: {fileID: 4010875617694740844}
+  upSide: 1
+  hidingMaterial: {fileID: 0}
   isStepped: 0
 --- !u!95 &5468122513018524495
 Animator:
@@ -342,7 +344,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9201286729222703709}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -350,4 +352,4 @@ Transform:
   - {fileID: 4472337196850276823}
   - {fileID: 8531918513528969758}
   m_Father: {fileID: 6457257322156790629}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}

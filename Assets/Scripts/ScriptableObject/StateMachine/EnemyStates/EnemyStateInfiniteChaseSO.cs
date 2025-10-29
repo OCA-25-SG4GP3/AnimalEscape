@@ -1,5 +1,8 @@
 using UnityEngine;
 
+//EnemyStateInfiniteChaseSO.cs ¨ “G‚ª–³ŒÀ‚É’ÇÕ‚ğ‘±‚¯‚éó‘Ô
+
+
 [CreateAssetMenu(fileName = "EnemyStateInfiniteChaseSO", menuName = "State/EnemyState/EnemyStateInfiniteChaseSO")]
 public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 {
@@ -22,7 +25,7 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 
             if (IsWithinCatchRange(closestTarget))
             {
-                Debug.Log("GAME OVER!");
+                Debug.Log("‚Â‚©‚Ü‚Á‚½!");
                 Destroy(closestTarget);
                 // Handle catch logic
                 return;
