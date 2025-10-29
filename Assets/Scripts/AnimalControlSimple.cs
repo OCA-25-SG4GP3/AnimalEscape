@@ -22,10 +22,11 @@ public class AnimalControlSimple : MonoBehaviour
     public float jumpForce = 7f;
     public LayerMask groundMask;
     public float groundCheckRadius = 0.3f;
+
     Rigidbody rb;
     bool isGrounded;
     Vector3 inputDir;
- 
+
     void Awake()
     {
         animator = GetComponentInChildren<Animator>();
@@ -42,14 +43,15 @@ public class AnimalControlSimple : MonoBehaviour
     {
         float h = 0f;
         float v = 0f;
-
-        if (Input.GetKey(inputKeys.forward)) v += 1f;
-        if (Input.GetKey(inputKeys.backward)) v -= 1f;
-        if (Input.GetKey(inputKeys.left)) h -= 1f;
-        if (Input.GetKey(inputKeys.right)) h += 1f;
+        if (!isStuned)
+        {
+            if (Input.GetKey(inputKeys.forward)) v += 1f;
+            if (Input.GetKey(inputKeys.backward)) v -= 1f;
+            if (Input.GetKey(inputKeys.left)) h -= 1f;
+            if (Input.GetKey(inputKeys.right)) h += 1f;
+        }
 
         inputDir = new Vector3(h, 0f, v).normalized;
-
     }
     [SerializeField] private float jumpBufferTime = 0.15f; // store input
     [SerializeField] private float coyoteTime = 0.1f;      // allow jump after leaving ground
@@ -59,9 +61,10 @@ public class AnimalControlSimple : MonoBehaviour
 
     void Update()
     {
+
         UpdateInput();
         // Jump input
-        if (Input.GetKeyDown(inputKeys.jump))
+        if (!isStuned && Input.GetKeyDown(inputKeys.jump))
             jumpBufferCounter = jumpBufferTime;
         else
             jumpBufferCounter -= Time.deltaTime;
@@ -71,6 +74,7 @@ public class AnimalControlSimple : MonoBehaviour
 
         TurnToLookDir(inputDir);
         UpdateAnimator();
+        UpdateStunedState();
     }
 
     void FixedUpdate()
@@ -144,7 +148,74 @@ public class AnimalControlSimple : MonoBehaviour
         if (animator.HasParameterOfType("IsJumping", AnimatorControllerParameterType.Bool))
             animator.SetBool("IsJumping", !isGrounded);
     }
+    [SerializeField] private float stunedDuration = 1.5f; // How long the freeze lasts
+    private float stunedTimer = 0f;
+    private bool isStuned = false;
+    private bool stunedComplete = false;
 
+    public bool IsStunedComplete => stunedComplete; // public read-only flag
+
+    public void EnterStunedState()
+    {
+        stunedTimer = 0f;
+        isStuned = true;
+        stunedComplete = false;
+
+        // Stop player movement completely
+        moveSpeed = 0f;
+        rb.linearVelocity = Vector3.zero; // make sure rigidbody stops
+
+        // Set animation flag if exists
+        if (animator && animator.HasParameterOfType("IsStuned", AnimatorControllerParameterType.Bool))
+            animator.SetBool("IsStuned", true);
+
+    }
+
+    public void UpdateStunedState()
+    {
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            EnterStunedState();
+        }
+
+        if (!isStuned) return;
+
+        stunedTimer += Time.deltaTime;
+
+        // Prevent movement or rotation
+        rb.linearVelocity = Vector3.zero;
+
+        if (stunedTimer >= stunedDuration)
+        {
+            stunedComplete = true;
+            ExitStunedState();
+        }
+    }
+
+    public void ExitStunedState()
+    {
+        if (!isStuned) return;
+
+        isStuned = false;
+        stunedTimer = 0f;
+
+        // Restore normal move speed
+        moveSpeed = baseMoveSpeed;
+
+        // Reset animation flag
+        if (animator && animator.HasParameterOfType("IsStuned", AnimatorControllerParameterType.Bool))
+            animator.SetBool("IsStuned", false);
+
+        //Debug.Log($"{name} recovered from Frozen state!");
+    }
+
+    /* private void OnTriggerEnter(Collider other)
+     {
+         if (other.gameObject.CompareTag("Dart"))
+         {
+             EnterStunedState();
+         }
+     }*/
 }
 // Extension helper
 public static class AnimatorExtensions
