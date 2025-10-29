@@ -6,8 +6,9 @@ public class ColorPanelPuzzle : MonoBehaviour
     ColorPanelManager colorPanelManager;
     Animator animator;
     [SerializeField] public MeshRenderer meshRen;
-    [NonSerializedAttribute] public Material panelMaterial;
+    [NonSerializedAttribute] public Material correctPanelMaterial;
     public bool upSide = true; //is this upside or downside (to prevent double press / exploit)
+    [SerializeField, Header("このスロットにつけると、マテリアルが隠しになる")] private Material hidingMaterial;
 
     public bool isStepped = false; //踏まえたかどうか
 
@@ -15,8 +16,9 @@ public class ColorPanelPuzzle : MonoBehaviour
     {
         colorPanelManager = FindAnyObjectByType<ColorPanelManager>();
         animator = GetComponent<Animator>();
-        panelMaterial = meshRen.material;
+        correctPanelMaterial = meshRen.material;
         colorPanelManager.RegisterPanel(this);
+        if (hidingMaterial) meshRen.material = hidingMaterial;
     }
 
     void OnTriggerEnter(Collider other)
@@ -26,15 +28,18 @@ public class ColorPanelPuzzle : MonoBehaviour
             //TODO need cache to reduce lag ?
             var playerInfo = other.GetComponent<PlayerInfo>();
             if (!playerInfo.IsFallingDown()) return;
-            
-            print("pressed");
+
             isStepped = true;
             animator.Play("ColorPanelPressedAnim");
             colorPanelManager.PanelStepped(this);
-
+            if (hidingMaterial && meshRen.material != correctPanelMaterial) RestoreToCorrectMaterial();
         }
     }
 
+    void RestoreToCorrectMaterial()
+    {
+        meshRen.material = correctPanelMaterial;
+    }
     void OnTriggerExit(Collider other)
     {
         if (other.CompareTag("Player"))
