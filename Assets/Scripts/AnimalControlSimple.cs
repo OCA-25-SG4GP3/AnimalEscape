@@ -28,7 +28,9 @@ public class AnimalControlSimple : MonoBehaviour
     bool isGrounded;
     Vector3 inputDir;
 
-    public GameObject effectFab;
+    public GameObject jumpEffect;
+    public GameObject slideEffect;
+    public GameObject smokeEffect;
 
     void Awake()
     {
@@ -53,6 +55,18 @@ public class AnimalControlSimple : MonoBehaviour
         if (Input.GetKey(inputKeys.right)) h += 1f;
 
         inputDir = new Vector3(h, 0f, v).normalized;
+
+
+        // Vキーが押された瞬間にエフェクト再生
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            Instantiate(slideEffect, transform.position, transform.rotation);
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            Instantiate(smokeEffect, transform.position, transform.rotation);
+        }
 
     }
     [SerializeField] private float jumpBufferTime = 0.15f; // store input
@@ -117,7 +131,7 @@ public class AnimalControlSimple : MonoBehaviour
                 isGrounded = true;
                 isHitGroundOnce = true;
 
-                GameObject effect = Instantiate(effectFab, transform.position, transform.rotation);
+                GameObject effect = Instantiate(jumpEffect, transform.position, transform.rotation);
 
                 break;
             }
