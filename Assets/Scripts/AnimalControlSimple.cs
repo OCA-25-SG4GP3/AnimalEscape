@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Audio;
 
 
 [System.Serializable]
@@ -22,6 +23,9 @@ public class AnimalControlSimple : MonoBehaviour
     public float jumpForce = 7f;
     public LayerMask groundMask;
     public float groundCheckRadius = 0.3f;
+
+    //着地のSEを入れる
+    public AudioSource audioSourcelanding; // 音源（Inspectorで設定）
 
     Rigidbody rb;
     bool isGrounded;
@@ -65,7 +69,10 @@ public class AnimalControlSimple : MonoBehaviour
         UpdateInput();
         // Jump input
         if (!isStuned && Input.GetKeyDown(inputKeys.jump))
+        {
             jumpBufferCounter = jumpBufferTime;
+            //ジャンプ
+        }
         else
             jumpBufferCounter -= Time.deltaTime;
 
@@ -108,7 +115,8 @@ public class AnimalControlSimple : MonoBehaviour
         {
             if (hit.gameObject != gameObject) // ignore self
             {
-                isGrounded = true;
+                isGrounded = true; //着地
+                audioSourcelanding.Play(); // 着地のSEを再生
                 break;
             }
         }
