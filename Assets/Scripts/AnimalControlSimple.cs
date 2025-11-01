@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Audio;
-
+using UnityEngine.Splines;
+using UnityEngine.UIElements;
 
 [System.Serializable]
 public struct PlayerInputKeys
@@ -23,13 +24,16 @@ public class AnimalControlSimple : MonoBehaviour
     public float jumpForce = 7f;
     public LayerMask groundMask;
     public float groundCheckRadius = 0.3f;
-
     //着地のSEを入れる
     public AudioSource audioSourcelanding; // 音源（Inspectorで設定）
 
     Rigidbody rb;
     bool isGrounded;
     Vector3 inputDir;
+
+    public GameObject jumpEffect;
+    public GameObject slideEffect;
+    public GameObject smokeEffect;
 
     void Awake()
     {
@@ -47,6 +51,7 @@ public class AnimalControlSimple : MonoBehaviour
     {
         float h = 0f;
         float v = 0f;
+
         if (!isStuned)
         {
             if (Input.GetKey(inputKeys.forward)) v += 1f;
@@ -56,6 +61,18 @@ public class AnimalControlSimple : MonoBehaviour
         }
 
         inputDir = new Vector3(h, 0f, v).normalized;
+
+        // Vキーが押された瞬間にエフェクト再生
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            Instantiate(slideEffect, transform.position, transform.rotation);
+        }
+
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            Instantiate(smokeEffect, transform.position, transform.rotation);
+        }
+
     }
     [SerializeField] private float jumpBufferTime = 0.15f; // store input
     [SerializeField] private float coyoteTime = 0.1f;      // allow jump after leaving ground
@@ -63,18 +80,21 @@ public class AnimalControlSimple : MonoBehaviour
     private float jumpBufferCounter = 0f;
     private float coyoteCounter = 0f;
 
-    void Update()
+    void Update() //hayai
     {
-
         UpdateInput();
         // Jump input
+        //ジャンプ
+
         if (!isStuned && Input.GetKeyDown(inputKeys.jump))
         {
             jumpBufferCounter = jumpBufferTime;
-            //ジャンプ
+            isHitGroundOnce = false;
         }
         else
+        {
             jumpBufferCounter -= Time.deltaTime;
+        }
 
         // Update coyote
         coyoteCounter = isGrounded ? coyoteTime : coyoteCounter - Time.deltaTime;
@@ -83,10 +103,10 @@ public class AnimalControlSimple : MonoBehaviour
         UpdateAnimator();
         UpdateStunedState();
     }
-
     void FixedUpdate()
     {
-        moveSpeed = playerInfoSystem.GetDistanceAffectedPlayerSpeed(baseMoveSpeed);
+        moveSpeed = baseMoveSpeed;
+        //moveSpeed = playerInfoSystem.GetDistanceAffectedPlayerSpeed(baseMoveSpeed);
         CheckGround();
         Move();
         Jump();
@@ -106,17 +126,25 @@ public class AnimalControlSimple : MonoBehaviour
         }
     }
 
+    bool isHitGroundOnce = false;
+
     void CheckGround()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, groundCheckRadius, groundMask);
-        isGrounded = false;
 
+        isGrounded = false;
         foreach (Collider hit in hits)
         {
             if (hit.gameObject != gameObject) // ignore self
             {
                 isGrounded = true; //着地
                 audioSourcelanding.Play(); // 着地のSEを再生
+                if (isHitGroundOnce == false)
+                {
+                    isHitGroundOnce = true;
+                    GameObject effect = Instantiate(jumpEffect, transform.position, transform.rotation);
+                    Destroy(effect, 3.0f);
+                }
                 break;
             }
         }
@@ -147,11 +175,9 @@ public class AnimalControlSimple : MonoBehaviour
 
         bool isMoving = inputDir.sqrMagnitude > 0.001f;
 
+
         if (animator.HasParameterOfType("IsWalking", AnimatorControllerParameterType.Bool))
             animator.SetBool("IsWalking", isMoving && isGrounded);
-
-        if (animator.HasParameterOfType("IsIdle", AnimatorControllerParameterType.Bool))
-            animator.SetBool("IsIdle", !isMoving && isGrounded);
 
         if (animator.HasParameterOfType("IsJumping", AnimatorControllerParameterType.Bool))
             animator.SetBool("IsJumping", !isGrounded);
