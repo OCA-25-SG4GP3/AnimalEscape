@@ -2,6 +2,10 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
+
+//EnemyStateCarryCaughtSO.cs ¨ “G‚ª‚¿ã‚°‚ç‚ê‚½^ƒvƒŒƒCƒ„[‚ª•ß‚Ü‚ê‚½ó‘Ô
+
+
 [CreateAssetMenu(fileName = "EnemyStateCarryCaughtSO", menuName = "State/EnemyState/EnemyStateCarryCaughtSO")]
 public class EnemyStateCarryCaughtSO : EnemyStateBaseSO
 {

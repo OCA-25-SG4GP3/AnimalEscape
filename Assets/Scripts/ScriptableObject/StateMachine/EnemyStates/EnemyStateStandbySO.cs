@@ -1,4 +1,6 @@
 using UnityEngine;
+//EnemyStateStandbySO.cs → 敵が待機（スタンバイ）中の状態
+
 
 [CreateAssetMenu(fileName = "EnemyStateStandbySO", menuName = "State/EnemyState/EnemyStateStandbySO")]
 public class EnemyStateStandbySO : EnemyStateBaseSO ///豎ｺ繧√◆蝣ｴ謇縺ｫ繝代ヨ繝ｭ繝ｼ繝ｫ / 蟾｡蝗?

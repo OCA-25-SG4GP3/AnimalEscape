@@ -1,5 +1,10 @@
 using UnityEngine;
 
+
+//EnemyStateLoiterSO.cs ¨ “G‚ª‚¤‚ë‚Â‚«^‘Ò‹@‚µ‚Ä‚¢‚éó‘Ô
+
+
+
 [CreateAssetMenu(fileName = "EnemyStateLoiterSO", menuName = "State/EnemyState/EnemyStateLoiterSO")]
 public class EnemyStateLoiterSO : EnemyStateBaseSO ///ãƒ©ãƒ³ãƒ€ãƒ?å¾˜å¾Šè¡Œå‹•
 {

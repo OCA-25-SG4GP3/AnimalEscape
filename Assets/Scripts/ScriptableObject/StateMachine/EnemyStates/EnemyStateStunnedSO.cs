@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
+//EnemyStateStunnedSO.cs ¨ “G‚ª‹Câ^ƒXƒ^ƒ“ó‘Ô
+
 [CreateAssetMenu(fileName = "EnemyStateStunnedSO", menuName = "State/EnemyState/EnemyStateStunnedSO")]
 public class EnemyStateStunnedSO : EnemyStateBaseSO
 {
