@@ -49,10 +49,6 @@ public class AnimalControlSimple : MonoBehaviour
         float h = 0f;
         float v = 0f;
 
-        if (Input.GetKey(inputKeys.forward)) v += 1f;
-        if (Input.GetKey(inputKeys.backward)) v -= 1f;
-        if (Input.GetKey(inputKeys.left)) h -= 1f;
-        if (Input.GetKey(inputKeys.right)) h += 1f;
         if (!isStuned)
         {
             if (Input.GetKey(inputKeys.forward)) v += 1f;
@@ -62,8 +58,6 @@ public class AnimalControlSimple : MonoBehaviour
         }
 
         inputDir = new Vector3(h, 0f, v).normalized;
-<<<<<<< HEAD
-
 
         // Vキーが押された瞬間にエフェクト再生
         if (Input.GetKeyDown(KeyCode.V))
@@ -90,8 +84,8 @@ public class AnimalControlSimple : MonoBehaviour
         // Jump input
         if (Input.GetKeyDown(inputKeys.jump))
         {
-        if (!isStuned && Input.GetKeyDown(inputKeys.jump))
-            jumpBufferCounter = jumpBufferTime;
+            if (!isStuned && Input.GetKeyDown(inputKeys.jump))
+                jumpBufferCounter = jumpBufferTime;
             isHitGroundOnce = false;
         }
         else
@@ -137,13 +131,15 @@ public class AnimalControlSimple : MonoBehaviour
         isGrounded = false;
         foreach (Collider hit in hits)
         {
-            if (hit.gameObject != gameObject && isHitGroundOnce == false) // ignore self
+            if (hit.gameObject != gameObject) // ignore self
             {
                 isGrounded = true;
-                isHitGroundOnce = true;
-
-                GameObject effect = Instantiate(jumpEffect, transform.position, transform.rotation);
-
+                if (isHitGroundOnce == false)
+                {
+                    isHitGroundOnce = true;
+                    GameObject effect = Instantiate(jumpEffect, transform.position, transform.rotation);
+                    Destroy(effect, 3.0f);
+                }
                 break;
             }
         }
@@ -174,11 +170,9 @@ public class AnimalControlSimple : MonoBehaviour
 
         bool isMoving = inputDir.sqrMagnitude > 0.001f;
 
+
         if (animator.HasParameterOfType("IsWalking", AnimatorControllerParameterType.Bool))
             animator.SetBool("IsWalking", isMoving && isGrounded);
-
-        if (animator.HasParameterOfType("IsIdle", AnimatorControllerParameterType.Bool))
-            animator.SetBool("IsIdle", !isMoving && isGrounded);
 
         if (animator.HasParameterOfType("IsJumping", AnimatorControllerParameterType.Bool))
             animator.SetBool("IsJumping", !isGrounded);
