@@ -1,5 +1,7 @@
 using UnityEngine;
 
+//EnemyStateBaseSO.cs → 敵の基本状態（ベースクラス）
+
 [CreateAssetMenu(fileName = "EnemyStateBaseSO", menuName = "State/EnemyStateBaseSO")]
 public class EnemyStateBaseSO : StateBaseSO
 {

@@ -1,5 +1,9 @@
 using UnityEngine;
 
+//EnemyStateFleeSO.cs ¨ “G‚ª“¦‘–’†‚Ìó‘Ô
+
+
+
 [CreateAssetMenu(fileName = "EnemyStateFleeSO", menuName = "State/EnemyState/EnemyStateFleeSO")]
 public class EnemyStateFleeSO : EnemyStateBaseSO
 {
