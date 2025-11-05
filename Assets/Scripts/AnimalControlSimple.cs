@@ -24,8 +24,11 @@ public class AnimalControlSimple : MonoBehaviour
     public float jumpForce = 7f;
     public LayerMask groundMask;
     public float groundCheckRadius = 0.3f;
+    
     //着地のSEを入れる
-    public AudioSource audioSourcelanding; // 音源（Inspectorで設定）
+    public AudioClip jumpSound;      // ジャンプ音のファイル
+    public AudioClip landingSound; // 着地音
+    private AudioSource audioSource; // AudioSourceを使うための変数
 
     Rigidbody rb;
     bool isGrounded;
@@ -44,6 +47,9 @@ public class AnimalControlSimple : MonoBehaviour
     void Start()
     {
         moveSpeed = baseMoveSpeed;
+
+        audioSource = GetComponent<AudioSource>();
+
     }
 
 
@@ -84,10 +90,11 @@ public class AnimalControlSimple : MonoBehaviour
     {
         UpdateInput();
         // Jump input
-        //ジャンプ
 
         if (!isStuned && Input.GetKeyDown(inputKeys.jump))
         {
+            //ジャンプ
+            audioSource.PlayOneShot(jumpSound);
             jumpBufferCounter = jumpBufferTime;
             isHitGroundOnce = false;
         }
@@ -138,9 +145,13 @@ public class AnimalControlSimple : MonoBehaviour
             if (hit.gameObject != gameObject) // ignore self
             {
                 isGrounded = true; //着地
-                audioSourcelanding.Play(); // 着地のSEを再生
+
+                //// 着地のSEを再生
+                //audioSource.PlayOneShot(landingSound);
+
                 if (isHitGroundOnce == false)
                 {
+
                     isHitGroundOnce = true;
                     GameObject effect = Instantiate(jumpEffect, transform.position, transform.rotation);
                     Destroy(effect, 3.0f);
