@@ -38,6 +38,8 @@ public class AnimalControlSimple : MonoBehaviour
     public GameObject slideEffect;
     public GameObject smokeEffect;
 
+    private bool isJumping = false;  // ジャンプ中かどうかを追跡するフラグ
+
     void Awake()
     {
         animator = GetComponentInChildren<Animator>();
@@ -93,10 +95,16 @@ public class AnimalControlSimple : MonoBehaviour
 
         if (!isStuned && Input.GetKeyDown(inputKeys.jump))
         {
-            //ジャンプ
-            audioSource.PlayOneShot(jumpSound);
+            if(!isJumping)
+            {
+                //ジャンプ
+                audioSource.PlayOneShot(jumpSound);
+            }
+
             jumpBufferCounter = jumpBufferTime;
             isHitGroundOnce = false;
+
+            isJumping = true;  // ジャンプ中フラグを立てる
         }
         else
         {
@@ -135,6 +143,20 @@ public class AnimalControlSimple : MonoBehaviour
 
     bool isHitGroundOnce = false;
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        // 地面に着地したことを判定
+        // 地面と接触した場合にSEを再生
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            if (audioSource != null && landingSound != null)
+            {
+                audioSource.PlayOneShot(landingSound);
+            }
+
+        }
+    }
+
     void CheckGround()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, groundCheckRadius, groundMask);
@@ -144,10 +166,12 @@ public class AnimalControlSimple : MonoBehaviour
         {
             if (hit.gameObject != gameObject) // ignore self
             {
+                isJumping = false;  // ジャンプフラグを元に戻す
                 isGrounded = true; //着地
 
                 //// 着地のSEを再生
                 //audioSource.PlayOneShot(landingSound);
+
 
                 if (isHitGroundOnce == false)
                 {
