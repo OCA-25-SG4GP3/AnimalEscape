@@ -7497,7 +7497,7 @@ MonoBehaviour:
   usingSides: 0
   gatesInOrder:
   - gate: {fileID: 739899806}
-    panelsRequired: 3
+    panelsRequired: 9
     cameraFollowObjectT: {fileID: 610365454}
   colorPanelRoomTimer: {fileID: 307622585}
   cm: {fileID: 1266806163}
