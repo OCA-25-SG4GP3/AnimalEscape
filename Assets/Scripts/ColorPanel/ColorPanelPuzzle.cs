@@ -1,4 +1,5 @@
 using System;
+using UnityEngine.Audio;
 using UnityEngine;
 
 public class ColorPanelPuzzle : MonoBehaviour
@@ -10,6 +11,10 @@ public class ColorPanelPuzzle : MonoBehaviour
     public bool upSide = true; //is this upside or downside (to prevent double press / exploit)
     [SerializeField, Header("このスロットにつけると、マテリアルが隠しになる")] private Material hidingMaterial;
 
+    public AudioClip pushSound;      // ジャンプ音のファイル
+    private AudioSource audioSource; // AudioSourceを使うための変数
+
+
     public bool isStepped = false; //踏まえたかどうか
 
     void Awake()
@@ -19,10 +24,13 @@ public class ColorPanelPuzzle : MonoBehaviour
         correctPanelMaterial = meshRen.material;
         colorPanelManager.RegisterPanel(this);
         if (hidingMaterial) meshRen.material = hidingMaterial;
+        audioSource = GetComponent<AudioSource>();
+
     }
 
     void OnTriggerEnter(Collider other)
     {
+
         if (other.CompareTag("Player"))
         {
             //TODO need cache to reduce lag ?
@@ -31,8 +39,10 @@ public class ColorPanelPuzzle : MonoBehaviour
 
             isStepped = true;
             animator.Play("ColorPanelPressedAnim");
+            audioSource.PlayOneShot(pushSound);
             colorPanelManager.PanelStepped(this);
             if (hidingMaterial && meshRen.material != correctPanelMaterial) RestoreToCorrectMaterial();
+
         }
     }
 
