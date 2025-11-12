@@ -2148,13 +2148,14 @@ MonoBehaviour:
     specialAction: 304
   baseMoveSpeed: 5
   moveSpeed: 5
-  jumpForce: 7
+  jumpForce: 5
   groundMask:
     serializedVersion: 2
     m_Bits: 4294967295
   groundCheckRadius: 0.3
   jumpBufferTime: 0.15
   coyoteTime: 0.1
+  stunedDuration: 1.5
 --- !u!114 &6773676947951746315
 MonoBehaviour:
   m_ObjectHideFlags: 0

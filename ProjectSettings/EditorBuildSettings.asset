@@ -27,7 +27,7 @@ EditorBuildSettings:
     path: Assets/Scenes/dev/PanelPuzzle/PanelPuzzle TEST.unity
     guid: 3467fb6d9e9124b458b667031269c241
   - enabled: 1
-    path: Assets/Scenes/dev/PanelPuzzle/PanelPuzzle1 (Tutorial).unity
+    path: Assets/Scenes/dev/PanelPuzzle/PanelPuzzle1.unity
     guid: f97110f9d2a5cee4aa89d6b0965c0155
   - enabled: 1
     path: Assets/Scenes/dev/PanelPuzzle/PanelPuzzle2.unity

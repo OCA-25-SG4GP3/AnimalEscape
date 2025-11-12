@@ -969,7 +969,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 00befe65e08cd2d4c89aa275eaf478b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _loadGameScene: PanelPuzzle
+  _loadGameScene: PanelPuzzle1
   _loadCreditScene: MAP (40x40)
   _delay: 300
 --- !u!4 &1542002173
