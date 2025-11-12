@@ -23,9 +23,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/dev/Title.unity
     guid: 140e53e48f9eea44b98fcad072d42141
-  - enabled: 1
-    path: Assets/Scenes/dev/PanelPuzzle/PanelPuzzle.unity
+  - enabled: 0
+    path: Assets/Scenes/dev/PanelPuzzle/PanelPuzzle TEST.unity
     guid: 3467fb6d9e9124b458b667031269c241
+  - enabled: 1
+    path: Assets/Scenes/dev/PanelPuzzle/PanelPuzzle1 (Tutorial).unity
+    guid: f97110f9d2a5cee4aa89d6b0965c0155
+  - enabled: 1
+    path: Assets/Scenes/dev/PanelPuzzle/PanelPuzzle2.unity
+    guid: 4df9221cc6f2d4247948fd23bbeeaa3c
+  - enabled: 1
+    path: Assets/Scenes/dev/PanelPuzzle/PanelPuzzle3.unity
+    guid: cd2c5a99e6a9e7d40a74cf1c931d0b0b
   - enabled: 1
     path: Assets/Scenes/dev/TemporaryGameClear.unity
     guid: b54abf6bccd41f1499bbfc96e235a18f
