@@ -15,7 +15,7 @@ public class OptionReturn : MonoBehaviour
         // PlayerPrefsから前のシーンの名前を読み込み
         beforeSceneName = PlayerPrefs.GetString(BEFORE_SCENE_KEY, "DefaultName");
 
-        Debug.Log($"前のシーンの名前: {beforeSceneName}");       
+        //Debug.Log($"前のシーンの名前: {beforeSceneName}");       
     }
     public void LoadBeforeScene()
     {        
