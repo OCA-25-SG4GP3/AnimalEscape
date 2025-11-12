@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ColorPanelRoomTimer : MonoBehaviour
 {
@@ -12,7 +13,21 @@ public class ColorPanelRoomTimer : MonoBehaviour
     [SerializeField] private List<Transform> spawnTs = new();
     private string originalString = "残り時間 : ";
     bool hasSpawnedOnce = false;
-    
+    [SerializeField] private RectTransform zookeeperIcon;
+    [SerializeField] Slider timerSlider;
+    float startingTime;
+    void Awake()
+    {
+        startingTime = totalTime;
+        timerSlider.minValue = 0;
+        timerSlider.maxValue = totalTime; // totalTime = max time
+        timerSlider.value = 0;            // start at 0
+    }
+    void SetSlider()
+    {
+        timerSlider.value = startingTime - totalTime; // slider increases as time passes
+    }
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Alpha1)) { Debug.Log("TIME END SET"); SetTimeEnd(); }
@@ -21,10 +36,8 @@ public class ColorPanelRoomTimer : MonoBehaviour
             totalTime -= Time.deltaTime;
             if (totalTime < 0) totalTime = 0;
 
-            int minutes = Mathf.FloorToInt(totalTime / 60f);
-            int seconds = Mathf.FloorToInt(totalTime % 60f);
-
-            timeText.text = originalString + minutes.ToString("00") + ":" + seconds.ToString("00");
+            UpdateTimeText();
+            SetSlider();
         }
         else
         {
@@ -37,15 +50,14 @@ public class ColorPanelRoomTimer : MonoBehaviour
         }
     }
 
-    //private IEnumerator PrintTest()
-    //{
-    //    yield return new WaitForSeconds(2.0f);
-    //    print("TEST1");
-    //    yield return new WaitForSeconds(2.0f);
-    //    print("TEST2");
-    //    yield return new WaitUntil(IsPlayerDie());
-    //    print("TEST3");
-    //}
+    private void UpdateTimeText()
+    {
+        int minutes = Mathf.FloorToInt(totalTime / 60f);
+        int seconds = Mathf.FloorToInt(totalTime % 60f);
+
+        timeText.text = originalString + minutes.ToString("00") + ":" + seconds.ToString("00");
+    }
+
     private void ResetSceneByGameOver()
     {
         Debug.Log("GAME OVER!");
@@ -56,6 +68,9 @@ public class ColorPanelRoomTimer : MonoBehaviour
     //現在は仮で時間が０になったらゲームオーバーにするように変更しています
     private void SetTimeEnd()
     {
+        totalTime = 0;
+        UpdateTimeText();
+
         timeText.text = "飼育員が来ます！";
         foreach (Transform spawnT in spawnTs)
         {

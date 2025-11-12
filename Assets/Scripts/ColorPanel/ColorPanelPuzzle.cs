@@ -25,7 +25,6 @@ public class ColorPanelPuzzle : MonoBehaviour
         colorPanelManager.RegisterPanel(this);
         if (hidingMaterial) meshRen.material = hidingMaterial;
         audioSource = GetComponent<AudioSource>();
-
     }
 
     void OnTriggerEnter(Collider other)
@@ -39,11 +38,25 @@ public class ColorPanelPuzzle : MonoBehaviour
 
             isStepped = true;
             animator.Play("ColorPanelPressedAnim");
-            audioSource.PlayOneShot(pushSound);
+            //audioSource.PlayOneShot(pushSound); //”j‰ó‚³‚ê‚é‚ÆƒoƒO‚é
+            //AudioSource.PlayClipAtPoint(pushSound, transform.position, 10000.0f); this volume is capped at 1
+            PlayPushedSFX();
+
             colorPanelManager.PanelStepped(this);
             if (hidingMaterial && meshRen.material != correctPanelMaterial) RestoreToCorrectMaterial();
 
         }
+    }
+
+    private void PlayPushedSFX()
+    {
+        GameObject tempAudio = new GameObject("TempAudio");
+        tempAudio.transform.position = transform.position;
+        AudioSource source = tempAudio.AddComponent<AudioSource>();
+        source.clip = pushSound;
+        source.volume = 2f;        // can exceed 1 if using an AudioMixer or normalized later
+        source.Play();
+        Destroy(tempAudio, pushSound.length);
     }
 
     void RestoreToCorrectMaterial()

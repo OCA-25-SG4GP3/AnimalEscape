@@ -3,8 +3,8 @@ using UnityEngine;
 
 public class PlayerDistanceManager : MonoBehaviour
 {
-    [SerializeField] Transform _player1;
-    [SerializeField] Transform _player2;
+    [SerializeField] Transform _player1; public Transform Player1 => _player1;
+    [SerializeField] Transform _player2; public Transform Player2 => _player2;
     [SerializeField] float _maxDistance = 15f;
 
     void Start()
