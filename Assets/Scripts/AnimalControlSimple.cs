@@ -1,7 +1,7 @@
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.Splines;
 using UnityEngine.UIElements;
-
 
 [System.Serializable]
 public struct PlayerInputKeys
@@ -24,6 +24,12 @@ public class AnimalControlSimple : MonoBehaviour
     public float jumpForce = 7f;
     public LayerMask groundMask;
     public float groundCheckRadius = 0.3f;
+    
+    //着地のSEを入れる
+    public AudioClip jumpSound;      // ジャンプ音のファイル
+    public AudioClip landingSound; // 着地音
+    private AudioSource audioSource; // AudioSourceを使うための変数
+
     Rigidbody rb;
     bool isGrounded;
     Vector3 inputDir;
@@ -31,6 +37,8 @@ public class AnimalControlSimple : MonoBehaviour
     public GameObject jumpEffect;
     public GameObject slideEffect;
     public GameObject smokeEffect;
+
+    private bool isJumping = false;  // ジャンプ中かどうかを追跡するフラグ
 
     void Awake()
     {
@@ -41,6 +49,9 @@ public class AnimalControlSimple : MonoBehaviour
     void Start()
     {
         moveSpeed = baseMoveSpeed;
+
+        audioSource = GetComponent<AudioSource>();
+
     }
 
 
@@ -79,17 +90,26 @@ public class AnimalControlSimple : MonoBehaviour
 
     void Update() //hayai
     {
-
         UpdateInput();
         // Jump input
-        if (Input.GetKeyDown(inputKeys.jump))
+
+        if (!isStuned && Input.GetKeyDown(inputKeys.jump))
         {
-            if (!isStuned && Input.GetKeyDown(inputKeys.jump))
-                jumpBufferCounter = jumpBufferTime;
+            if(!isJumping)
+            {
+                //ジャンプ
+                audioSource.PlayOneShot(jumpSound);
+            }
+
+            jumpBufferCounter = jumpBufferTime;
             isHitGroundOnce = false;
+
+            isJumping = true;  // ジャンプ中フラグを立てる
         }
         else
+        {
             jumpBufferCounter -= Time.deltaTime;
+        }
 
         // Update coyote
         coyoteCounter = isGrounded ? coyoteTime : coyoteCounter - Time.deltaTime;
@@ -98,7 +118,6 @@ public class AnimalControlSimple : MonoBehaviour
         UpdateAnimator();
         UpdateStunedState();
     }
-
     void FixedUpdate()
     {
         moveSpeed = baseMoveSpeed;
@@ -124,6 +143,20 @@ public class AnimalControlSimple : MonoBehaviour
 
     bool isHitGroundOnce = false;
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        // 地面に着地したことを判定
+        // 地面と接触した場合にSEを再生
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            if (audioSource != null && landingSound != null)
+            {
+                audioSource.PlayOneShot(landingSound);
+            }
+
+        }
+    }
+
     void CheckGround()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, groundCheckRadius, groundMask);
@@ -133,9 +166,16 @@ public class AnimalControlSimple : MonoBehaviour
         {
             if (hit.gameObject != gameObject) // ignore self
             {
-                isGrounded = true;
+                isJumping = false;  // ジャンプフラグを元に戻す
+                isGrounded = true; //着地
+
+                //// 着地のSEを再生
+                //audioSource.PlayOneShot(landingSound);
+
+
                 if (isHitGroundOnce == false)
                 {
+
                     isHitGroundOnce = true;
                     GameObject effect = Instantiate(jumpEffect, transform.position, transform.rotation);
                     Destroy(effect, 3.0f);
