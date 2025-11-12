@@ -12,11 +12,11 @@ public class GateAndButtonsRequired
 }
 public class ColorPanelManager : MonoBehaviour
 {
-    //‚±‚ÌƒMƒ~ƒbƒN‚ÍAF‚Å•ª‚¯‚é‚Å‚Í‚È‚¢‚Å‚·B
-    //‚Ü‚¸‚ÍA
-    //1.uƒ}ƒeƒŠƒAƒ‹‚Í“¯‚¶‚Å‚·‚©Hv‚©‚çƒ`ƒFƒbƒN‚·‚éB
-    //2.u—¼•û‚ÍAã‘¤‚Æ‰º‘¤‚Å‚·‚©HB“¯‚¶‘¤‚È‚çA‚¾‚ßBv
-
+    //ï¿½ï¿½ï¿½ÌƒMï¿½~ï¿½bï¿½Nï¿½ÍAï¿½Fï¿½Å•ï¿½ï¿½ï¿½ï¿½ï¿½Å‚Í‚È‚ï¿½ï¿½Å‚ï¿½ï¿½B
+    //ï¿½Ü‚ï¿½ï¿½ÍA
+    //1.ï¿½uï¿½}ï¿½eï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½Í“ï¿½ï¿½ï¿½ï¿½Å‚ï¿½ï¿½ï¿½ï¿½Hï¿½vï¿½ï¿½ï¿½ï¿½`ï¿½Fï¿½bï¿½Nï¿½ï¿½ï¿½ï¿½B
+    //2.ï¿½uï¿½ï¿½ï¿½ï¿½ï¿½ÍAï¿½ã‘¤ï¿½Æ‰ï¿½ï¿½ï¿½ï¿½Å‚ï¿½ï¿½ï¿½ï¿½Hï¿½Bï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È‚ï¿½Aï¿½ï¿½ï¿½ßBï¿½v
+[SerializeField]  bool usingSides  = true;
     [SerializeField] private List<GateAndButtonsRequired> gatesInOrder = new(); //If these objects are activated together, trigger the event 
     [SerializeField] private ColorPanelRoomTimer colorPanelRoomTimer;
     [SerializeField] private CinemachineCamera cm;
@@ -52,7 +52,7 @@ public class ColorPanelManager : MonoBehaviour
                 ColorPanelPuzzle panelB = activePanels[j];
                 if (panelA.correctPanelMaterial.name == panelB.correctPanelMaterial.name)
                 {
-                    if (IsSameSide(panelA, panelB)) return;
+                    if (usingSides && IsSameSide(panelA, panelB)) return;
                     // Matched pair!
                     AccumulatePoint();
 
