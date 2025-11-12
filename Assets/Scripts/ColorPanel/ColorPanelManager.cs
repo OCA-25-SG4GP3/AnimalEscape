@@ -6,28 +6,25 @@ using UnityEngine;
 [System.SerializableAttribute]
 public class GateAndButtonsRequired
 {
-     [SerializeField] public GameObject gate;
-     [SerializeField] public int panelsRequired = 0;
-     [SerializeField] public Transform cameraFollowObjectT;
+    [SerializeField] public GameObject gate;
+    [SerializeField] public int panelsRequired = 0;
+    [SerializeField] public Transform cameraFollowObjectT;
+    [SerializeField, Header("扉が開いたら、どこに動く")] public Transform[] playerAIMoveToTransform = new Transform[2];
 }
 public class ColorPanelManager : MonoBehaviour
 {
-    //���̃M�~�b�N�́A�F�ŕ�����ł͂Ȃ��ł��B
-    //�܂��́A
-    //1.�u�}�e���A���͓����ł����H�v����`�F�b�N����B
-    //2.�u�����́A�㑤�Ɖ����ł����H�B�������Ȃ�A���߁B�v
-[SerializeField]  bool usingSides  = true;
+    [SerializeField] bool usingSides = true;
     [SerializeField] private List<GateAndButtonsRequired> gatesInOrder = new(); //If these objects are activated together, trigger the event 
     [SerializeField] private ColorPanelRoomTimer colorPanelRoomTimer;
     [SerializeField] private CinemachineCamera cm;
     int point = 0;
-    int curentGateIndex = 0;
+    int currentGateIndex = 0;
     private List<ColorPanelPuzzle> allPanels = new();
     private List<ColorPanelPuzzle> steppedPanels = new();
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha2)) OpenGateAndNextCamera();
+        if (Input.GetKeyDown(KeyCode.Alpha2)) NextGateIndex();
     }
     public void RegisterPanel(ColorPanelPuzzle panel)
     {
@@ -82,21 +79,36 @@ public class ColorPanelManager : MonoBehaviour
     public void AccumulatePoint()
     {
         point++;
-        int numbersOfPanelsRequired = gatesInOrder[curentGateIndex].panelsRequired;
+        int numbersOfPanelsRequired = gatesInOrder[currentGateIndex].panelsRequired;
         if (point >= numbersOfPanelsRequired)
         {
-            OpenGateAndNextCamera();
-            
+            NextGateIndex();
         }
+    }
+
+    private void NextGateIndex()
+    {
+        OpenGateAndNextCamera();
+        AutoWalkPlayersToSpot();
+        currentGateIndex++;
+    }
+
+    void AutoWalkPlayersToSpot()
+    {
+        GateAndButtonsRequired gate = gatesInOrder[currentGateIndex];
+        var playerDistManager = GameObject.FindAnyObjectByType<PlayerDistanceManager>();
+        var player1AnimalControl = playerDistManager.Player1.GetComponent<AnimalControlSimple>();
+        if (player1AnimalControl) player1AnimalControl.SetMoveTo(gate.playerAIMoveToTransform[0].position);
+        var player2AnimalControl = playerDistManager.Player2.GetComponent<AnimalControlSimple>();
+        if (player2AnimalControl) player2AnimalControl.SetMoveTo(gate.playerAIMoveToTransform[1].position);
     }
     void OpenGateAndNextCamera()
     {
-        GameObject gate = gatesInOrder[curentGateIndex].gate;
-        cm.Follow = gatesInOrder[curentGateIndex].cameraFollowObjectT;
+        GameObject gate = gatesInOrder[currentGateIndex].gate;
+        cm.Follow = gatesInOrder[currentGateIndex].cameraFollowObjectT;
         colorPanelRoomTimer.AddTime();
         //Destroy(gate);
         gate.GetComponent<Animator>().Play("GateLift");
-        curentGateIndex++;
     }
 
 }

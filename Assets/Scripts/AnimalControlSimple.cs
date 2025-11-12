@@ -38,7 +38,7 @@ public class AnimalControlSimple : MonoBehaviour
     public GameObject jumpEffect;
     public GameObject slideEffect;
     public GameObject smokeEffect;
-
+    bool isAIControlled = false;
     [NonSerializedAttribute] public bool isJumping = false;  // ジャンプ中かどうかを追跡するフラグ
 
     void Awake()
@@ -53,14 +53,21 @@ public class AnimalControlSimple : MonoBehaviour
         moveSpeed = baseMoveSpeed;
 
         audioSource = GetComponent<AudioSource>();
-
     }
 
+    Vector3 aiMoveTarget;
+    public void SetMoveTo(Vector3 newMoveTarget)
+    {
+        aiMoveTarget = newMoveTarget;
+        isAIControlled = true;
+    }
 
     private void UpdateInput()
     {
         float h = 0f;
         float v = 0f;
+
+        jumpPressed = false;
 
         if (!isStuned)
         {
@@ -68,11 +75,15 @@ public class AnimalControlSimple : MonoBehaviour
             if (Input.GetKey(inputKeys.backward)) v -= 1f;
             if (Input.GetKey(inputKeys.left)) h -= 1f;
             if (Input.GetKey(inputKeys.right)) h += 1f;
+
+            if (Input.GetKeyDown(inputKeys.jump)) jumpPressed = true;
         }
 
         inputDir = new Vector3(h, 0f, v).normalized;
 
         // Vキーが押された瞬間にエフェクト再生
+        //DEBUG
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.V))
         {
             Instantiate(slideEffect, transform.position, transform.rotation);
@@ -82,6 +93,7 @@ public class AnimalControlSimple : MonoBehaviour
         {
             Instantiate(smokeEffect, transform.position, transform.rotation);
         }
+#endif
 
     }
     [SerializeField] private float jumpBufferTime = 0.15f; // store input
@@ -89,12 +101,19 @@ public class AnimalControlSimple : MonoBehaviour
 
     private float jumpBufferCounter = 0f;
     private float coyoteCounter = 0f;
-
+    bool jumpPressed = false;
     void Update()
     {
-        UpdateInput();
+        if (!isAIControlled)
+        {
+            UpdateInput();
+        }
+        else
+        {
+            UpdateAIControlled();
+        }
 
-        if (!isStuned && Input.GetKeyDown(inputKeys.jump))
+        if (!isStuned && jumpPressed)
         {
             jumpBufferCounter = jumpBufferTime; // store input
         }
@@ -108,6 +127,28 @@ public class AnimalControlSimple : MonoBehaviour
         TurnToLookDir(inputDir);
         UpdateAnimator();
         UpdateStunedState();
+    }
+
+    private void UpdateAIControlled()
+    {
+
+        // Move straight toward target
+        transform.position = Vector3.MoveTowards(transform.position, aiMoveTarget, moveSpeed * Time.deltaTime);
+
+        Vector3 direction = (aiMoveTarget - transform.position).normalized;
+
+        if (direction != Vector3.zero)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(direction);
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, turningSpeed * Time.deltaTime);
+        }
+
+
+        //Stop when close
+        if (Vector3.Distance(transform.position, aiMoveTarget) < 0.1f)
+        {
+            isAIControlled = false;
+        }
     }
 
     void FixedUpdate()
@@ -147,13 +188,13 @@ public class AnimalControlSimple : MonoBehaviour
         rb.linearVelocity = vel;
     }
 
-
+    float turningSpeed = 10f;
     void TurnToLookDir(Vector3 dir)
     {
         if (dir.sqrMagnitude > 0.001f)
         {
             Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 10f * Time.fixedDeltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, turningSpeed * Time.fixedDeltaTime);
         }
     }
 
