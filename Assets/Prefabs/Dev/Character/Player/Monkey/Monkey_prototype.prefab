@@ -391,7 +391,7 @@ MonoBehaviour:
     specialAction: 271
   baseMoveSpeed: 5
   moveSpeed: 5
-  jumpForce: 7
+  jumpForce: 5
   groundMask:
     serializedVersion: 2
     m_Bits: 4294967295
