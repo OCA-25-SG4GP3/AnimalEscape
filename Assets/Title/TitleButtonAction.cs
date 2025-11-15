@@ -1,11 +1,21 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class TitleButtonAction : MonoBehaviour
 {
     [SerializeField] private string _loadGameScene;
     [SerializeField] private string _loadCreditScene;
     public int _delay; //íxâÑÇ≥ÇπÇΩÇ¢ïbêî
+
+    void Awake()
+    {
+        unselectedColor = menuItems[0].GetComponent<UnityEngine.UI.Image>().color;
+        Time.timeScale = 1f;
+        selectedIndex = 0;
+        UpdateMenuHighlight();
+    }
 
     public void TimeLag()
     {
@@ -39,5 +49,63 @@ public class TitleButtonAction : MonoBehaviour
     Application.Quit();//ÉQÅ[ÉÄÉvÉåÉCèIóπ
 #endif
     }
+    //MENU
 
+    public void OnNavigate(InputAction.CallbackContext context)
+    {
+        Vector2 navigationInput = context.ReadValue<Vector2>();
+        NavigateMenu(navigationInput);
+    }
+
+    public void OnSubmit(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return; // only trigger on performed
+        SubmitSelection();
+    }
+
+    public void OnCancel(InputAction.CallbackContext context)
+    {
+        if (context.performed) { } //Close sfx menu, etc
+    }
+
+    [SerializeField] private RectTransform[] menuItems; // assign buttons in inspector
+    private int selectedIndex = 0;
+    private float navCooldown = 0.2f; // prevent super-fast scrolling
+    private float lastNavTime = 0f;
+    public void SubmitSelection()
+    {
+        menuItems[selectedIndex].GetComponent<Button>().onClick.Invoke();
+    }
+    public void NavigateMenu(Vector2 navigationInput)
+    {
+        // Only allow navigation after cooldown
+        if (Time.unscaledTime - lastNavTime < navCooldown) return;
+
+        if (navigationInput.y > 0.5f)
+        {
+            selectedIndex = Mathf.Max(0, selectedIndex - 1);
+            lastNavTime = Time.unscaledTime;
+        }
+        else if (navigationInput.y < -0.5f)
+        {
+            selectedIndex = Mathf.Min(menuItems.Length - 1, selectedIndex + 1);
+            lastNavTime = Time.unscaledTime;
+        }
+
+        // Highlight the selected menu item
+        UpdateMenuHighlight();
+    }
+    Color unselectedColor;
+    private void UpdateMenuHighlight()
+    {
+        if (menuItems == null) return;
+
+        for (int i = 0; i < menuItems.Length; i++)
+        {
+            if (menuItems[i] == null) continue; // skip destroyed items
+            var img = menuItems[i].GetComponent<UnityEngine.UI.Image>();
+            if (img == null) continue;
+            img.color = (i == selectedIndex) ? Color.yellow : unselectedColor;
+        }
+    }
 }

@@ -65,8 +65,6 @@ public class PenguinActionSimple : MonoBehaviour
         PlayerInfo.UpdateCDText( cooldownText,slideCooldown);
     }
 
-    
-
     void FixedUpdate()
     {
         if (!isSliding) return;

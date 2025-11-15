@@ -1,6 +1,9 @@
 using System;
 using UnityEngine;
 using UnityEngine.Audio;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.Users;
+using UnityEngine.InputSystem.Utilities;
 using UnityEngine.Splines;
 using UnityEngine.UIElements;
 
@@ -13,6 +16,8 @@ public struct PlayerInputKeys
     public KeyCode right;
     public KeyCode jump;
     public KeyCode specialAction; //Slide / Throw
+    public KeyCode horizontalAxis; //Slide / Throw
+    public KeyCode verticalAxis; //Slide / Throw
 }
 [RequireComponent(typeof(Rigidbody))]
 public class AnimalControlSimple : MonoBehaviour
@@ -40,6 +45,8 @@ public class AnimalControlSimple : MonoBehaviour
     public GameObject smokeEffect;
     bool isAIControlled = false;
     [NonSerializedAttribute] public bool isJumping = false;  // ジャンプ中かどうかを追跡するフラグ
+    PlayerInput playerInput;
+    OptionMenu optionMenu;
 
     void Awake()
     {
@@ -47,13 +54,31 @@ public class AnimalControlSimple : MonoBehaviour
         jumpChecker = GetComponentInChildren<JumpChecker>();
         rb = GetComponent<Rigidbody>();
         playerInfoSystem = GameObject.FindAnyObjectByType<PlayerInfoSystem>();
+        playerInput = GetComponent<PlayerInput>();
+        optionMenu = FindAnyObjectByType<OptionMenu>();
     }
+
+
     void Start()
     {
         moveSpeed = baseMoveSpeed;
 
         audioSource = GetComponent<AudioSource>();
     }
+    private Vector2 moveInput;
+    private float deadZone = 0.25f;
+    public void OnMove(InputAction.CallbackContext context)
+    {
+        moveInput = context.ReadValue<Vector2>();
+    }
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return; // only trigger on performed
+
+        jumpPressed = true;
+    }
+
+
 
     Vector3 aiMoveTarget;
     public void SetMoveTo(Vector3 newMoveTarget)
@@ -67,10 +92,11 @@ public class AnimalControlSimple : MonoBehaviour
         float h = 0f;
         float v = 0f;
 
-        jumpPressed = false;
-
         if (!isStuned)
         {
+            h += moveInput.x;
+            v += moveInput.y;
+
             if (Input.GetKey(inputKeys.forward)) v += 1f;
             if (Input.GetKey(inputKeys.backward)) v -= 1f;
             if (Input.GetKey(inputKeys.left)) h -= 1f;
@@ -121,6 +147,7 @@ public class AnimalControlSimple : MonoBehaviour
         {
             jumpBufferCounter -= Time.deltaTime; // countdown every frame
         }
+        jumpPressed = false;
 
         coyoteCounter = jumpChecker.isGrounded ? coyoteTime : coyoteCounter - Time.deltaTime;
 
@@ -279,6 +306,34 @@ public class AnimalControlSimple : MonoBehaviour
              EnterStunedState();
          }
      }*/
+
+    //PAUSE MENU INPUT HANDLING
+
+    public void OnPauseMenu(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return; // only trigger on performed
+        optionMenu.ToggleOption();
+    }
+
+    public void OnNavigate(InputAction.CallbackContext context)
+    {
+        Vector2 navigationInput = context.ReadValue<Vector2>();
+        optionMenu.NavigateMenu(navigationInput);
+    }
+
+    public void OnSubmit(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return; // only trigger on performed
+
+        optionMenu.SubmitSelection();
+    }
+
+    public void OnCancel(InputAction.CallbackContext context)
+    {
+        if (!optionMenu.IsPaused) return;
+        if (context.performed)
+            optionMenu.ToggleOption();
+    }
 }
 // Extension helper
 public static class AnimatorExtensions

@@ -202,7 +202,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1786979265286982258}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
@@ -222,8 +222,8 @@ MonoBehaviour:
   m_ActionEvents:
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4272331035533330904}
-        m_TargetAssemblyTypeName: PlayerBase, Assembly-CSharp
+      - m_Target: {fileID: 7242846007963405759}
+        m_TargetAssemblyTypeName: AnimalControlSimple, Assembly-CSharp
         m_MethodName: OnMove
         m_Mode: 0
         m_Arguments:
@@ -242,8 +242,8 @@ MonoBehaviour:
     m_ActionName: 'Player/Interact[/Keyboard/e,/Keyboard/numpad1]'
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4272331035533330904}
-        m_TargetAssemblyTypeName: PlayerBase, Assembly-CSharp
+      - m_Target: {fileID: 7242846007963405759}
+        m_TargetAssemblyTypeName: AnimalControlSimple, Assembly-CSharp
         m_MethodName: OnJump
         m_Mode: 0
         m_Arguments:
@@ -257,10 +257,14 @@ MonoBehaviour:
     m_ActionId: f1ba0d36-48eb-4cd5-b651-1c94a6531f70
     m_ActionName: 'Player/Jump[/Keyboard/space,/Keyboard/numpad0]'
   - m_PersistentCalls:
+      m_Calls: []
+    m_ActionId: ff3a048e-c46d-41e4-a703-6f7b63759fcb
+    m_ActionName: 'Player/SpecialAction[/Keyboard/f,/Keyboard/numpad2]'
+  - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 4272331035533330904}
-        m_TargetAssemblyTypeName: PlayerBase, Assembly-CSharp
-        m_MethodName: OnSpecialAction
+      - m_Target: {fileID: 7242846007963405759}
+        m_TargetAssemblyTypeName: AnimalControlSimple, Assembly-CSharp
+        m_MethodName: OnNavigate
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -270,18 +274,38 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-    m_ActionId: ff3a048e-c46d-41e4-a703-6f7b63759fcb
-    m_ActionName: 'Player/SpecialAction[/Keyboard/f,/Keyboard/numpad2]'
-  - m_PersistentCalls:
-      m_Calls: []
     m_ActionId: c95b2375-e6d9-4b88-9c4c-c5e76515df4b
     m_ActionName: 'UI/Navigate[/Keyboard/w,/Keyboard/upArrow,/Keyboard/s,/Keyboard/downArrow,/Keyboard/a,/Keyboard/leftArrow,/Keyboard/d,/Keyboard/rightArrow]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7242846007963405759}
+        m_TargetAssemblyTypeName: AnimalControlSimple, Assembly-CSharp
+        m_MethodName: OnSubmit
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 7607c7b6-cd76-4816-beef-bd0341cfe950
     m_ActionName: 'UI/Submit[/Keyboard/enter]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 7242846007963405759}
+        m_TargetAssemblyTypeName: AnimalControlSimple, Assembly-CSharp
+        m_MethodName: OnCancel
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: 15cef263-9014-4fd5-94d9-4e4a6234a6ef
     m_ActionName: 'UI/Cancel[/Keyboard/escape]'
   - m_PersistentCalls:
@@ -312,7 +336,39 @@ MonoBehaviour:
       m_Calls: []
     m_ActionId: 9caa3d8a-6b2f-4e8e-8bad-6ede561bd9be
     m_ActionName: UI/TrackedDeviceOrientation
-  m_NeverAutoSwitchControlSchemes: 0
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7242846007963405759}
+        m_TargetAssemblyTypeName: AnimalControlSimple, Assembly-CSharp
+        m_MethodName: OnPauseMenu
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 5c70539e-58be-44c3-a36a-f4b85e66b17d
+    m_ActionName: 'Player/PauseMenu[/XInputControllerWindows/start,/XInputControllerWindows1/start]'
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 7242846007963405759}
+        m_TargetAssemblyTypeName: AnimalControlSimple, Assembly-CSharp
+        m_MethodName: OnPauseMenu
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: c6227088-f488-4a32-9767-5d1af3cd9a88
+    m_ActionName: 'UI/PauseMenu[/XInputControllerWindows/start,/XInputControllerWindows1/start]'
+  m_NeverAutoSwitchControlSchemes: 1
   m_DefaultControlScheme: Player2
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
@@ -391,6 +447,8 @@ MonoBehaviour:
     right: 275
     jump: 256
     specialAction: 271
+    horizontalAxis: 0
+    verticalAxis: 0
   baseMoveSpeed: 5
   moveSpeed: 5
   jumpForce: 5
