@@ -27,6 +27,8 @@ public class PenguinActionSimple : MonoBehaviour
     private Vector3 originalCapsuleCenter;
     private float originalCapsuleHeight;
 
+    public GameObject slideEffect;
+
     void Awake()
     {
         playerInfo = GetComponent<PlayerInfo>();
@@ -83,6 +85,10 @@ public class PenguinActionSimple : MonoBehaviour
     {
         if (isSliding) return;
 
+
+        // Effect
+        Instantiate(slideEffect, transform.position, transform.rotation);
+
         isSliding = true;
         slideTimer = 0f;
 
@@ -102,6 +108,7 @@ public class PenguinActionSimple : MonoBehaviour
             capsule.height *= 0.25f;
             capsule.center = originalCapsuleCenter * 0.25f;
         }
+
     }
 
     private void EndSlide()
@@ -109,6 +116,9 @@ public class PenguinActionSimple : MonoBehaviour
         isSliding = false;
         animalControlSimple.SetMoveSpeed(originalMoveSpeed); // restore base speed
         playerInfo.hasCaught = false;
+
+        // Effect
+        Instantiate(slideEffect, transform.position, transform.rotation);
 
         if (impactCollider) impactCollider.SetActive(false);
 
