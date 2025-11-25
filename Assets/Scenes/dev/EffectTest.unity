@@ -532,6 +532,10 @@ PrefabInstance:
       propertyPath: smokeEffect
       value: 
       objectReference: {fileID: 1735024089641582, guid: 378b2c30ef426554495292cb902cb8f4, type: 3}
+    - target: {fileID: 6773676947951746315, guid: 44708eacf6548724091de49bd7158f15, type: 3}
+      propertyPath: slideEffect
+      value: 
+      objectReference: {fileID: 4749980201479958301, guid: a4cbca814b838a5458720cd2f8d6a501, type: 3}
     - target: {fileID: 7761411444963070728, guid: 44708eacf6548724091de49bd7158f15, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
