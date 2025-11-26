@@ -7,6 +7,7 @@ using UnityEngine;
 public class GateAndButtonsRequired
 {
     [SerializeField] public GameObject gate;
+    public GateDropController gateDropController;
     [SerializeField] public int panelsRequired = 0;
     [SerializeField] public Transform cameraFollowObjectT;
     [SerializeField, Header("扉が開いたら、どこに動く")] public Transform[] playerAIMoveToTransform = new Transform[2];
@@ -60,6 +61,7 @@ public class ColorPanelManager : MonoBehaviour
                     // Remove from steppedPanels
                     steppedPanels.Remove(activePanels[i]);
                     steppedPanels.Remove(activePanels[j]);
+                  
                     return; // stop after first pair
                 }
             }
@@ -79,11 +81,18 @@ public class ColorPanelManager : MonoBehaviour
     public void AccumulatePoint()
     {
         point++;
-        int numbersOfPanelsRequired = gatesInOrder[currentGateIndex].panelsRequired;
-        if (point >= numbersOfPanelsRequired)
+        int panelsRequired = gatesInOrder[currentGateIndex].panelsRequired;
+        bool isFinalStep = point >= panelsRequired;
+
+        // Gọi DropStep, nếu là panel cuối cùng thì hạ 100%
+        gatesInOrder[currentGateIndex].gateDropController.DropStep(isFinalStep);
+
+        if (isFinalStep)
         {
             NextGateIndex();
         }
+
+       
     }
 
     private void NextGateIndex()
