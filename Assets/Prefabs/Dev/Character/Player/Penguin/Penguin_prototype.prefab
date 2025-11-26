@@ -2272,6 +2272,7 @@ MonoBehaviour:
   model: {fileID: 8610540033777356204}
   impactCollider: {fileID: 6437768521902360824}
   cooldownText: {fileID: 7385856075692521777}
+  slideEffect: {fileID: 4749980201479958301, guid: a4cbca814b838a5458720cd2f8d6a501, type: 3}
 --- !u!82 &202164699887812056
 AudioSource:
   m_ObjectHideFlags: 0

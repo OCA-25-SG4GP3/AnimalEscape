@@ -87,7 +87,7 @@ public class PenguinActionSimple : MonoBehaviour
 
 
         // Effect
-        Instantiate(slideEffect, transform.position, transform.rotation);
+        Instantiate(slideEffect, transform.position, transform.rotation); 
 
         isSliding = true;
         slideTimer = 0f;
