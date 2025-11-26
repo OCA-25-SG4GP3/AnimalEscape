@@ -4294,6 +4294,22 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3875006494217275180, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
   m_PrefabInstance: {fileID: 1028728819}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &600274443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 600274442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40fc12cd5ffa4504eb354e44134316f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startY: 0
+  endY: -6
+  partialStepPercentage: 0.05
+  dropSpeed: 1.5
 --- !u!1 &610365453
 GameObject:
   m_ObjectHideFlags: 0
@@ -4824,6 +4840,14 @@ PrefabInstance:
       propertyPath: gatesInOrder.Array.data[1].panelsRequired
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
+      propertyPath: gatesInOrder.Array.data[0].gateDropController
+      value: 
+      objectReference: {fileID: 1570585574}
+    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
+      propertyPath: gatesInOrder.Array.data[1].gateDropController
+      value: 
+      objectReference: {fileID: 600274443}
     - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
       propertyPath: gatesInOrder.Array.data[0].cameraFollowObjectT
       value: 
@@ -7605,6 +7629,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3875006494217275180, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 600274443}
     - targetCorrespondingSourceObject: {fileID: 8448321653539610046, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4818422}
@@ -10356,6 +10383,18 @@ PrefabInstance:
       propertyPath: maxDistance
       value: 14
       objectReference: {fileID: 0}
+    - target: {fileID: 6467717242955905633, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6467717242955905633, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6467717242955905633, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6843784987305697534, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: '_spawnPoints.Array.data[0]'
       value: 
@@ -10873,6 +10912,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 3458079814507646786, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3875006494217275180, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
       propertyPath: m_Name
       value: Gate
@@ -10921,6 +10964,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 3875006494217275180, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1570585574}
     - targetCorrespondingSourceObject: {fileID: 8448321653539610046, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
       insertIndex: -1
       addedObject: {fileID: 266265333}
@@ -11481,6 +11527,22 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3875006494217275180, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
   m_PrefabInstance: {fileID: 1470488839}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &1570585574
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1570585573}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 40fc12cd5ffa4504eb354e44134316f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  startY: 0
+  endY: -6
+  partialStepPercentage: 0.075
+  dropSpeed: 1.5
 --- !u!43 &1625294066
 Mesh:
   m_ObjectHideFlags: 0
