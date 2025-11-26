@@ -8563,25 +8563,9 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1266806163}
     - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: usingSides
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: gatesInOrder.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
       propertyPath: gatesInOrder.Array.data[0].gate
       value: 
       objectReference: {fileID: 739899806}
-    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: gatesInOrder.Array.data[1].gate
-      value: 
-      objectReference: {fileID: 739899806}
-    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: gatesInOrder.Array.data[1].panelsRequired
-      value: 3
-      objectReference: {fileID: 0}
     - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
       propertyPath: gatesInOrder.Array.data[0].gateDropController
       value: 
@@ -8591,27 +8575,11 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 610365454}
     - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: gatesInOrder.Array.data[1].cameraFollowObjectT
-      value: 
-      objectReference: {fileID: 610365454}
-    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: gatesInOrder.Array.data[1].playerAIMoveToTransform.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
       propertyPath: 'gatesInOrder.Array.data[0].playerAIMoveToTransform.Array.data[0]'
       value: 
       objectReference: {fileID: 618207616}
     - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
       propertyPath: 'gatesInOrder.Array.data[0].playerAIMoveToTransform.Array.data[1]'
-      value: 
-      objectReference: {fileID: 1318991478}
-    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: 'gatesInOrder.Array.data[1].playerAIMoveToTransform.Array.data[0]'
-      value: 
-      objectReference: {fileID: 618207616}
-    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: 'gatesInOrder.Array.data[1].playerAIMoveToTransform.Array.data[1]'
       value: 
       objectReference: {fileID: 1318991478}
     - target: {fileID: 3713019981782567374, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
