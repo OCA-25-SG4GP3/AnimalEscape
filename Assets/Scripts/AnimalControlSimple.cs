@@ -26,10 +26,11 @@ public class AnimalControlSimple : MonoBehaviour
     [SerializeField] public PlayerInputKeys inputKeys = new(); //Player 1, Player 2 別々に決める
     Animator animator;
     [SerializeField] public float baseMoveSpeed = 5f;
-    public float moveSpeed = 5f; public void SetMoveSpeed(float _moveSpeed) { moveSpeed = _moveSpeed; }
-    public float jumpForce = 7f;
-    public LayerMask groundMask;
-    public float groundCheckRadius = 0.1f;
+    [SerializeField] public float moveSpeed = 5f; public void SetMoveSpeed(float _moveSpeed) { moveSpeed = _moveSpeed; }
+    [SerializeField] public float jumpForce = 7f;
+    [SerializeField] public LayerMask groundMask;
+    [SerializeField] public float groundCheckRadius = 0.1f;
+    [SerializeField, Header("Not a prefab")] private GameObject starPopEffect;
 
     //着地のSEを入れる
     public AudioClip jumpSound;      // ジャンプ音のファイル
@@ -245,6 +246,7 @@ public class AnimalControlSimple : MonoBehaviour
 
     public bool IsStunedComplete => stunedComplete; // public read-only flag
 
+
     public void EnterStunedState()
     {
         stunedTimer = 0f;
@@ -253,7 +255,8 @@ public class AnimalControlSimple : MonoBehaviour
 
         // Stop player movement completely
         moveSpeed = 0f;
-        rb.linearVelocity = Vector3.zero; // make sure rigidbody stops
+
+        starPopEffect.SetActive(true);
 
         // Set animation flag if exists
         if (animator && animator.HasParameterOfType("IsStuned", AnimatorControllerParameterType.Bool))
@@ -266,14 +269,12 @@ public class AnimalControlSimple : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.H))
         {
             EnterStunedState();
+            
         }
 
         if (!isStuned) return;
 
         stunedTimer += Time.deltaTime;
-
-        // Prevent movement or rotation
-        rb.linearVelocity = Vector3.zero;
 
         if (stunedTimer >= stunedDuration)
         {

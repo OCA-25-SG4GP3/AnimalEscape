@@ -140,6 +140,7 @@ Transform:
   - {fileID: 723323009496770116}
   - {fileID: 5315531015650438738}
   - {fileID: 8915892288197803271}
+  - {fileID: 8441078457021820885}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &1525023715460192827
@@ -456,6 +457,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   groundCheckRadius: 0.3
+  starPopEffect: {fileID: 4199815467251410385}
   jumpSound: {fileID: 8300000, guid: 1b2c5d0f7b9f30040b06bfb09b96cbe1, type: 3}
   landingSound: {fileID: 8300000, guid: cb6949d082b1ce44bb1b6031187e123f, type: 3}
   jumpEffect: {fileID: 1344314377593938, guid: 9e03786a9517b604d8e930182607a128, type: 3}
@@ -1223,3 +1225,74 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1001 &8753272700728769287
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1261348875918423859}
+    m_Modifications:
+    - target: {fileID: 890977181846672594, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 890977181846672594, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 2.175
+      objectReference: {fileID: 0}
+    - target: {fileID: 890977181846672594, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 890977181846672594, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 890977181846672594, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 890977181846672594, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 890977181846672594, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 890977181846672594, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 890977181846672594, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 890977181846672594, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4841759713630215894, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
+      propertyPath: m_Name
+      value: Star Pop Explode VFX
+      objectReference: {fileID: 0}
+    - target: {fileID: 4841759713630215894, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
+--- !u!1 &4199815467251410385 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4841759713630215894, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
+  m_PrefabInstance: {fileID: 8753272700728769287}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8441078457021820885 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 890977181846672594, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
+  m_PrefabInstance: {fileID: 8753272700728769287}
+  m_PrefabAsset: {fileID: 0}
