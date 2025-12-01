@@ -225,7 +225,7 @@ public class AnimalControlSimple : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, turningSpeed * Time.fixedDeltaTime);
         }
     }
-
+    private Cooldown idle2AnimCooldown = new(5.0f);
     void UpdateAnimator() //for now we use this to prevent warnings on monkey
     {
         if (!animator) return;
@@ -238,6 +238,17 @@ public class AnimalControlSimple : MonoBehaviour
 
         if (animator.HasParameterOfType("IsJumping", AnimatorControllerParameterType.Bool))
             animator.SetBool("IsJumping", !jumpChecker.isGrounded);
+
+        if (animator.HasParameterOfType("Idle2", AnimatorControllerParameterType.Trigger))
+        {
+
+            if (!idle2AnimCooldown.IsCooldown)
+            {
+                animator.SetTrigger("Idle2");
+                idle2AnimCooldown.SetRandomizedCooldown(5.0f, 8.0f);
+                idle2AnimCooldown.StartCooldown();
+            }
+        }
     }
     [SerializeField] private float stunedDuration = 1.5f; // How long the freeze lasts
     private float stunedTimer = 0f;
@@ -269,7 +280,7 @@ public class AnimalControlSimple : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.H))
         {
             EnterStunedState();
-            
+
         }
 
         if (!isStuned) return;
