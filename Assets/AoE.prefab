@@ -45,7 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5eef080d3a55e5841843b5ed0236876f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  aoeSize: 3
+  aoeSize: 5
+  effectObj: {fileID: 5449546573868711357}
 --- !u!1001 &6464350522341728331
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -143,6 +144,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 13df0a6d72f727842af4a0f46fc0db7f, type: 3}
+--- !u!1 &5449546573868711357 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1303036935969578486, guid: 13df0a6d72f727842af4a0f46fc0db7f, type: 3}
+  m_PrefabInstance: {fileID: 6464350522341728331}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8001596917129326602 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3944764650214690881, guid: 13df0a6d72f727842af4a0f46fc0db7f, type: 3}
