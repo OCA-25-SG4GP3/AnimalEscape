@@ -13,21 +13,29 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
     {
         _logicController.AlertMark.SetActive(true);
         animator.SetBool("IsWalking", true);
+        _logicController.rbNavMesh.Resume();
     }
-
+    bool isCarrying = false;
     public override void UpdateState()
     {
+        if (isCarrying) return;
         // Find the closest uncaught target regardless of cone or distance
         GameObject closestTarget = FindClosestUncaughtTarget();
         if (closestTarget != null)
         {
             _logicController.CurrentTarget = closestTarget;
             SetChaseTargetPos();
-
             if (IsWithinCatchRange(closestTarget))
             {
-                Debug.Log("‚Â‚©‚Ü‚Á‚½!");
-                Destroy(closestTarget);
+                isCarrying = true;
+                //For now we us both because we dont have miss
+                animator.SetBool("IsDiving", true);
+                animator.SetBool("IsCatching", true);
+                _logicController.rbNavMesh.ClearPath();
+
+                //_logicController.SetState(_logicController.LoiterStateInstance);
+
+                //Destroy(closestTarget);
                 // Handle catch logic
                 return;
             }
@@ -43,6 +51,8 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
     public override void ExitState()
     {
         animator.SetBool("IsWalking", false);
+        animator.SetBool("IsDiving", false);
+        animator.SetBool("IsCatching", false);
         _logicController.AlertMark.SetActive(false);
         _logicController.rbNavMesh.ClearPath();
     }
