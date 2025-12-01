@@ -3472,11 +3472,10 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3875006494217275180, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
   m_PrefabInstance: {fileID: 1106119270}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &739899807
+--- !u!114 &739899807 stripped
 MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
+  m_CorrespondingSourceObject: {fileID: 7261463893781025438, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
+  m_PrefabInstance: {fileID: 1106119270}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 739899806}
   m_Enabled: 1
@@ -3484,10 +3483,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40fc12cd5ffa4504eb354e44134316f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startY: 0
-  endY: -6
-  partialStepPercentage: 0.1
-  dropSpeed: 1.5
 --- !u!1001 &761177537
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4652,10 +4647,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 3458079814507646786, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3875006494217275180, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
       propertyPath: m_Name
       value: Gate
@@ -4703,10 +4694,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 3875006494217275180, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 739899807}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
 --- !u!1001 &1146124972
 PrefabInstance:
