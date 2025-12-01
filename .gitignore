@@ -30,7 +30,7 @@
 ################
 #CUSTOM ZAN
 # Exclude ThirdParty assets
-/[Aa]ssets/!ThirdParty/
+/[Aa]ssets/!ThirdParty/Excluded/
 
 # Unity auto-generated lightmap data
 *.CellData.bytes
