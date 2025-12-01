@@ -1,9 +1,10 @@
+using System;
 using UnityEngine;
 
 
 public class Zookeeper : MonoBehaviour
 {
-    Animator animator;
+    [SerializeField] public Animator animator;
     void Awake()
     {
         animator = GetComponent<Animator>();

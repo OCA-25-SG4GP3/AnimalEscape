@@ -12,6 +12,7 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
     public override void EnterState()
     {
         _logicController.AlertMark.SetActive(true);
+        animator.SetBool("IsWalking", true);
     }
 
     public override void UpdateState()
@@ -41,6 +42,7 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 
     public override void ExitState()
     {
+        animator.SetBool("IsWalking", false);
         _logicController.AlertMark.SetActive(false);
         _logicController.rbNavMesh.ClearPath();
     }
