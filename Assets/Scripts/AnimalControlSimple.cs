@@ -234,7 +234,7 @@ public class AnimalControlSimple : MonoBehaviour
 
 
         if (animator.HasParameterOfType("IsWalking", AnimatorControllerParameterType.Bool))
-            animator.SetBool("IsWalking", isMoving && jumpChecker.isGrounded);
+            animator.SetBool("IsWalking", isMoving);
 
         if (animator.HasParameterOfType("IsJumping", AnimatorControllerParameterType.Bool))
             animator.SetBool("IsJumping", !jumpChecker.isGrounded);
