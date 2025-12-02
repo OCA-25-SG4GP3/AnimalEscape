@@ -18,7 +18,7 @@ public class AILogicController : MonoBehaviour
 
     public enum SelectedState
     {
-        Empty, Standby, Detecting, Loiter, Patrol, Flee, InfiniteChase
+        Empty, Standby, Detecting, Loiter, Patrol, Stun, Flee, InfiniteChase
     }
 
     [SerializeField][Header("開始行動")] SelectedState selectedState = SelectedState.Empty;
@@ -130,6 +130,9 @@ public class AILogicController : MonoBehaviour
                 break;
             case SelectedState.Patrol:
                 SetState(PatrolStateInstance);
+                break;
+            case SelectedState.Stun:
+                SetState(StunStateInstance);
                 break;
             case SelectedState.Flee:
                 SetState(FleeStateInstance);

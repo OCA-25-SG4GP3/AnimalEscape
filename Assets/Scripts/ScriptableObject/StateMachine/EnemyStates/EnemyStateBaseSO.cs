@@ -7,6 +7,8 @@ public class EnemyStateBaseSO : StateBaseSO
 {
     [SerializeField] protected AILogicController _logicController;
     public GameObject Owner => _logicController.gameObject;
+    public Zookeeper zookeeper => _logicController.gameObject.GetComponent<Zookeeper>();
+    public Animator animator => zookeeper.animator;
     public virtual void SetLogicController(AILogicController logicController)
     {
         _logicController = logicController;
