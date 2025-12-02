@@ -67,7 +67,6 @@ public class AnimalControlSimple : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
     private Vector2 moveInput;
-    private float deadZone = 0.25f;
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
