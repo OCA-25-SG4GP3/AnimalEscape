@@ -113,7 +113,7 @@ GameObject:
   - component: {fileID: 1061554034291184409}
   - component: {fileID: 717650065177291792}
   - component: {fileID: 4804608962149343986}
-  - component: {fileID: 906964897963806570}
+  - component: {fileID: 6737950377242035633}
   m_Layer: 5
   m_Name: GameStartUI
   m_TagString: Untagged
@@ -135,10 +135,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 6393126255539481697}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -693, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -468.5, y: -55.5}
+  m_SizeDelta: {x: -923, y: -129}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717650065177291792
 CanvasRenderer:
@@ -178,7 +178,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &906964897963806570
+--- !u!114 &6737950377242035633
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -190,4 +190,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a53f464171949d74687e0daacab3a7a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 100
+  speed: 300
+  StartUiParent: {fileID: 6507986907359979145}
