@@ -5,7 +5,6 @@ using UnityEngine.Events;
 public class ThrownObject : MonoBehaviour
 {
     [SerializeField] private GameObject VFXObj;
-    bool hitOnce = false;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -15,11 +14,10 @@ public class ThrownObject : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        if (collision.gameObject.CompareTag("Enemy") && !hitOnce)
+        if (collision.gameObject.CompareTag("Enemy"))
         {
             ActivateVFX();
             Destroy(gameObject);
-            hitOnce = true;
         }
     }
 

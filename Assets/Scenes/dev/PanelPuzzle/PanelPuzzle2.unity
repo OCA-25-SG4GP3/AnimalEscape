@@ -20,12 +20,12 @@ RenderSettings:
   m_FogDensity: 0.01
   m_LinearFogStart: 30.4
   m_LinearFogEnd: 56.4
-  m_AmbientSkyColor: {r: 0.5471698, g: 0.42735168, b: 0.35359558, a: 1}
+  m_AmbientSkyColor: {r: 0.67058825, g: 0.61960787, b: 0.4509804, a: 1}
   m_AmbientEquatorColor: {r: 0.114, g: 0.125, b: 0.133, a: 1}
   m_AmbientGroundColor: {r: 0.047, g: 0.043, b: 0.035, a: 1}
   m_AmbientIntensity: 1
   m_AmbientMode: 3
-  m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
+  m_SubtractiveShadowColor: {r: 0.2627451, g: 0.2784314, b: 0.32156864, a: 1}
   m_SkyboxMaterial: {fileID: 2100000, guid: dbee1f28ed1c928418fc4901c293bf98, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
@@ -43,7 +43,7 @@ RenderSettings:
 LightmapSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 13
-  m_BakeOnSceneLoad: 0
+  m_BakeOnSceneLoad: 1
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -9351,32 +9351,15 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 6239969156481072347, guid: b71b0f8d2f881c743a85228f3030d1cb, type: 3}
   m_PrefabInstance: {fileID: 1253420161}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1266806158 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7896501625585939821, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
-  m_PrefabInstance: {fileID: 1380437859}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &1266806163 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 2146633213646677930, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
   m_PrefabInstance: {fileID: 1380437859}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1266806158}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f9dfa5b682dcd46bda6128250e975f58, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &1266806164
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1266806158}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 55a0ca213b3a2d94c8e95c0a3ab50dba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1268668897
@@ -10432,10 +10415,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 5219001806242368570, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       insertIndex: 4
       addedObject: {fileID: 338492411}
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7896501625585939821, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1266806164}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
 --- !u!4 &1380437860 stripped
 Transform:

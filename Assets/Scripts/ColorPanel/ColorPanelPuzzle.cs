@@ -16,15 +16,23 @@ public class ColorPanelPuzzle : MonoBehaviour
 
 
     public bool isStepped = false; //“¥‚Ü‚¦‚½‚©‚Ç‚¤‚©
-
+    [SerializeField] private Cooldown returnToWhiteCD = new(3.0f);
     void Awake()
     {
         colorPanelManager = FindAnyObjectByType<ColorPanelManager>();
         animator = GetComponent<Animator>();
-        correctPanelMaterial = meshRen.material;
+        correctPanelMaterial = meshRen.sharedMaterial;
         colorPanelManager.RegisterPanel(this);
-        if (hidingMaterial) meshRen.material = hidingMaterial;
+        if (hidingMaterial) meshRen.sharedMaterial = hidingMaterial;
         audioSource = GetComponent<AudioSource>();
+    }
+
+    void Update()
+    {
+        if (hidingMaterial && IsCurrentlyUsingCorrectMaterial() && !returnToWhiteCD.IsCooldown)
+        {
+            RestoreToHidingMaterial();
+        }
     }
 
     void OnTriggerEnter(Collider other)
@@ -42,10 +50,23 @@ public class ColorPanelPuzzle : MonoBehaviour
             //AudioSource.PlayClipAtPoint(pushSound, transform.position, 10000.0f); this volume is capped at 1
             PlayPushedSFX();
 
-            colorPanelManager.PanelStepped(this);
-            if (hidingMaterial && meshRen.material != correctPanelMaterial) RestoreToCorrectMaterial();
+            if (IsCurrentlyUsingHidingMaterial()) //If any hiding mat is assigned
+            {
+                RestoreToCorrectMaterial();
+                returnToWhiteCD.StartCooldown();
+            }
 
+            colorPanelManager.PanelStepped(this); //last order so it change first then checked
         }
+    }
+
+    private bool IsCurrentlyUsingHidingMaterial()
+    {
+        return hidingMaterial && meshRen.sharedMaterial == hidingMaterial;
+    }
+    private bool IsCurrentlyUsingCorrectMaterial()
+    {
+        return meshRen.sharedMaterial == correctPanelMaterial;
     }
 
     private void PlayPushedSFX()
@@ -62,6 +83,11 @@ public class ColorPanelPuzzle : MonoBehaviour
     void RestoreToCorrectMaterial()
     {
         meshRen.material = correctPanelMaterial;
+    }
+
+    void RestoreToHidingMaterial()
+    {
+        meshRen.material = hidingMaterial;
     }
     void OnTriggerExit(Collider other)
     {
