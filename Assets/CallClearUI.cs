@@ -18,12 +18,15 @@ public class CallClearUI : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {        
+    {
+
         if (Input.GetKeyDown(KeyCode.X))
         {
-            isClear = true;            
+#if UNITY_EDITOR
+            isClear = true;
+#endif
         }
-        if(isClear)
+        if (isClear)
         {
             uiAppearFrame -= decelTimeSpeed * Time.deltaTime;//UIの表示時間を減らしていく
             Vector3 newPosition = transform.position;        //オブジェクトの座標を代入
@@ -31,10 +34,11 @@ public class CallClearUI : MonoBehaviour
                            Screen.height * 0.5f, 0);         //宣言した変数に原点を代入             
             transform.position = newPosition;                //新しく作った変数をオブジェクトに入れなおす            
         }
-        if(uiAppearFrame <= 0.0f)
+        if (uiAppearFrame <= 0.0f)
         {
-            SceneManager.LoadScene(targetSceneName);
-            Destroy(gameObject);
+            //すでに実装されている(-Zan)
+            //SceneManager.LoadScene(targetSceneName);
+            //Destroy(gameObject);
         }
     }
 }

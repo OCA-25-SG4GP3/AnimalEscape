@@ -1,9 +1,8 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class CallGameOverUI : MonoBehaviour
 {
-    [SerializeField] private Vector3 firstPosition = new Vector3(0.0f,0.0f,0.0f);
+    [SerializeField] private Vector3 firstPosition = new Vector3(0.0f, 0.0f, 0.0f);
     [SerializeField] private bool isCatched = false;//敵に捕まったかどうか
     [SerializeField] private float uiAppearFrame = 2.0f;//UIの出現時間    
     [SerializeField] private float decelTimeSpeed = 1.0f;//減速する速さ
@@ -13,18 +12,20 @@ public class CallGameOverUI : MonoBehaviour
     {
         //UIを初期位置に設定(画面外)
         transform.position = firstPosition;
-    }   
+    }
 
     // Update is called once per frame
     void Update()
     {
         //捕まった場合(仮)
         if (Input.GetKeyDown(KeyCode.Z))
-        {                                    
+        {
+#if UNITY_EDITOR
             isCatched = true; //捕まったことにする
+#endif
         }
         //捕まっているなら
-        if(isCatched)
+        if (isCatched)
         {
             uiAppearFrame -= decelTimeSpeed * Time.deltaTime;//UIの表示時間を減らしていく
             Vector3 newPosition = transform.position;        //オブジェクトの座標を代入
@@ -34,9 +35,11 @@ public class CallGameOverUI : MonoBehaviour
         }
         //UIの表示時間が0以下になったら
         if (uiAppearFrame <= 0.0f)
-        {            
-            Destroy(gameObject); //オブジェクトを破棄する
-            SceneManager.LoadScene("Title");
+        {
+            // すでに実装されている(-Zan)
+
+            //Destroy(gameObject); //オブジェクトを破棄する
+            //SceneManager.LoadScene("Title");
         }
     }
 }

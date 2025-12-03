@@ -7,7 +7,7 @@ public class PenguinActionSimple : MonoBehaviour
     [SerializeField] private float slideSpeed = 8f;
     [SerializeField] private float slideDuration = 0.3f;
     [SerializeField] private float slideHeightOffset = 0.5f; // how much the model hovers
-    [SerializeField] private Cooldown slideCooldown = new (1.8f);
+    [SerializeField] private Cooldown slideCooldown = new(1.8f);
 
     [Header("References")]
     [SerializeField] private Transform model;
@@ -49,9 +49,13 @@ public class PenguinActionSimple : MonoBehaviour
     }
     void Update()
     {
-
         // trigger slide only if requested
-        if (Input.GetKeyDown(animalControlSimple.inputKeys.specialAction) && !slideCooldown.IsCooldown)
+        if (Input.GetKeyDown(animalControlSimple.inputKeys.specialAction)
+        &&
+        !slideCooldown.IsCooldown
+        &&
+        !animalControlSimple.IsAIControlled
+        )
         {
             StartSlide();
             slideCooldown.StartCooldown();
@@ -64,7 +68,7 @@ public class PenguinActionSimple : MonoBehaviour
                 EndSlide();
         }
 
-        PlayerInfo.UpdateCDText( cooldownText,slideCooldown);
+        PlayerInfo.UpdateCDText(cooldownText, slideCooldown);
     }
 
     void FixedUpdate()
@@ -87,7 +91,7 @@ public class PenguinActionSimple : MonoBehaviour
 
 
         // Effect
-        Instantiate(slideEffect, transform.position, transform.rotation); 
+        Instantiate(slideEffect, transform.position, transform.rotation);
 
         isSliding = true;
         slideTimer = 0f;
