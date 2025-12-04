@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Cinemachine;
@@ -7,7 +8,7 @@ using UnityEngine;
 public class GateAndButtonsRequired
 {
     [SerializeField] public GameObject gate;
-    public GateDropController gateDropController;
+    [NonSerializedAttribute] public GateDropController gateDropController;
     [SerializeField] public int panelsRequired = 0;
     [SerializeField] public Transform cameraFollowObjectT;
     [SerializeField, Header("扉が開いたら、どこに動く")] public Transform[] playerAIMoveToTransform = new Transform[2];
@@ -99,7 +100,9 @@ public class ColorPanelManager : MonoBehaviour
         bool isFinalStep = point >= panelsRequired;
 
         // Gọi DropStep, nếu l�? panel cuối cùng thì hạ 100%
-        gatesInOrder[currentGateIndex].gateDropController.DropStep(isFinalStep);
+        var gateAndButtons = gatesInOrder[currentGateIndex];
+        gateAndButtons.gateDropController = gatesInOrder[currentGateIndex].gate.GetComponent<GateDropController>();
+        gateAndButtons.gateDropController.DropStep(isFinalStep);
         return isFinalStep;
     }
 

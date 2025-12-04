@@ -34,7 +34,8 @@ public class AnimalControlSimple : MonoBehaviour
 
     //着地のSEを入れる
     public AudioClip jumpSound;      // ジャンプ音のファイル
-    public AudioClip landingSound; // 着地音
+    public AudioClip landingSound;   // 着地音
+    public AudioClip walkSound;      // 歩く
     [NonSerializedAttribute] public AudioSource audioSource; // AudioSourceを使うための変数
 
     Rigidbody rb;
@@ -155,7 +156,6 @@ public class AnimalControlSimple : MonoBehaviour
         UpdateAnimator();
         UpdateStunedState();
     }
-
     private void UpdateAIControlled()
     {
 
@@ -213,6 +213,27 @@ public class AnimalControlSimple : MonoBehaviour
         vel.x = inputDir.x * moveSpeed;
         vel.z = inputDir.z * moveSpeed;
         rb.linearVelocity = vel;
+        //audioSource.PlayOneShot(walkSound);
+
+        if (inputDir.sqrMagnitude > 0.001f) // 動いている場合
+        {
+            // ループ用の歩行音を設定
+            if (!audioSource.isPlaying && walkSound != null)
+            {
+                audioSource.clip = walkSound;
+                audioSource.loop = true;
+                audioSource.Play();
+            }
+        }
+        else
+        {
+            // 止まった場合、ループを停止
+            if (audioSource.isPlaying && walkSound != null)
+            {
+                audioSource.Stop();
+            }
+        }
+
     }
 
     float turningSpeed = 10f;
@@ -222,6 +243,7 @@ public class AnimalControlSimple : MonoBehaviour
         {
             Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, turningSpeed * Time.fixedDeltaTime);
+            
         }
     }
     private Cooldown idle2AnimCooldown = new(5.0f);
