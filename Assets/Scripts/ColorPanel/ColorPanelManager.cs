@@ -25,7 +25,11 @@ public class ColorPanelManager : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha2)) NextGateIndex();
+#if UNITY_EDITOR
+        if (Input.GetKeyDown(KeyCode.Alpha2))
+            AccumulatePoint();
+#endif
+
     }
     public void RegisterPanel(ColorPanelPuzzle panel)
     {
@@ -61,7 +65,7 @@ public class ColorPanelManager : MonoBehaviour
                     // Remove from steppedPanels
                     steppedPanels.Remove(activePanels[i]);
                     steppedPanels.Remove(activePanels[j]);
-                  
+
                     return; // stop after first pair
                 }
             }
@@ -80,19 +84,23 @@ public class ColorPanelManager : MonoBehaviour
 
     public void AccumulatePoint()
     {
-        point++;
-        int panelsRequired = gatesInOrder[currentGateIndex].panelsRequired;
-        bool isFinalStep = point >= panelsRequired;
-
-        // Gọi DropStep, nếu là panel cuối cùng thì hạ 100%
-        gatesInOrder[currentGateIndex].gateDropController.DropStep(isFinalStep);
+        bool isFinalStep = DropStep();
 
         if (isFinalStep)
         {
             NextGateIndex();
         }
+    }
 
-       
+    private bool DropStep()
+    {
+        point++;
+        int panelsRequired = gatesInOrder[currentGateIndex].panelsRequired;
+        bool isFinalStep = point >= panelsRequired;
+
+        // Gọi DropStep, nếu l�? panel cuối cùng thì hạ 100%
+        gatesInOrder[currentGateIndex].gateDropController.DropStep(isFinalStep);
+        return isFinalStep;
     }
 
     private void NextGateIndex()

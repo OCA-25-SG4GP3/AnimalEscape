@@ -14,7 +14,7 @@ public class EnemyStateStunnedSO : EnemyStateBaseSO
     {
         if (previousState == null || _logicController.CurrentState.GetType() != GetType())
         {
-            previousState = _logicController.CurrentState; //It shouldn't return from Stun state to Stun state, so we want to prevent infinite stun.
+            previousState = _logicController.CurrentState; //It shouldn't `return from Stun state to Stun state, so we want to prevent infinite stun.
         }
         _logicController.rbNavMesh.Pause();
         animator.SetBool("IsStunned", true);

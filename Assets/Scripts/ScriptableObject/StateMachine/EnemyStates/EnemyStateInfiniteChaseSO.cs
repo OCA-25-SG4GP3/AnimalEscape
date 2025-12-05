@@ -8,9 +8,10 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 {
     [SerializeField] private float _catchRange = 3.5f;
     private Vector3 lastChaseTargetPos;
-
+    ColorPanelRoomTimer colorPanelRoomTimer;
     public override void EnterState()
     {
+        colorPanelRoomTimer = GameObject.FindAnyObjectByType<ColorPanelRoomTimer>();
         _logicController.AlertMark.SetActive(true);
         animator.SetBool("IsWalking", true);
         _logicController.rbNavMesh.Resume();
@@ -32,6 +33,8 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
                 animator.SetBool("IsDiving", true);
                 animator.SetBool("IsCatching", true);
                 _logicController.rbNavMesh.ClearPath();
+                if (!colorPanelRoomTimer.gameOverImage.activeSelf)
+                    colorPanelRoomTimer.ResetSceneByGameOver();
 
                 //_logicController.SetState(_logicController.LoiterStateInstance);
 

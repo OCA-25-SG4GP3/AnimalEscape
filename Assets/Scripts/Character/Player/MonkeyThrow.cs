@@ -19,7 +19,7 @@ public class MonkeyThrow : MonoBehaviour
     {
         if (Input.GetKeyDown(animalControlSimple.inputKeys.specialAction))
         {
-            if (!throwCd.IsCooldown)
+            if (!throwCd.IsCooldown && !animalControlSimple.IsAIControlled)
             {
                 Throw();
                 throwCd.StartCooldown();
@@ -33,7 +33,7 @@ public class MonkeyThrow : MonoBehaviour
         }
         else cooldownText.text = "";
 
-        PlayerInfo.UpdateCDText( cooldownText, throwCd);
+        PlayerInfo.UpdateCDText(cooldownText, throwCd);
     }
 
     void Throw()

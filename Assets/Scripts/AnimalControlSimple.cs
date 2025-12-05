@@ -44,7 +44,7 @@ public class AnimalControlSimple : MonoBehaviour
     public GameObject jumpEffect;
     public GameObject slideEffect;
     public GameObject smokeEffect;
-    bool isAIControlled = false;
+    bool isAIControlled = false; public bool IsAIControlled => isAIControlled;
     [NonSerializedAttribute] public bool isJumping = false;  // ジャンプ中かどうかを追跡するフラグ
     PlayerInput playerInput;
     OptionMenu optionMenu;
@@ -278,8 +278,9 @@ public class AnimalControlSimple : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.H))
         {
+#if UNITY_EDITOR
             EnterStunedState();
-
+#endif
         }
 
         if (!isStuned) return;

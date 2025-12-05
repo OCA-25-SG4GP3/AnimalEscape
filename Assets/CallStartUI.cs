@@ -5,6 +5,7 @@ public class GameStartUI : MonoBehaviour
     private float time = 0.0f;
     private bool isGrind = false;
     [SerializeField] private float speed = 300.0f;
+    [SerializeField] private GameObject StartUiParent;
     
     private void Awake()
     {
@@ -20,12 +21,12 @@ public class GameStartUI : MonoBehaviour
     {   
         if(transform.position.x >= Screen.width * 2.0f)
         { 
-            Destroy(this.gameObject);
+            //Destroy(this.gameObject);
+            Destroy(StartUiParent);
         }
         //transform += Vector2(0.1f,0.1f);
         Vector3 newPosition = transform.position;
         newPosition.x += speed * Time.deltaTime;
         transform.position = newPosition;
     }
-
 }

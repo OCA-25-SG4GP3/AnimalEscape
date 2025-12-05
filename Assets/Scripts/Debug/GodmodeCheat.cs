@@ -33,6 +33,10 @@ public class GodmodeCheat : MonoBehaviour
 
     private void Update()
     {
+#if !UNITY_EDITOR 
+return;
+#endif
+
         // Toggle Godmode
         if (Input.GetKeyDown(toggleKey))
         {
