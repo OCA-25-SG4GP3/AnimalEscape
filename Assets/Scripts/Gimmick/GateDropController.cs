@@ -43,6 +43,7 @@ public class GateDropController : MonoBehaviour
     {
         Vector3 pos = transform.position;
         audioSource.PlayOneShot(gateSound);
+        audioSource.volume = 2f;
         while (Mathf.Abs(pos.y - targetY) > 0.01f)
         {
             pos.y = Mathf.Lerp(pos.y, targetY, Time.deltaTime * dropSpeed);

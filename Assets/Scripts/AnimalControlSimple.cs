@@ -36,6 +36,8 @@ public class AnimalControlSimple : MonoBehaviour
     public AudioClip jumpSound;      // ジャンプ音のファイル
     public AudioClip landingSound;   // 着地音
     public AudioClip walkSound;      // 歩く
+
+    [SerializeField] public float soundPitch = 2.5f;
     [NonSerializedAttribute] public AudioSource audioSource; // AudioSourceを使うための変数
 
     Rigidbody rb;
@@ -221,6 +223,7 @@ public class AnimalControlSimple : MonoBehaviour
             if (!audioSource.isPlaying && walkSound != null)
             {
                 audioSource.clip = walkSound;
+                audioSource.pitch= soundPitch;
                 audioSource.loop = true;
                 audioSource.Play();
             }
