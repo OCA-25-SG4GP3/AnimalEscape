@@ -41,8 +41,10 @@ public class AnimalControlSimple : MonoBehaviour
     Vector3 inputDir;
     JumpChecker jumpChecker;
 
-    public GameObject jumpEffect;
-    public GameObject slideEffect;
+    public GameObject moveEffect;
+    private bool moveEffectFlag = false;
+    private int moveEffectFrame = 0;
+
     public GameObject smokeEffect;
     bool isAIControlled = false; public bool IsAIControlled => isAIControlled;
     [NonSerializedAttribute] public bool isJumping = false;  // �W�����v�����ǂ�����ǐՂ���t���O
@@ -123,6 +125,23 @@ public class AnimalControlSimple : MonoBehaviour
             if (Input.GetKey(inputKeys.right)) h += 1f;
 
             if (Input.GetKeyDown(inputKeys.jump)) jumpPressed = true;
+
+            if (Input.GetKey(inputKeys.forward) || Input.GetKey(inputKeys.backward) ||
+              Input.GetKey(inputKeys.left) || Input.GetKey(inputKeys.right))
+            {
+                moveEffectFlag = true;
+            }
+
+            if (moveEffectFlag)
+            {
+                moveEffectFrame++;
+                if (moveEffectFrame >= 20)
+                {
+                    Instantiate(moveEffect, transform.position, transform.rotation);
+                    moveEffectFrame = 0;
+                    moveEffectFlag = false;
+                }
+            }
         }
 
         inputDir = new Vector3(h, 0f, v).normalized;
@@ -130,10 +149,6 @@ public class AnimalControlSimple : MonoBehaviour
         // V�L�[�������ꂽ�u�ԂɃG�t�F�N�g�Đ�
         //DEBUG
 #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.V))
-        {
-            Instantiate(slideEffect, transform.position, transform.rotation);
-        }
 
         if (Input.GetKeyDown(KeyCode.B))
         {
