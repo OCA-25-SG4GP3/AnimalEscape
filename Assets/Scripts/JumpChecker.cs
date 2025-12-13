@@ -22,8 +22,7 @@ public class JumpChecker : MonoBehaviour
             //audioSource.PlayOneShot(landingSound);
 
             PlayLandingSound();
-            GameObject effect = Instantiate(animalControl.jumpEffect, transform.position, transform.rotation);
-            Destroy(effect, 2.0f);
+       
         }
     }
     private void PlayLandingSound()
