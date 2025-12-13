@@ -764,10 +764,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45cbbebd0f2e1d944ac70ebb01f2efff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeText: {fileID: 892523005}
   totalTime: 120
   addTimePerRoom: 15
+  timeBeforeGameOverScreen: 5
   zookeeperPrefab: {fileID: 3632063498514462046, guid: 95b02ef49d3aa12488ba38bc95d60be1, type: 3}
+  gameOverImage: {fileID: 0}
   spawnTs:
   - {fileID: 281372648}
   - {fileID: 1160552335}
@@ -1031,7 +1032,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 108507113624698413, guid: eebb56c82efbd8d4bb0eb6bd925a0e9d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 12.3023
+      value: 17.3
       objectReference: {fileID: 0}
     - target: {fileID: 108507113624698413, guid: eebb56c82efbd8d4bb0eb6bd925a0e9d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2818,19 +2819,19 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -8679921383154817045, guid: f2d38b276f72a4c4b9bb2fc9102fd39a, type: 3}
       propertyPath: m_LocalScale.x
-      value: 10
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f2d38b276f72a4c4b9bb2fc9102fd39a, type: 3}
       propertyPath: m_LocalScale.y
-      value: 10
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f2d38b276f72a4c4b9bb2fc9102fd39a, type: 3}
       propertyPath: m_LocalScale.z
-      value: 10
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f2d38b276f72a4c4b9bb2fc9102fd39a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.4
+      value: -0.43
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f2d38b276f72a4c4b9bb2fc9102fd39a, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2838,7 +2839,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f2d38b276f72a4c4b9bb2fc9102fd39a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.69
+      value: -3.98
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: f2d38b276f72a4c4b9bb2fc9102fd39a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2975,7 +2976,7 @@ Animator:
   m_GameObject: {fileID: 829042917}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: f2d38b276f72a4c4b9bb2fc9102fd39a, type: 3}
-  m_Controller: {fileID: 9100000, guid: 283bb83335e841a448e76105e9933875, type: 2}
+  m_Controller: {fileID: 9100000, guid: e54966ed19a1b674fadac3dde40cacfb, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 1
@@ -3059,7 +3060,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _clearTimeSO: {fileID: 11400000, guid: 4c026bbafd3434e40a1e34a631935afd, type: 2}
-  _clearTimeText: {fileID: 0}
+  finishImageObject: {fileID: 0}
   nextSceneName: TemporaryGameClear
 --- !u!1001 &883499600
 PrefabInstance:
@@ -3468,7 +3469,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2ae7f77c97ec70e4c924254350530c7c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 3.55
+      value: -3.24
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 2ae7f77c97ec70e4c924254350530c7c, type: 3}
       propertyPath: m_LocalRotation.w
