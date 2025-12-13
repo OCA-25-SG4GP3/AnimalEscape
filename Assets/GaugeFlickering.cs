@@ -17,10 +17,15 @@ public class GaugeFlickering : MonoBehaviour
     void Update()
     {
         //残りのゲージが三分の一以下なら
-        if(zooKeeperSlide.value >= zooKeeperSlide.maxValue* ONE_THIRD)        
+        if(zooKeeperSlide.value >= zooKeeperSlide.maxValue* ONE_THIRD)
         {
-            anim.Play("GaugeFlickerImage");
+            PlayGaugeFlicker();
         }
-        
+
+    }
+
+    public void PlayGaugeFlicker() //一応デバグからも呼びますので、publicにしています
+    {
+        anim.Play("GaugeFlickerImage");
     }
 }

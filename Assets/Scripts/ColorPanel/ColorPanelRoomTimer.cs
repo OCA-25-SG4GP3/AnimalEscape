@@ -11,7 +11,7 @@ public class ColorPanelRoomTimer : MonoBehaviour
     [SerializeField] private float addTimePerRoom = 30f; // total seconds add
     [SerializeField] private float timeBeforeGameOverScreen = 5.0f;
     [SerializeField] private GameObject zookeeperPrefab;
-    [SerializeField, Header("�Q�[���I�[�o�[���A�L���ɂ���")] public GameObject gameOverImage;
+    [SerializeField, Header("Game Overに出るキャンバスオブジェクト")] public GameObject gameOverImage;
     [SerializeField] private List<Transform> spawnTs = new();
     //private string originalString = "�c�莞�� : ";
     bool isGameOver = false;
@@ -33,7 +33,15 @@ public class ColorPanelRoomTimer : MonoBehaviour
     void Update()
     {
 #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.Alpha1)) { Debug.Log("TIME END SET"); SetTimeEnd(); }
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Debug.Log("TIME END SET"); SetTimeEnd();
+            GaugeFlickering gaugeFlicker = FindAnyObjectByType<GaugeFlickering>();
+            if (gaugeFlicker)
+            {
+                gaugeFlicker.PlayGaugeFlicker();
+            }
+        }
 #endif
         if (totalTime > 0)
         {
@@ -72,14 +80,11 @@ public class ColorPanelRoomTimer : MonoBehaviour
         Invoke("ResetSceneByGameOverImpl", timeBeforeGameOverScreen);
     }
 
-    //�I��鎞�Ԃ̐ݒ肪�ł���֐�
-    //���݂͉��Ŏ��Ԃ��O�ɂȂ�����Q�[���I�[�o�[�ɂ���悤�ɕύX���Ă��܂�
     private void SetTimeEnd()
     {
         totalTime = 0;
         // UpdateTimeText();
 
-        // timeText.text = "����������܂��I";
         foreach (Transform spawnT in spawnTs)
         {
             if (spawnT == null || zookeeperPrefab == null)
