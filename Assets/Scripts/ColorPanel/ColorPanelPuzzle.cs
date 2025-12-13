@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using UnityEngine.Audio;
 using UnityEngine;
 
@@ -8,6 +9,8 @@ public class ColorPanelPuzzle : MonoBehaviour
     Animator animator;
     [SerializeField] public MeshRenderer meshRen;
     [NonSerializedAttribute] public Material correctPanelMaterial;
+    [SerializeField] private Material normalMaterial;
+    [SerializeField] private Material pressedMaterial;
     public bool upSide = true; //is this upside or downside (to prevent double press / exploit)
     [SerializeField, Header("このスロットにつけると、マテリアルが隠しになる")] private Material hidingMaterial;
 
@@ -17,6 +20,7 @@ public class ColorPanelPuzzle : MonoBehaviour
 
     public bool isStepped = false; //踏まえたかどうか
     [SerializeField] private Cooldown returnToWhiteCD = new(3.0f);
+    private Coroutine resetCoroutine;
     void Awake()
     {
         colorPanelManager = FindAnyObjectByType<ColorPanelManager>();
@@ -50,6 +54,8 @@ public class ColorPanelPuzzle : MonoBehaviour
             //AudioSource.PlayClipAtPoint(pushSound, transform.position, 10000.0f); this volume is capped at 1
             PlayPushedSFX();
 
+            meshRen.material = pressedMaterial;
+
             if (IsCurrentlyUsingHidingMaterial()) //If any hiding mat is assigned
             {
                 RestoreToCorrectMaterial();
@@ -57,9 +63,15 @@ public class ColorPanelPuzzle : MonoBehaviour
             }
 
             colorPanelManager.PanelStepped(this); //last order so it change first then checked
+
+            if (resetCoroutine != null)
+            {
+                StopCoroutine(resetCoroutine);
+            }
+
+            resetCoroutine = StartCoroutine(ResetStepAfterDelay(1f));
         }
     }
-
     private bool IsCurrentlyUsingHidingMaterial()
     {
         return hidingMaterial && meshRen.sharedMaterial == hidingMaterial;
@@ -97,9 +109,17 @@ public class ColorPanelPuzzle : MonoBehaviour
             isStepped = false;
             animator.Play("ColorPanelReleasedAnim");
             colorPanelManager.PanelReleased(this);
+            meshRen.material = normalMaterial;
         }
     }
+    private IEnumerator ResetStepAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
 
-
+        isStepped = false;
+        animator.Play("ColorPanelReleasedAnim");
+        colorPanelManager.PanelReleased(this);
+        meshRen.material = normalMaterial; 
+    }
 
 }
