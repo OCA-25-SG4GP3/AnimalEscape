@@ -27,7 +27,7 @@ public class AnimalControlSimple : MonoBehaviour
     Animator animator;
     [SerializeField] public float baseMoveSpeed = 5f;
     [SerializeField] public float moveSpeed = 5f; public void SetMoveSpeed(float _moveSpeed) { moveSpeed = _moveSpeed; }
-    [SerializeField] public float jumpForce = 7f;
+    [SerializeField] public float jumpForce = 5f;
     [SerializeField] public LayerMask groundMask;
     [SerializeField] public float groundCheckRadius = 0.1f;
     [SerializeField, Header("Not a prefab")] private GameObject starPopEffect;
@@ -48,6 +48,12 @@ public class AnimalControlSimple : MonoBehaviour
     [NonSerializedAttribute] public bool isJumping = false;  // ジャンプ中かどうかを追跡するフラグ
     PlayerInput playerInput;
     OptionMenu optionMenu;
+
+    //ジャンプホールド用追加
+    [SerializeField] public float holdJumpForce = 10f;      // 押し続けている間の追加力
+    public float maxJumpHoldTime = 0.2f;   // 最大で押せる時間
+    public float jumpHoldCounter;   // 押し続けられる残り時間
+    public bool jumpHeld;   // 現在ジャンプボタンが押されているかどうか
 
     void Awake()
     {
@@ -71,11 +77,25 @@ public class AnimalControlSimple : MonoBehaviour
     {
         moveInput = context.ReadValue<Vector2>();
     }
+    //public void OnJump(InputAction.CallbackContext context)
+    //{
+    //    if (!context.performed) return; // only trigger on performed
+
+    //    jumpPressed = true;
+    //}
+    //押す、離すを検知
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (!context.performed) return; // only trigger on performed
+        if (context.performed)
+        {
+            jumpPressed = true;  // ジャンプ入力があったことを記録（ジャンプバッファ用）
+            jumpHeld = true;    // ボタンを押している状態にする
+        }
 
-        jumpPressed = true;
+        if (context.canceled)
+        {
+            jumpHeld = false;   // 押し続け状態を解除
+        }
     }
 
 
@@ -154,6 +174,39 @@ public class AnimalControlSimple : MonoBehaviour
         TurnToLookDir(inputDir);
         UpdateAnimator();
         UpdateStunedState();
+
+        // ===============================
+        // 押し続けジャンプ（高さ調整）
+        // ===============================
+
+        // 条件：
+        // ・ジャンプボタンを押し続けている
+        // ・現在ジャンプ中
+        // ・押し続け可能な時間が残っている
+        if (jumpHeld && isJumping && jumpHoldCounter > 0f)
+        {
+            // 現在の速度を取得
+            Vector3 vel = rb.linearVelocity;
+
+            // 押している間、少しずつ上方向速度を足す
+            // Time.deltaTime を掛けることでフレームレート依存を防ぐ
+            vel.y += holdJumpForce * Time.deltaTime;
+
+            // 速度を反映
+            rb.linearVelocity = vel;
+
+            // 残りの押し続け時間を減らす
+            jumpHoldCounter -= Time.deltaTime;
+        }
+        // ===============================
+        // 上昇が終わったらジャンプ終了
+        // ===============================
+        // 上方向速度が0以下になったら
+        // （上昇が終わり、落下に転じた）
+        if (rb.linearVelocity.y <= 0f)
+        {
+            isJumping = false;
+        }
     }
 
     private void UpdateAIControlled()
@@ -186,24 +239,53 @@ public class AnimalControlSimple : MonoBehaviour
         Jump();
     }
 
+    //void Jump()
+    //{
+    //    if (jumpBufferCounter > 0f && coyoteCounter > 0f)
+    //    {
+    //        Vector3 vel = rb.linearVelocity;
+    //        vel.y = jumpForce;
+    //        rb.linearVelocity = vel;
+
+    //        jumpBufferCounter = 0f; // consume input
+    //        coyoteCounter = 0f;     // consume coyote
+    //        jumpChecker.isGrounded = false; // prevent infinite jump
+    //        isJumping = true;
+
+    //        // Play sound only here
+    //        if (audioSource != null && jumpSound != null)
+    //            audioSource.PlayOneShot(jumpSound);
+    //    }
+    //}
+    //ジャンプ開始処理(最低ジャンプ)
     void Jump()
     {
+        // ジャンプバッファ & コヨーテタイムの両方が有効なときのみジャンプ
         if (jumpBufferCounter > 0f && coyoteCounter > 0f)
         {
+            // 現在の Rigidbody の速度を取得
             Vector3 vel = rb.linearVelocity;
+            // 上方向（Y）だけをジャンプ用速度に変更
+            // 横方向の速度は維持される
             vel.y = jumpForce;
+            // 変更した速度を Rigidbody に反映
             rb.linearVelocity = vel;
-
-            jumpBufferCounter = 0f; // consume input
-            coyoteCounter = 0f;     // consume coyote
-            jumpChecker.isGrounded = false; // prevent infinite jump
+            // ボタンを押し続けたとき用のタイマーをリセット
+            jumpHoldCounter = maxJumpHoldTime;
+            // 入力とコヨーテタイムを消費（1回のジャンプで使い切る）
+            jumpBufferCounter = 0f;
+            coyoteCounter = 0f;
+            // 地面にいる判定を強制的に解除（無限ジャンプ防止）
+            jumpChecker.isGrounded = false;
+            // ジャンプ状態に入ったことを記録
             isJumping = true;
 
-            // Play sound only here
-            if (audioSource != null && jumpSound != null)
+            // ジャンプ音を1回だけ再生
+            if (audioSource && jumpSound)
                 audioSource.PlayOneShot(jumpSound);
         }
     }
+
 
 
     void Move()
