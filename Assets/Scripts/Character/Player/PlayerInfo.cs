@@ -24,6 +24,12 @@ public class PlayerInfo : MonoBehaviour
     {
         FixedUpdateIsFalling();
     }
+    public void SetCaught()
+    {
+        hasCaught = true;
+
+        GetComponent<AnimalControlSimple>().SetStunnedState(999.0f); //プレイヤー操作を無効化
+    }
 
     private void FixedUpdateIsFalling()
     {

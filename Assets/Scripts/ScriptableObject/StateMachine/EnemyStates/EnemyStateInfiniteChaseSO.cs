@@ -1,6 +1,6 @@
 using UnityEngine;
 
-//EnemyStateInfiniteChaseSO.cs �� �G�������ɒǐՂ𑱂�����
+//EnemyStateInfiniteChaseSO.cs �� �G�������ɒǐՂ𑱂�����
 
 
 [CreateAssetMenu(fileName = "EnemyStateInfiniteChaseSO", menuName = "State/EnemyState/EnemyStateInfiniteChaseSO")]
@@ -15,27 +15,33 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         _logicController.AlertMark.SetActive(true);
         animator.SetBool("IsWalking", true);
         _logicController.rbNavMesh.Resume();
+
+        _logicController.CurrentTarget = FindClosestUnTargetedTarget(); //Obtain once
     }
-    bool isCarrying = false;
+    bool isCarrying = false; //運んでいますか
     public override void UpdateState()
     {
         if (isCarrying) return;
-        // Find the closest uncaught target regardless of cone or distance
-        GameObject closestTarget = FindClosestUncaughtTarget();
-        if (closestTarget != null)
+
+
+        if (IsValidChaseTarget()) //ターゲット存在する
         {
-            _logicController.CurrentTarget = closestTarget;
+            GameObject untargetedTarget = _logicController.CurrentTarget;
+
             SetChaseTargetPos();
-            if (IsWithinCatchRange(closestTarget))
+            if (IsWithinCatchRange(untargetedTarget))
             {
                 isCarrying = true;
                 //For now we us both because we dont have miss
-                animator.SetBool("IsDiving", true);
-                animator.SetBool("IsCatching", true);
-                closestTarget.GetComponent<CatchPosition>().SetCatch(this);
+                animator.SetBool("IsDiving", true); //今回はまだスキップする。
+                animator.SetBool("IsCatching", true); //TODO move this to Caught State for better animation flow
+
+                untargetedTarget.GetComponent<CatchPosition>().SetCatch(this);
                 _logicController.rbNavMesh.ClearPath();
-                if (!colorPanelRoomTimer.gameOverImage.activeSelf)
-                    colorPanelRoomTimer.ResetSceneByGameOver();
+
+                untargetedTarget.GetComponent<PlayerInfo>().SetCaught();
+
+                TryGameOver();
 
                 //_logicController.SetState(_logicController.LoiterStateInstance);
 
@@ -44,12 +50,28 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
                 return;
             }
         }
-        else
+        else //ターゲットそもそも存在しない
         {
+            Debug.Log("No Animal found");
             // Optional: no targets in scene
-            _logicController.CurrentTarget = null;
-            _logicController.SetState(_logicController.LoiterStateInstance);
+            // Find the closest uncaught target regardless of cone or distance
+            GameObject closestTarget = FindClosestUncaughtTarget();
+            if (IsValidChaseTarget()) _logicController.CurrentTarget = closestTarget;
+            else _logicController.SetState(_logicController.LoiterStateInstance);
         }
+    }
+
+    private bool IsValidChaseTarget()
+    {
+        return _logicController.CurrentTarget != null && _logicController.CurrentTarget.activeSelf;
+    }
+
+    private void TryGameOver()
+    {
+        PlayerDistanceManager playerDistanceManager = GameObject.FindAnyObjectByType<PlayerDistanceManager>();
+        if (!playerDistanceManager.HaveAllPlayersCaught()) return;
+
+        colorPanelRoomTimer.SetGameOverByAllCaught();
     }
 
     public override void ExitState()
@@ -91,14 +113,14 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 
     private GameObject FindClosestUncaughtTarget()
     {
-        GameObject[] targets = GameObject.FindGameObjectsWithTag("Player"); // or whatever targets
+        GameObject[] targets = GameObject.FindGameObjectsWithTag("Player");
         GameObject closest = null;
         float minDist = float.MaxValue;
 
         foreach (var t in targets)
         {
             PlayerInfo info = t.GetComponent<PlayerInfo>();
-            if (info != null && info.IsFallingDown()) continue; // skip falling players if needed
+            //if (info != null && info.IsFallingDown()) continue;
 
             float dist = Vector3.Distance(_logicController.transform.position, t.transform.position);
             if (dist < minDist)
@@ -109,5 +131,52 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         }
 
         return closest;
+    }
+
+    private GameObject FindClosestUnTargetedTarget()
+    {
+        GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
+        AILogicController[] allEnemies = Object.FindObjectsByType<AILogicController>(FindObjectsSortMode.None);
+
+        GameObject closestUntargeted = null;
+        float minDist = float.MaxValue;
+
+        foreach (var player in allPlayers)
+        {
+            PlayerInfo info = player.GetComponent<PlayerInfo>();
+
+            // Skip caught players
+            if (info != null && info.hasCaught) continue;
+
+            // Skip falling players
+            //if (info != null && info.IsFallingDown()) continue;
+
+            // Check if this player is already targeted by another enemy
+            bool isTargetedByOther = false;
+            foreach (var enemy in allEnemies)
+            {
+                // Skip checking this enemy (self)
+                if (enemy == _logicController) continue;
+
+                // If another enemy is targeting this player, skip
+                if (enemy.CurrentTarget == player)
+                {
+                    isTargetedByOther = true;
+                    break;
+                }
+            }
+
+            if (isTargetedByOther) continue;
+
+            // Find the closest untargeted player
+            float dist = Vector3.Distance(_logicController.transform.position, player.transform.position);
+            if (dist < minDist)
+            {
+                minDist = dist;
+                closestUntargeted = player;
+            }
+        }
+
+        return closestUntargeted;
     }
 }

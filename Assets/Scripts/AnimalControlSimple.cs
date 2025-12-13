@@ -23,7 +23,7 @@ public struct PlayerInputKeys
 public class AnimalControlSimple : MonoBehaviour
 {
     PlayerInfoSystem playerInfoSystem;
-    [SerializeField] public PlayerInputKeys inputKeys = new(); //Player 1, Player 2 •ÊX‚ÉŒˆ‚ß‚é
+    [SerializeField] public PlayerInputKeys inputKeys = new(); //Player 1, Player 2 ï¿½ÊXï¿½ÉŒï¿½ï¿½ß‚ï¿½
     Animator animator;
     [SerializeField] public float baseMoveSpeed = 5f;
     [SerializeField] public float moveSpeed = 5f; public void SetMoveSpeed(float _moveSpeed) { moveSpeed = _moveSpeed; }
@@ -32,10 +32,10 @@ public class AnimalControlSimple : MonoBehaviour
     [SerializeField] public float groundCheckRadius = 0.1f;
     [SerializeField, Header("Not a prefab")] private GameObject starPopEffect;
 
-    //’…’n‚ÌSE‚ð“ü‚ê‚é
-    public AudioClip jumpSound;      // ƒWƒƒƒ“ƒv‰¹‚Ìƒtƒ@ƒCƒ‹
-    public AudioClip landingSound; // ’…’n‰¹
-    [NonSerializedAttribute] public AudioSource audioSource; // AudioSource‚ðŽg‚¤‚½‚ß‚Ì•Ï”
+    //ï¿½ï¿½ï¿½nï¿½ï¿½SEï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public AudioClip jumpSound;      // ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½Ìƒtï¿½@ï¿½Cï¿½ï¿½
+    public AudioClip landingSound; // ï¿½ï¿½ï¿½nï¿½ï¿½
+    [NonSerializedAttribute] public AudioSource audioSource; // AudioSourceï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ß‚Ì•Ïï¿½
 
     Rigidbody rb;
     Vector3 inputDir;
@@ -45,7 +45,7 @@ public class AnimalControlSimple : MonoBehaviour
     public GameObject slideEffect;
     public GameObject smokeEffect;
     bool isAIControlled = false; public bool IsAIControlled => isAIControlled;
-    [NonSerializedAttribute] public bool isJumping = false;  // ƒWƒƒƒ“ƒv’†‚©‚Ç‚¤‚©‚ð’ÇÕ‚·‚éƒtƒ‰ƒO
+    [NonSerializedAttribute] public bool isJumping = false;  // ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½ï¿½ï¿½ÇÕ‚ï¿½ï¿½ï¿½tï¿½ï¿½ï¿½O
     PlayerInput playerInput;
     OptionMenu optionMenu;
 
@@ -107,7 +107,7 @@ public class AnimalControlSimple : MonoBehaviour
 
         inputDir = new Vector3(h, 0f, v).normalized;
 
-        // VƒL[‚ª‰Ÿ‚³‚ê‚½uŠÔ‚ÉƒGƒtƒFƒNƒgÄ¶
+        // Vï¿½Lï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½uï¿½Ô‚ÉƒGï¿½tï¿½Fï¿½Nï¿½gï¿½Äï¿½
         //DEBUG
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.V))
@@ -256,9 +256,13 @@ public class AnimalControlSimple : MonoBehaviour
 
     public bool IsStunedComplete => stunedComplete; // public read-only flag
 
-
-    public void EnterStunedState()
+    public void SetStunnedState(float stunedDurationOverride = -1f)
     {
+        if (stunedDurationOverride > 0f)
+        {
+            stunedDuration = stunedDurationOverride;
+        }
+
         stunedTimer = 0f;
         isStuned = true;
         stunedComplete = false;
@@ -272,6 +276,8 @@ public class AnimalControlSimple : MonoBehaviour
         if (animator && animator.HasParameterOfType("IsStuned", AnimatorControllerParameterType.Bool))
             animator.SetBool("IsStuned", true);
 
+        Debug.Log("STUNED");
+
     }
 
     public void UpdateStunedState()
@@ -279,7 +285,7 @@ public class AnimalControlSimple : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.H))
         {
 #if UNITY_EDITOR
-            EnterStunedState();
+            SetStunnedState();
 #endif
         }
 

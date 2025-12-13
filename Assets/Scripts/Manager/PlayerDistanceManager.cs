@@ -1,7 +1,7 @@
 using Unity.Cinemachine;
 using UnityEngine;
 
-public class PlayerDistanceManager : MonoBehaviour
+public class PlayerDistanceManager : MonoBehaviour //またはPlayerManager
 {
     [SerializeField] Transform _player1; public Transform Player1 => _player1;
     [SerializeField] Transform _player2; public Transform Player2 => _player2;
@@ -21,7 +21,7 @@ public class PlayerDistanceManager : MonoBehaviour
 
     void LateUpdate()
     {
-        // If only one player �� do nothing
+        // If only one player �� do nothing
         if (_player1 == null || _player2 == null) return;
 
         Vector3 dir = _player2.position - _player1.position;
@@ -35,5 +35,10 @@ public class PlayerDistanceManager : MonoBehaviour
             _player1.position = midpoint - dir * _maxDistance / 2f;
             _player2.position = midpoint + dir * _maxDistance / 2f;
         }
+    }
+
+    public bool HaveAllPlayersCaught() //全員捕まえたか
+    {
+        return Player1.GetComponent<PlayerInfo>().hasCaught && Player2.GetComponent<PlayerInfo>().hasCaught;
     }
 }

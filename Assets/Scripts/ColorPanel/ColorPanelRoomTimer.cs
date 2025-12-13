@@ -11,9 +11,9 @@ public class ColorPanelRoomTimer : MonoBehaviour
     [SerializeField] private float addTimePerRoom = 30f; // total seconds add
     [SerializeField] private float timeBeforeGameOverScreen = 5.0f;
     [SerializeField] private GameObject zookeeperPrefab;
-    [SerializeField, Header("ƒQ[ƒ€ƒI[ƒo[A—LŒø‚É‚·‚é")] public GameObject gameOverImage;
+    [SerializeField, Header("ï¿½Qï¿½[ï¿½ï¿½ï¿½Iï¿½[ï¿½oï¿½[ï¿½ï¿½ï¿½Aï¿½Lï¿½ï¿½ï¿½É‚ï¿½ï¿½ï¿½")] public GameObject gameOverImage;
     [SerializeField] private List<Transform> spawnTs = new();
-    //private string originalString = "c‚èŠÔ : ";
+    //private string originalString = "ï¿½cï¿½èï¿½ï¿½ : ";
     bool isGameOver = false;
     [SerializeField] private RectTransform zookeeperIcon;
     [SerializeField] Slider timerSlider;
@@ -65,21 +65,21 @@ public class ColorPanelRoomTimer : MonoBehaviour
         ButtonSceneChanger.ChangeScene("TemporaryGameOver");
     }
 
-    public void ResetSceneByGameOver()
+    public void SetGameOverByAllCaught() //å…¨å“¡æ•ã¾ãˆãŸç†ç”±ã§ã‚²ãƒ¼ãƒ ã‚ªãƒ¼ãƒãƒ¼
     {
         if (gameOverImage.activeSelf) return;
         gameOverImage.SetActive(true);
         Invoke("ResetSceneByGameOverImpl", timeBeforeGameOverScreen);
     }
 
-    //I‚í‚éŠÔ‚Ìİ’è‚ª‚Å‚«‚éŠÖ”
-    //Œ»İ‚Í‰¼‚ÅŠÔ‚ª‚O‚É‚È‚Á‚½‚çƒQ[ƒ€ƒI[ƒo[‚É‚·‚é‚æ‚¤‚É•ÏX‚µ‚Ä‚¢‚Ü‚·
+    //ï¿½Iï¿½ï¿½éï¿½Ô‚Ìİ’è‚ªï¿½Å‚ï¿½ï¿½ï¿½Öï¿½
+    //ï¿½ï¿½ï¿½İ‚Í‰ï¿½ï¿½Åï¿½ï¿½Ô‚ï¿½ï¿½Oï¿½É‚È‚ï¿½ï¿½ï¿½ï¿½ï¿½Qï¿½[ï¿½ï¿½ï¿½Iï¿½[ï¿½oï¿½[ï¿½É‚ï¿½ï¿½ï¿½æ‚¤ï¿½É•ÏXï¿½ï¿½ï¿½Ä‚ï¿½ï¿½Ü‚ï¿½
     private void SetTimeEnd()
     {
         totalTime = 0;
         // UpdateTimeText();
 
-        // timeText.text = "”ˆçˆõ‚ª—ˆ‚Ü‚·I";
+        // timeText.text = "ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½I";
         foreach (Transform spawnT in spawnTs)
         {
             if (spawnT == null || zookeeperPrefab == null)
