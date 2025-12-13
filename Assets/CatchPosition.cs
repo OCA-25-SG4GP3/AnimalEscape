@@ -39,10 +39,8 @@ public class CatchPosition : MonoBehaviour
         // 飼育員がキャッチモーションの時
         if(enemyState.animator.GetBool("IsCatching"))
         {
-            Debug.Log("キャッチされた！");
             transform.position = hand.position + offset;
             transform.rotation = hand.rotation;
-
         }
     }
 }
