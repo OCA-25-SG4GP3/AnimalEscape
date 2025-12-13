@@ -98,6 +98,7 @@ public class ColorPanelRoomTimer : MonoBehaviour
             aiLogic.SetStateByEnum(AILogicController.SelectedState.InfiniteChase);
         }
         isGameOver = true;
+        SetSlider();
     }
 
 
