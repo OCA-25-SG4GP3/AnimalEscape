@@ -28,6 +28,8 @@ public class PenguinActionSimple : MonoBehaviour
     private float originalCapsuleHeight;
 
     public GameObject slideEffect;
+    private bool slideFlag = false;
+    private int slideFrame = 0;
 
     void Awake()
     {
@@ -91,7 +93,7 @@ public class PenguinActionSimple : MonoBehaviour
 
 
         // Effect
-        Instantiate(slideEffect, transform.position, transform.rotation);
+        slideFlag = true;
 
         isSliding = true;
         slideTimer = 0f;
@@ -122,7 +124,7 @@ public class PenguinActionSimple : MonoBehaviour
         playerInfo.hasCaught = false;
 
         // Effect
-        Instantiate(slideEffect, transform.position, transform.rotation);
+        slideFlag = false;
 
         if (impactCollider) impactCollider.SetActive(false);
 
@@ -133,6 +135,19 @@ public class PenguinActionSimple : MonoBehaviour
         {
             capsule.height = originalCapsuleHeight;
             capsule.center = originalCapsuleCenter;
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (slideFlag)
+        {
+            slideFrame++;
+            if (slideFrame >= 10)
+            {
+                Instantiate(slideEffect, transform.position, transform.rotation);
+                slideFrame = 0;
+            }
         }
     }
 
