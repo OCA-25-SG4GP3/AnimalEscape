@@ -27,7 +27,7 @@ public class AnimalControlSimple : MonoBehaviour
     Animator animator;
     [SerializeField] public float baseMoveSpeed = 5f;
     [SerializeField] public float moveSpeed = 5f; public void SetMoveSpeed(float _moveSpeed) { moveSpeed = _moveSpeed; }
-    [SerializeField] public float jumpForce = 7f;
+    [SerializeField] public float jumpForce = 5f;
     [SerializeField] public LayerMask groundMask;
     [SerializeField] public float groundCheckRadius = 0.1f;
     [SerializeField, Header("Not a prefab")] private GameObject starPopEffect;
@@ -48,6 +48,12 @@ public class AnimalControlSimple : MonoBehaviour
     [NonSerializedAttribute] public bool isJumping = false;  // ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½ï¿½ï¿½ÇÕ‚ï¿½ï¿½ï¿½tï¿½ï¿½ï¿½O
     PlayerInput playerInput;
     OptionMenu optionMenu;
+
+    //ƒWƒƒƒ“ƒvƒz[ƒ‹ƒh—p’Ç‰Á
+    [SerializeField] public float holdJumpForce = 10f;      // ‰Ÿ‚µ‘±‚¯‚Ä‚¢‚éŠÔ‚Ì’Ç‰Á—Í
+    public float maxJumpHoldTime = 0.2f;   // Å‘å‚Å‰Ÿ‚¹‚éŠÔ
+    public float jumpHoldCounter;   // ‰Ÿ‚µ‘±‚¯‚ç‚ê‚éc‚èŠÔ
+    public bool jumpHeld;   // Œ»İƒWƒƒƒ“ƒvƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚Ä‚¢‚é‚©‚Ç‚¤‚©
 
     void Awake()
     {
@@ -71,11 +77,25 @@ public class AnimalControlSimple : MonoBehaviour
     {
         moveInput = context.ReadValue<Vector2>();
     }
+    //public void OnJump(InputAction.CallbackContext context)
+    //{
+    //    if (!context.performed) return; // only trigger on performed
+
+    //    jumpPressed = true;
+    //}
+    //‰Ÿ‚·A—£‚·‚ğŒŸ’m
     public void OnJump(InputAction.CallbackContext context)
     {
-        if (!context.performed) return; // only trigger on performed
+        if (context.performed)
+        {
+            jumpPressed = true;  // ƒWƒƒƒ“ƒv“ü—Í‚ª‚ ‚Á‚½‚±‚Æ‚ğ‹L˜^iƒWƒƒƒ“ƒvƒoƒbƒtƒ@—pj
+            jumpHeld = true;    // ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‚Ä‚¢‚éó‘Ô‚É‚·‚é
+        }
 
-        jumpPressed = true;
+        if (context.canceled)
+        {
+            jumpHeld = false;   // ‰Ÿ‚µ‘±‚¯ó‘Ô‚ğ‰ğœ
+        }
     }
 
 
@@ -154,6 +174,39 @@ public class AnimalControlSimple : MonoBehaviour
         TurnToLookDir(inputDir);
         UpdateAnimator();
         UpdateStunedState();
+
+        // ===============================
+        // ‰Ÿ‚µ‘±‚¯ƒWƒƒƒ“ƒvi‚‚³’²®j
+        // ===============================
+
+        // ğŒF
+        // EƒWƒƒƒ“ƒvƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‘±‚¯‚Ä‚¢‚é
+        // EŒ»İƒWƒƒƒ“ƒv’†
+        // E‰Ÿ‚µ‘±‚¯‰Â”\‚ÈŠÔ‚ªc‚Á‚Ä‚¢‚é
+        if (jumpHeld && isJumping && jumpHoldCounter > 0f)
+        {
+            // Œ»İ‚Ì‘¬“x‚ğæ“¾
+            Vector3 vel = rb.linearVelocity;
+
+            // ‰Ÿ‚µ‚Ä‚¢‚éŠÔA­‚µ‚¸‚Âã•ûŒü‘¬“x‚ğ‘«‚·
+            // Time.deltaTime ‚ğŠ|‚¯‚é‚±‚Æ‚ÅƒtƒŒ[ƒ€ƒŒ[ƒgˆË‘¶‚ğ–h‚®
+            vel.y += holdJumpForce * Time.deltaTime;
+
+            // ‘¬“x‚ğ”½‰f
+            rb.linearVelocity = vel;
+
+            // c‚è‚Ì‰Ÿ‚µ‘±‚¯ŠÔ‚ğŒ¸‚ç‚·
+            jumpHoldCounter -= Time.deltaTime;
+        }
+        // ===============================
+        // ã¸‚ªI‚í‚Á‚½‚çƒWƒƒƒ“ƒvI—¹
+        // ===============================
+        // ã•ûŒü‘¬“x‚ª0ˆÈ‰º‚É‚È‚Á‚½‚ç
+        // iã¸‚ªI‚í‚èA—‰º‚É“]‚¶‚½j
+        if (rb.linearVelocity.y <= 0f)
+        {
+            isJumping = false;
+        }
     }
 
     private void UpdateAIControlled()
@@ -186,24 +239,53 @@ public class AnimalControlSimple : MonoBehaviour
         Jump();
     }
 
+    //void Jump()
+    //{
+    //    if (jumpBufferCounter > 0f && coyoteCounter > 0f)
+    //    {
+    //        Vector3 vel = rb.linearVelocity;
+    //        vel.y = jumpForce;
+    //        rb.linearVelocity = vel;
+
+    //        jumpBufferCounter = 0f; // consume input
+    //        coyoteCounter = 0f;     // consume coyote
+    //        jumpChecker.isGrounded = false; // prevent infinite jump
+    //        isJumping = true;
+
+    //        // Play sound only here
+    //        if (audioSource != null && jumpSound != null)
+    //            audioSource.PlayOneShot(jumpSound);
+    //    }
+    //}
+    //ƒWƒƒƒ“ƒvŠJnˆ—(Å’áƒWƒƒƒ“ƒv)
     void Jump()
     {
+        // ƒWƒƒƒ“ƒvƒoƒbƒtƒ@ & ƒRƒˆ[ƒeƒ^ƒCƒ€‚Ì—¼•û‚ª—LŒø‚È‚Æ‚«‚Ì‚İƒWƒƒƒ“ƒv
         if (jumpBufferCounter > 0f && coyoteCounter > 0f)
         {
+            // Œ»İ‚Ì Rigidbody ‚Ì‘¬“x‚ğæ“¾
             Vector3 vel = rb.linearVelocity;
+            // ã•ûŒüiYj‚¾‚¯‚ğƒWƒƒƒ“ƒv—p‘¬“x‚É•ÏX
+            // ‰¡•ûŒü‚Ì‘¬“x‚ÍˆÛ‚³‚ê‚é
             vel.y = jumpForce;
+            // •ÏX‚µ‚½‘¬“x‚ğ Rigidbody ‚É”½‰f
             rb.linearVelocity = vel;
-
-            jumpBufferCounter = 0f; // consume input
-            coyoteCounter = 0f;     // consume coyote
-            jumpChecker.isGrounded = false; // prevent infinite jump
+            // ƒ{ƒ^ƒ“‚ğ‰Ÿ‚µ‘±‚¯‚½‚Æ‚«—p‚Ìƒ^ƒCƒ}[‚ğƒŠƒZƒbƒg
+            jumpHoldCounter = maxJumpHoldTime;
+            // “ü—Í‚ÆƒRƒˆ[ƒeƒ^ƒCƒ€‚ğÁ”ïi1‰ñ‚ÌƒWƒƒƒ“ƒv‚Åg‚¢Ø‚éj
+            jumpBufferCounter = 0f;
+            coyoteCounter = 0f;
+            // ’n–Ê‚É‚¢‚é”»’è‚ğ‹­§“I‚É‰ğœi–³ŒÀƒWƒƒƒ“ƒv–h~j
+            jumpChecker.isGrounded = false;
+            // ƒWƒƒƒ“ƒvó‘Ô‚É“ü‚Á‚½‚±‚Æ‚ğ‹L˜^
             isJumping = true;
 
-            // Play sound only here
-            if (audioSource != null && jumpSound != null)
+            // ƒWƒƒƒ“ƒv‰¹‚ğ1‰ñ‚¾‚¯Ä¶
+            if (audioSource && jumpSound)
                 audioSource.PlayOneShot(jumpSound);
         }
     }
+
 
 
     void Move()
