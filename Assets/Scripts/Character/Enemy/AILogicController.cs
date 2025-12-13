@@ -48,7 +48,7 @@ public class AILogicController : MonoBehaviour
 
     //public NavMeshAgent Agent; //We want rigidbody so we won't directly use this
     [NonSerializedAttribute] public RigidbodyNavMesh rbNavMesh;
-    [SerializeField] private GameObject modelObj;
+    [SerializeField] private GameObject modelObj; public GameObject ModelObj => modelObj;
 
     #region Unity
     private void Awake()
@@ -66,7 +66,15 @@ public class AILogicController : MonoBehaviour
         InfiniteChaseInstance = Instantiate(InfiniteChase);
 
         RefreshStateFromEnum();
+        //ShowBones(ModelObj.transform, 0);
 
+    }
+    void ShowBones(Transform parent, int depth)
+    {
+        string indent = new string(' ', depth * 2);
+        Debug.Log(indent + parent.name);
+        foreach (Transform child in parent)
+        { ShowBones(child, depth + 1); }
     }
     public void SetInfiniteDetectionRange(bool isEnabled)
     {

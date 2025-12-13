@@ -113,6 +113,7 @@ GameObject:
   - component: {fileID: 4505055279703155771}
   - component: {fileID: 7242846007963405759}
   - component: {fileID: -2333816355566835471}
+  - component: {fileID: 273473059296078140}
   m_Layer: 7
   m_Name: Monkey_prototype
   m_TagString: Player
@@ -563,6 +564,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &273473059296078140
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1786979265286982258}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8bbfa9a4dfa8834ba24b2381baa01d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyState: {fileID: 0}
+  offset: {x: 0, y: -0.8, z: 0}
 --- !u!1 &1820811013730780516
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,7 +5,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EnemyStateBaseSO", menuName = "State/EnemyStateBaseSO")]
 public class EnemyStateBaseSO : StateBaseSO
 {
-    [SerializeField] protected AILogicController _logicController;
+    [SerializeField] protected AILogicController _logicController; public AILogicController LogicController => _logicController;
     public GameObject Owner => _logicController.gameObject;
     public Zookeeper zookeeper => _logicController.gameObject.GetComponent<Zookeeper>();
     public Animator animator => zookeeper.animator;
