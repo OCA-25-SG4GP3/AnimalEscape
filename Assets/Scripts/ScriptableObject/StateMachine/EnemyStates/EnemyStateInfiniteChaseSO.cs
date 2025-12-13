@@ -32,6 +32,7 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
                 //For now we us both because we dont have miss
                 animator.SetBool("IsDiving", true);
                 animator.SetBool("IsCatching", true);
+                closestTarget.GetComponent<CatchPosition>().SetCatch(this);
                 _logicController.rbNavMesh.ClearPath();
                 if (!colorPanelRoomTimer.gameOverImage.activeSelf)
                     colorPanelRoomTimer.ResetSceneByGameOver();

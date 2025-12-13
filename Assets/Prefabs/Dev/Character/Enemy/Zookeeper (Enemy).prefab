@@ -155,7 +155,6 @@ Transform:
   m_Children:
   - {fileID: 5212661284768365254}
   - {fileID: 5690977718009767959}
-  - {fileID: 322551110205001273}
   - {fileID: 6098842497147744475}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -186,7 +185,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Targets: []
   CurrentTarget: {fileID: 0}
-  CatchSlot: {fileID: 322551110205001273}
+  CatchSlot: {fileID: 428457211902995826}
   AlertMark: {fileID: 6034243719339532902}
   PatrolSpots:
   - {fileID: 0}
@@ -273,37 +272,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c07f4d79927aa2d4e99a3d34377f1edb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!1 &5451849200229544581
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 322551110205001273}
-  m_Layer: 0
-  m_Name: CatchNetSlot
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!4 &322551110205001273
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5451849200229544581}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0.3016725, w: 0.95341164}
-  m_LocalPosition: {x: 0, y: 2.22, z: 0.853}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 4826137849219370858}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: -35.116}
 --- !u!1 &6034243719339532902
 GameObject:
   m_ObjectHideFlags: 0
@@ -672,6 +640,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 88a4fbe48b3a71e43abc81a9d9c68798, type: 3}
+--- !u!4 &428457211902995826 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1300851670155399319, guid: 88a4fbe48b3a71e43abc81a9d9c68798, type: 3}
+  m_PrefabInstance: {fileID: 1729279056462527973}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1185884170564786702 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 88a4fbe48b3a71e43abc81a9d9c68798, type: 3}
