@@ -9,16 +9,16 @@ public class ColorPanelPuzzle : MonoBehaviour
     Animator animator;
     [SerializeField] public MeshRenderer meshRen;
     [NonSerializedAttribute] public Material correctPanelMaterial;
-    [SerializeField] private Material normalMaterial;
     [SerializeField] private Material pressedMaterial;
     public bool upSide = true; //is this upside or downside (to prevent double press / exploit)
-    [SerializeField, Header("‚±‚ÌƒXƒƒbƒg‚É‚Â‚¯‚é‚ÆAƒ}ƒeƒŠƒAƒ‹‚ª‰B‚µ‚É‚È‚é")] private Material hidingMaterial;
+    [SerializeField, Header("éš ã—ãŸã„å ´åˆãƒãƒ†ãƒªã‚¢ãƒ«")] private Material hidingMaterial;
+    [SerializeField, Header("ä½•ç§’ã¾ã§ãƒªã‚»ãƒƒãƒˆ")] private float autoResetTimer = 1.0f;
 
-    public AudioClip pushSound;      // ƒWƒƒƒ“ƒv‰¹‚Ìƒtƒ@ƒCƒ‹
-    private AudioSource audioSource; // AudioSource‚ğg‚¤‚½‚ß‚Ì•Ï”
+    public AudioClip pushSound;      // ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½Ìƒtï¿½@ï¿½Cï¿½ï¿½
+    private AudioSource audioSource; // AudioSourceï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ß‚Ì•Ïï¿½
 
 
-    public bool isStepped = false; //“¥‚Ü‚¦‚½‚©‚Ç‚¤‚©
+    public bool isStepped = false; //ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç‚ï¿½ï¿½ï¿½
     [SerializeField] private Cooldown returnToWhiteCD = new(3.0f);
     private Coroutine resetCoroutine;
     void Awake()
@@ -27,7 +27,7 @@ public class ColorPanelPuzzle : MonoBehaviour
         animator = GetComponent<Animator>();
         correctPanelMaterial = meshRen.sharedMaterial;
         colorPanelManager.RegisterPanel(this);
-        if (hidingMaterial) meshRen.sharedMaterial = hidingMaterial;
+        if (hidingMaterial) meshRen.material = hidingMaterial;
         audioSource = GetComponent<AudioSource>();
     }
 
@@ -50,7 +50,7 @@ public class ColorPanelPuzzle : MonoBehaviour
 
             isStepped = true;
             animator.Play("ColorPanelPressedAnim");
-            //audioSource.PlayOneShot(pushSound); //”j‰ó‚³‚ê‚é‚ÆƒoƒO‚é
+            //audioSource.PlayOneShot(pushSound); //ï¿½jï¿½ó‚³‚ï¿½ï¿½Æƒoï¿½Oï¿½ï¿½
             //AudioSource.PlayClipAtPoint(pushSound, transform.position, 10000.0f); this volume is capped at 1
             PlayPushedSFX();
 
@@ -68,17 +68,16 @@ public class ColorPanelPuzzle : MonoBehaviour
             {
                 StopCoroutine(resetCoroutine);
             }
-
-            resetCoroutine = StartCoroutine(ResetStepAfterDelay(1f));
+            resetCoroutine = StartCoroutine(ResetStepAfterDelay(autoResetTimer));
         }
     }
     private bool IsCurrentlyUsingHidingMaterial()
     {
-        return hidingMaterial && meshRen.sharedMaterial == hidingMaterial;
+        return hidingMaterial && meshRen.material == hidingMaterial;
     }
     private bool IsCurrentlyUsingCorrectMaterial()
     {
-        return meshRen.sharedMaterial == correctPanelMaterial;
+        return meshRen.material == correctPanelMaterial;
     }
 
     private void PlayPushedSFX()
@@ -109,7 +108,14 @@ public class ColorPanelPuzzle : MonoBehaviour
             isStepped = false;
             animator.Play("ColorPanelReleasedAnim");
             colorPanelManager.PanelReleased(this);
-            meshRen.material = normalMaterial;
+            if (hidingMaterial)
+            {
+                RestoreToHidingMaterial();
+            }
+            else
+            {
+                meshRen.material = correctPanelMaterial;
+            }
         }
     }
     private IEnumerator ResetStepAfterDelay(float delay)
@@ -119,7 +125,14 @@ public class ColorPanelPuzzle : MonoBehaviour
         isStepped = false;
         animator.Play("ColorPanelReleasedAnim");
         colorPanelManager.PanelReleased(this);
-        meshRen.material = normalMaterial; 
+        if (hidingMaterial)
+        {
+            RestoreToHidingMaterial();
+        }
+        else
+        {
+            meshRen.material = correctPanelMaterial;
+        }
     }
 
 }
