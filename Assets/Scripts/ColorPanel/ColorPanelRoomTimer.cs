@@ -13,7 +13,6 @@ public class ColorPanelRoomTimer : MonoBehaviour
     [SerializeField] private GameObject zookeeperPrefab;
     [SerializeField, Header("Game Overに出るキャンバスオブジェクト")] public GameObject gameOverImage;
     [SerializeField] private List<Transform> spawnTs = new();
-    //private string originalString = "�c�莞�� : ";
     bool isGameOver = false;
     [SerializeField] private RectTransform zookeeperIcon;
     [SerializeField] Slider timerSlider;
@@ -89,7 +88,7 @@ public class ColorPanelRoomTimer : MonoBehaviour
         {
             if (spawnT == null || zookeeperPrefab == null)
             {
-                Debug.LogError("Zookeeper spawn positions are Missing!");
+                Debug.LogError("Zookeeper spawn 場所がない!");
                 continue;
             }
 

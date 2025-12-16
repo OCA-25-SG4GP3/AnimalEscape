@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class ColorPanelPuzzle : MonoBehaviour
 {
-    ColorPanelManager colorPanelManager;
+    ColorPanelGate colorPanelGate;
     Animator animator;
     [SerializeField] public MeshRenderer meshRen;
     [NonSerializedAttribute] public Material correctPanelMaterial;
@@ -18,17 +18,31 @@ public class ColorPanelPuzzle : MonoBehaviour
     private AudioSource audioSource; // AudioSource���g�����߂̕ϐ�
 
 
-    public bool isStepped = false; //���܂������ǂ���
+    public bool isStepped = false; //押されているかどうか
     [SerializeField] private Cooldown returnToWhiteCD = new(3.0f);
     private Coroutine resetCoroutine;
     void Awake()
     {
-        colorPanelManager = FindAnyObjectByType<ColorPanelManager>();
+        colorPanelGate = GetActiveGate();
         animator = GetComponent<Animator>();
         correctPanelMaterial = meshRen.sharedMaterial;
-        colorPanelManager.RegisterPanel(this);
+        colorPanelGate.RegisterPanel(this);
         if (hidingMaterial) meshRen.material = hidingMaterial;
         audioSource = GetComponent<AudioSource>();
+    }
+
+    ColorPanelGate GetActiveGate()
+    {
+        var allGates = FindObjectsByType<ColorPanelGate>(FindObjectsSortMode.None);
+        foreach (var gate in allGates)
+        {
+            if (!gate.IsGateOpened() && gate.CanAcceptPanels())
+            {
+                return gate;
+            }
+        }
+        // If all gates are opened, return the first one (fallback)
+        return allGates.Length > 0 ? allGates[0] : null;
     }
 
     void Update()
@@ -36,6 +50,17 @@ public class ColorPanelPuzzle : MonoBehaviour
         if (hidingMaterial && IsCurrentlyUsingCorrectMaterial() && !returnToWhiteCD.IsCooldown)
         {
             RestoreToHidingMaterial();
+        }
+
+        // Switch gates if current gate is opened
+        if (colorPanelGate != null && colorPanelGate.IsGateOpened())
+        {
+            var newGate = GetActiveGate();
+            if (newGate != null && newGate != colorPanelGate)
+            {
+                colorPanelGate = newGate;
+                colorPanelGate.RegisterPanel(this);
+            }
         }
     }
 
@@ -62,7 +87,7 @@ public class ColorPanelPuzzle : MonoBehaviour
                 returnToWhiteCD.StartCooldown();
             }
 
-            colorPanelManager.PanelStepped(this); //last order so it change first then checked
+            colorPanelGate.PanelStepped(this); //last order so it change first then checked
 
             if (resetCoroutine != null)
             {
@@ -107,7 +132,7 @@ public class ColorPanelPuzzle : MonoBehaviour
             if (!isStepped) return;
             isStepped = false;
             animator.Play("ColorPanelReleasedAnim");
-            colorPanelManager.PanelReleased(this);
+            colorPanelGate.PanelReleased(this);
             if (hidingMaterial)
             {
                 RestoreToHidingMaterial();
@@ -124,7 +149,7 @@ public class ColorPanelPuzzle : MonoBehaviour
 
         isStepped = false;
         animator.Play("ColorPanelReleasedAnim");
-        colorPanelManager.PanelReleased(this);
+        colorPanelGate.PanelReleased(this);
         if (hidingMaterial)
         {
             RestoreToHidingMaterial();
