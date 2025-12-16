@@ -6,13 +6,15 @@ using UnityEngine.UI;
 
 public class ColorPanelRoomTimer : MonoBehaviour
 {
-    [SerializeField] private TMP_Text timeText;
+    //[SerializeField] private TMP_Text timeText;
     [SerializeField] private float totalTime = 120f; // total seconds, e.g., 2 minutes
     [SerializeField] private float addTimePerRoom = 30f; // total seconds add
+    [SerializeField] private float timeBeforeGameOverScreen = 5.0f;
     [SerializeField] private GameObject zookeeperPrefab;
+    [SerializeField, Header("ゲームオーバー時、有効にする")] public GameObject gameOverImage;
     [SerializeField] private List<Transform> spawnTs = new();
-    private string originalString = "残り時間 : ";
-    bool hasSpawnedOnce = false;
+    //private string originalString = "残り時間 : ";
+    bool isGameOver = false;
     [SerializeField] private RectTransform zookeeperIcon;
     [SerializeField] Slider timerSlider;
     float startingTime;
@@ -30,38 +32,44 @@ public class ColorPanelRoomTimer : MonoBehaviour
 
     void Update()
     {
+#if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.Alpha1)) { Debug.Log("TIME END SET"); SetTimeEnd(); }
+#endif
         if (totalTime > 0)
         {
             totalTime -= Time.deltaTime;
             if (totalTime < 0) totalTime = 0;
 
-            UpdateTimeText();
+            //UpdateTimeText();
             SetSlider();
         }
         else
         {
-            if (!hasSpawnedOnce)
+            if (!isGameOver)
             {
                 SetTimeEnd();
-                Invoke("ResetSceneByGameOver", 2.0f);
-                //StartCoroutine(PrintTest());
             }
         }
     }
 
-    private void UpdateTimeText()
-    {
-        int minutes = Mathf.FloorToInt(totalTime / 60f);
-        int seconds = Mathf.FloorToInt(totalTime % 60f);
+    // private void UpdateTimeText()
+    // {
+    //     int minutes = Mathf.FloorToInt(totalTime / 60f);
+    //     int seconds = Mathf.FloorToInt(totalTime % 60f);
 
-        timeText.text = originalString + minutes.ToString("00") + ":" + seconds.ToString("00");
+    //     timeText.text = originalString + minutes.ToString("00") + ":" + seconds.ToString("00");
+    // }
+
+    private void ResetSceneByGameOverImpl()
+    {
+        ButtonSceneChanger.ChangeScene("TemporaryGameOver");
     }
 
-    private void ResetSceneByGameOver()
+    public void ResetSceneByGameOver()
     {
-        Debug.Log("GAME OVER!");
-        ButtonSceneChanger.ChangeScene("TemporaryGameOver");
+        if (gameOverImage.activeSelf) return;
+        gameOverImage.SetActive(true);
+        Invoke("ResetSceneByGameOverImpl", timeBeforeGameOverScreen);
     }
 
     //終わる時間の設定ができる関数
@@ -69,22 +77,24 @@ public class ColorPanelRoomTimer : MonoBehaviour
     private void SetTimeEnd()
     {
         totalTime = 0;
-        UpdateTimeText();
+        // UpdateTimeText();
 
-        timeText.text = "飼育員が来ます！";
+        // timeText.text = "飼育員が来ます！";
         foreach (Transform spawnT in spawnTs)
         {
             if (spawnT == null || zookeeperPrefab == null)
             {
-                Debug.LogError("missing!");
+                Debug.LogError("Zookeeper spawn positions are Missing!");
                 continue;
             }
+
             var inst = Instantiate(zookeeperPrefab, spawnT);
             AILogicController aiLogic = inst.GetComponent<AILogicController>();
             aiLogic.SetStateByEnum(AILogicController.SelectedState.InfiniteChase);
         }
-        hasSpawnedOnce = true;
+        isGameOver = true;
     }
+
 
     public void AddTime()
     {
