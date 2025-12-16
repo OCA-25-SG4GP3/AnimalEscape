@@ -188,11 +188,11 @@ public class AnimalControlSimple : MonoBehaviour
 
         //編集:江頭
         //ポーズ時にプレイヤーを回転させなくする処理です
-        //if (Time.timeScale != 0)
-        //{
-        //    TurnToLookDir(inputDir);
-        //}
-        TurnToLookDir(inputDir);
+        if (Time.timeScale != 0)
+        {
+            TurnToLookDir(inputDir);
+        }
+        //TurnToLookDir(inputDir);
         UpdateAnimator();
         UpdateStunedState();
 
