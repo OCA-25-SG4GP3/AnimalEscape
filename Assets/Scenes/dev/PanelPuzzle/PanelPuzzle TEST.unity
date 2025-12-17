@@ -978,10 +978,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 45cbbebd0f2e1d944ac70ebb01f2efff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  timeText: {fileID: 892523005}
   totalTime: 120
   addTimePerRoom: 15
+  timeBeforeGameOverScreen: 5
   zookeeperPrefab: {fileID: 3632063498514462046, guid: 95b02ef49d3aa12488ba38bc95d60be1, type: 3}
+  gameOverImage: {fileID: 0}
   spawnTs:
   - {fileID: 281372648}
   - {fileID: 1160552335}
@@ -1322,6 +1323,14 @@ PrefabInstance:
       propertyPath: pairPanel
       value: 
       objectReference: {fileID: 649905836}
+    - target: {fileID: 7281855194734368328, guid: c2fc65a5e0d73674d94f26fd1d166a58, type: 3}
+      propertyPath: correctEffect
+      value: 
+      objectReference: {fileID: 1303036935969578486, guid: 13df0a6d72f727842af4a0f46fc0db7f, type: 3}
+    - target: {fileID: 7281855194734368328, guid: c2fc65a5e0d73674d94f26fd1d166a58, type: 3}
+      propertyPath: steppedEffect
+      value: 
+      objectReference: {fileID: 1344314377593938, guid: 9e03786a9517b604d8e930182607a128, type: 3}
     - target: {fileID: 7281855194734368328, guid: c2fc65a5e0d73674d94f26fd1d166a58, type: 3}
       propertyPath: hidingMaterial
       value: 
@@ -2644,7 +2653,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _clearTimeSO: {fileID: 11400000, guid: 4c026bbafd3434e40a1e34a631935afd, type: 2}
-  _clearTimeText: {fileID: 0}
+  finishImageObject: {fileID: 0}
   nextSceneName: TemporaryGameClear
 --- !u!1001 &883499600
 PrefabInstance:
@@ -2996,7 +3005,7 @@ MonoBehaviour:
   m_text: "\u6B8B\u308A\u6642\u9593 : 00:00"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 739eed005c8a67a4fb9ff7e4c8765741, type: 2}
-  m_sharedMaterial: {fileID: 2132118271068847125, guid: 739eed005c8a67a4fb9ff7e4c8765741, type: 2}
+  m_sharedMaterial: {fileID: 1052623971164806631, guid: 739eed005c8a67a4fb9ff7e4c8765741, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

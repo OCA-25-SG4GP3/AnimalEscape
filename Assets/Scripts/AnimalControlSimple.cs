@@ -117,7 +117,10 @@ public class AnimalControlSimple : MonoBehaviour
                 moveEffectFrame++;
                 if (moveEffectFrame >= 20)
                 {
-                    Instantiate(moveEffect, transform.position, transform.rotation);
+                    if(isJumping == false)
+                    { 
+                        Instantiate(moveEffect, transform.position, transform.rotation);
+                    }
                     moveEffectFrame = 0;
                     moveEffectFlag = false;
                 }

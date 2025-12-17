@@ -17,6 +17,11 @@ public class ColorPanelPuzzle : MonoBehaviour
 
     public bool isStepped = false; //“¥‚Ü‚¦‚½‚©‚Ç‚¤‚©
     [SerializeField] private Cooldown returnToWhiteCD = new(3.0f);
+
+    public GameObject steppedEffect;
+    public GameObject correctEffect;
+
+
     void Awake()
     {
         colorPanelManager = FindAnyObjectByType<ColorPanelManager>();
@@ -46,12 +51,14 @@ public class ColorPanelPuzzle : MonoBehaviour
 
             isStepped = true;
             animator.Play("ColorPanelPressedAnim");
+            Instantiate(steppedEffect, transform.position, transform.rotation);
             //audioSource.PlayOneShot(pushSound); //”j‰ó‚³‚ê‚é‚ÆƒoƒO‚é
             //AudioSource.PlayClipAtPoint(pushSound, transform.position, 10000.0f); this volume is capped at 1
             PlayPushedSFX();
 
             if (IsCurrentlyUsingHidingMaterial()) //If any hiding mat is assigned
             {
+                Instantiate(correctEffect, transform.position, transform.rotation);
                 RestoreToCorrectMaterial();
                 returnToWhiteCD.StartCooldown();
             }
