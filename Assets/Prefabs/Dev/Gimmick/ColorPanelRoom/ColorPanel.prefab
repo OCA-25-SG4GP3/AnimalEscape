@@ -75,6 +75,10 @@ MonoBehaviour:
   hidingMaterial: {fileID: 0}
   pushSound: {fileID: 8300000, guid: 0a4c302a02afcea45aa813cbbc0ae484, type: 3}
   isStepped: 0
+  returnToWhiteCD:
+    cooldownDuration: 3
+  steppedEffect: {fileID: 1344314377593938, guid: 9e03786a9517b604d8e930182607a128, type: 3}
+  correctEffect: {fileID: 4749980201479958301, guid: a4cbca814b838a5458720cd2f8d6a501, type: 3}
 --- !u!95 &5468122513018524495
 Animator:
   serializedVersion: 7
