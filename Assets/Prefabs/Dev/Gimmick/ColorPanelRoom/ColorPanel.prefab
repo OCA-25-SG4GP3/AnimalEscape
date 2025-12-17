@@ -74,7 +74,10 @@ MonoBehaviour:
   upSide: 1
   hidingMaterial: {fileID: 0}
   pushSound: {fileID: 8300000, guid: 0a4c302a02afcea45aa813cbbc0ae484, type: 3}
+  push_volume: 0.01
   isStepped: 0
+  returnToWhiteCD:
+    cooldownDuration: 3
 --- !u!95 &5468122513018524495
 Animator:
   serializedVersion: 7
