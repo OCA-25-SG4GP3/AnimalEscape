@@ -17,6 +17,10 @@ public class GaugeFlickering : MonoBehaviour
         {
             PlayGaugeFlicker();
         }
+        else
+        {
+            //なにもしない
+        }
     }
 
     public void PlayGaugeFlicker() //一応デバグからも呼びますので、publicにしています

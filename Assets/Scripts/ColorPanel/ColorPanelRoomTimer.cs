@@ -28,6 +28,13 @@ public class ColorPanelRoomTimer : MonoBehaviour
     void SetSlider()
     {
         timerSlider.value = startingTime - totalTime; // slider increases as time passes
+        //編集:江頭
+        //ゲートが開いたとき、ゲージのValueが0を下回らないようにする
+        if(totalTime <= 0)
+        {
+            //timerSlider.value = 0;
+            totalTime = 0;
+        }
     }
 
     void Update()
