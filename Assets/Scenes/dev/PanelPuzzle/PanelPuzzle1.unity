@@ -318,6 +318,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GoalPoint
       objectReference: {fileID: 0}
+    - target: {fileID: 7112349901315144723, guid: b3db85ab0317b384da224a93313c10e7, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -4038,6 +4042,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Gate
       objectReference: {fileID: 0}
+    - target: {fileID: 3875006494217275180, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4829442626499638457, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
       propertyPath: m_LocalPosition.x
       value: 5.07001
@@ -5258,6 +5266,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 535137882271034745, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -19.99997
+      objectReference: {fileID: 0}
+    - target: {fileID: 868443471324131151, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
+      propertyPath: m_Intensity
+      value: 2.16
+      objectReference: {fileID: 0}
     - target: {fileID: 3740987094845606514, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_Name
       value: SETUPS
@@ -8001,6 +8017,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Pillar
       objectReference: {fileID: 0}
+    - target: {fileID: 5596955809591267870, guid: 40f5e271ded50f74ab70213414f6c44d, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7685400836706802601, guid: 40f5e271ded50f74ab70213414f6c44d, type: 3}
       propertyPath: m_Mesh
       value: 
@@ -8219,6 +8239,10 @@ PrefabInstance:
     - target: {fileID: 1048754459432054650, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
       propertyPath: m_Name
       value: TimerManager
+      objectReference: {fileID: 0}
+    - target: {fileID: 1048754459432054650, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
       propertyPath: cm
