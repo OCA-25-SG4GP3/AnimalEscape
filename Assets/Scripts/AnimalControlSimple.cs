@@ -23,7 +23,7 @@ public struct PlayerInputKeys
 public class AnimalControlSimple : MonoBehaviour
 {
     PlayerInfoSystem playerInfoSystem;
-    [SerializeField] public PlayerInputKeys inputKeys = new(); //Player 1, Player 2 ?ï¿½ï¿½ÊX?ï¿½ï¿½ÉŒï¿½?ï¿½ï¿½ß‚ï¿½
+    [SerializeField] public PlayerInputKeys inputKeys = new(); //Player 1, Player 2 ??¿½?¿½ÊX??¿½?¿½ÉŒï¿½??¿½?¿½ß‚ï¿½
     Animator animator;
     [SerializeField] public float baseMoveSpeed = 5f;
     [SerializeField] public float moveSpeed = 5f; public void SetMoveSpeed(float _moveSpeed) { moveSpeed = _moveSpeed; }
@@ -32,10 +32,12 @@ public class AnimalControlSimple : MonoBehaviour
     [SerializeField] public float groundCheckRadius = 0.1f;
     [SerializeField, Header("Not a prefab")] private GameObject starPopEffect;
 
-    //?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½n?ï¿½ï¿½?ï¿½ï¿½SE?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½
-    public AudioClip jumpSound;      // ?ï¿½ï¿½W?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½v?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½Ìƒt?ï¿½ï¿½@?ï¿½ï¿½C?ï¿½ï¿½?ï¿½ï¿½
-    public AudioClip landingSound; // ?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½n?ï¿½ï¿½?ï¿½ï¿½
-    [NonSerializedAttribute] public AudioSource audioSource; // AudioSource?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½g?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ß‚Ì•Ïï¿½
+    //’…’n‚ÌSE‚ğ“ü‚ê‚é
+    public AudioClip jumpSound;      // ƒWƒƒƒ“ƒv‰¹‚Ìƒtƒ@ƒCƒ‹
+    public AudioClip landingSound;   // ’…’n‰¹
+    public AudioClip walkSound;      // •à‚­
+    [NonSerializedAttribute] public AudioSource audioSource; // AudioSource‚ğg‚¤‚½‚ß‚Ì•Ï”
+
 
     Rigidbody rb;
     Vector3 inputDir;
@@ -47,15 +49,15 @@ public class AnimalControlSimple : MonoBehaviour
 
     public GameObject smokeEffect;
     bool isAIControlled = false; public bool IsAIControlled => isAIControlled;
-    [NonSerializedAttribute] public bool isJumping = false;  // ?ï¿½ï¿½W?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½v?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½Ç‚ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ÇÕ‚ï¿½?ï¿½ï¿½?ï¿½ï¿½t?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½O
+    [NonSerializedAttribute] public bool isJumping = false;  // ??¿½?¿½W??¿½?¿½??¿½?¿½??¿½?¿½??¿½?¿½??¿½?¿½v??¿½?¿½??¿½?¿½??¿½?¿½??¿½?¿½??¿½?¿½Ç‚ï¿½??¿½?¿½??¿½?¿½??¿½?¿½??¿½?¿½ÇÕ‚ï¿½??¿½?¿½??¿½?¿½t??¿½?¿½??¿½?¿½??¿½?¿½O
     PlayerInput playerInput;
     OptionMenu optionMenu;
 
-    //ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½zï¿½[ï¿½ï¿½ï¿½hï¿½pï¿½Ç‰ï¿½
-    [SerializeField] public float holdJumpForce = 10f;      // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½Ô‚Ì’Ç‰ï¿½ï¿½ï¿½
-    public float maxJumpHoldTime = 0.2f;   // ï¿½Å‘ï¿½Å‰ï¿½ï¿½ï¿½ï¿½éï¿½ï¿½
-    public float jumpHoldCounter;   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½cï¿½èï¿½ï¿½
-    public bool jumpHeld;   // ï¿½ï¿½ï¿½İƒWï¿½ï¿½ï¿½ï¿½ï¿½vï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½é‚©ï¿½Ç‚ï¿½ï¿½ï¿½
+    //?¿½W?¿½?¿½?¿½?¿½?¿½v?¿½z?¿½[?¿½?¿½?¿½h?¿½p?¿½Ç‰ï¿½
+    [SerializeField] public float holdJumpForce = 10f;      // ?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½Ä‚ï¿½?¿½?¿½Ô‚Ì’Ç‰ï¿½?¿½?¿½
+    public float maxJumpHoldTime = 0.2f;   // ?¿½Å‘ï¿½Å‰ï¿½?¿½?¿½?¿½éï¿½?¿½
+    public float jumpHoldCounter;   // ?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½c?¿½èï¿½?¿½
+    public bool jumpHeld;   // ?¿½?¿½?¿½İƒW?¿½?¿½?¿½?¿½?¿½v?¿½{?¿½^?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½Ä‚ï¿½?¿½é‚©?¿½Ç‚ï¿½?¿½?¿½
 
     void Awake()
     {
@@ -85,25 +87,25 @@ public class AnimalControlSimple : MonoBehaviour
 
     //    jumpPressed = true;
     //}
-    //ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½m
+    //?¿½?¿½?¿½?¿½?¿½A?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½m
     public void OnJump(InputAction.CallbackContext context)
     {
         if (isAIControlled)
         {
-            jumpPressed = false;  // ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½Í‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ‚ï¿½ï¿½Lï¿½^ï¿½iï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½oï¿½bï¿½tï¿½@ï¿½pï¿½j
-            jumpHeld = false;   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½ï¿½ï¿½ï¿½
+            jumpPressed = false;  // ?¿½W?¿½?¿½?¿½?¿½?¿½v?¿½?¿½?¿½Í‚ï¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½Æ‚ï¿½?¿½L?¿½^?¿½i?¿½W?¿½?¿½?¿½?¿½?¿½v?¿½o?¿½b?¿½t?¿½@?¿½p?¿½j
+            jumpHeld = false;   // ?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½Ô‚ï¿½?¿½?¿½?¿½?¿½
             return;
         }
 
         if (context.performed)
         {
-            jumpPressed = true;  // ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½Í‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ‚ï¿½ï¿½Lï¿½^ï¿½iï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½oï¿½bï¿½tï¿½@ï¿½pï¿½j
-            jumpHeld = true;    // ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ï¿½Ô‚É‚ï¿½ï¿½ï¿½
+            jumpPressed = true;  // ?¿½W?¿½?¿½?¿½?¿½?¿½v?¿½?¿½?¿½Í‚ï¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½Æ‚ï¿½?¿½L?¿½^?¿½i?¿½W?¿½?¿½?¿½?¿½?¿½v?¿½o?¿½b?¿½t?¿½@?¿½p?¿½j
+            jumpHeld = true;    // ?¿½{?¿½^?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½Ä‚ï¿½?¿½?¿½?¿½Ô‚É‚ï¿½?¿½?¿½
         }
 
         if (context.canceled)
         {
-            jumpHeld = false;   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½ï¿½ï¿½ï¿½
+            jumpHeld = false;   // ?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½Ô‚ï¿½?¿½?¿½?¿½?¿½
         }
 
     }
@@ -158,7 +160,7 @@ public class AnimalControlSimple : MonoBehaviour
 
         inputDir = new Vector3(h, 0f, v).normalized;
 
-        // V?ï¿½ï¿½L?ï¿½ï¿½[?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½?ï¿½ï¿½ê‚½?ï¿½ï¿½u?ï¿½ï¿½Ô‚ÉƒG?ï¿½ï¿½t?ï¿½ï¿½F?ï¿½ï¿½N?ï¿½ï¿½g?ï¿½ï¿½Äï¿½
+        // V??¿½?¿½L??¿½?¿½[??¿½?¿½??¿½?¿½??¿½?¿½??¿½?¿½??¿½?¿½??¿½?¿½??¿½?¿½ê‚½??¿½?¿½u??¿½?¿½Ô‚ÉƒG??¿½?¿½t??¿½?¿½F??¿½?¿½N??¿½?¿½g??¿½?¿½Äï¿½
         //DEBUG
 #if UNITY_EDITOR
 
@@ -203,39 +205,38 @@ public class AnimalControlSimple : MonoBehaviour
         UpdateStunedState();
 
         // ===============================
-        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½iï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½j
+        // ?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½W?¿½?¿½?¿½?¿½?¿½v?¿½i?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½j
         // ===============================
 
-        // ï¿½ï¿½ï¿½ï¿½ï¿½F
-        // ï¿½Eï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½
-        // ï¿½Eï¿½ï¿½ï¿½İƒWï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½
-        // ï¿½Eï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â”\ï¿½Èï¿½ï¿½Ô‚ï¿½ï¿½cï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½
+        // ?¿½?¿½?¿½?¿½?¿½F
+        // ?¿½E?¿½W?¿½?¿½?¿½?¿½?¿½v?¿½{?¿½^?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½Ä‚ï¿½?¿½?¿½
+        // ?¿½E?¿½?¿½?¿½İƒW?¿½?¿½?¿½?¿½?¿½v?¿½?¿½
+        // ?¿½E?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½Â”\?¿½Èï¿½?¿½Ô‚ï¿½?¿½c?¿½?¿½?¿½Ä‚ï¿½?¿½?¿½
         if (jumpHeld && isJumping && jumpHoldCounter > 0f)
         {
-            // ï¿½ï¿½ï¿½İ‚Ì‘ï¿½ï¿½xï¿½ï¿½ï¿½æ“¾
+            // ?¿½?¿½?¿½İ‚Ì‘ï¿½?¿½x?¿½?¿½?¿½æ“¾
             Vector3 vel = rb.linearVelocity;
 
-            // ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½ÔAï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½ğ‘«‚ï¿½
-            // Time.deltaTime ï¿½ï¿½ï¿½|ï¿½ï¿½ï¿½é‚±ï¿½Æ‚Åƒtï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½gï¿½Ë‘ï¿½ï¿½ï¿½hï¿½ï¿½
+            // ?¿½?¿½?¿½?¿½?¿½Ä‚ï¿½?¿½?¿½ÔA?¿½?¿½?¿½?¿½?¿½?¿½?¿½Âï¿½?¿½?¿½?¿½?¿½?¿½?¿½x?¿½?«‚ï¿½
+            // Time.deltaTime ?¿½?¿½?¿½|?¿½?¿½?¿½é‚±?¿½Æ‚Åƒt?¿½?¿½?¿½[?¿½?¿½?¿½?¿½?¿½[?¿½g?¿½Ë‘ï¿½?¿½?¿½h?¿½?¿½
             vel.y += holdJumpForce * Time.deltaTime;
 
-            // ï¿½ï¿½ï¿½xï¿½ğ”½‰f
+            // ?¿½?¿½?¿½x?¿½?½‰f
             rb.linearVelocity = vel;
 
-            // ï¿½cï¿½ï¿½Ì‰ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½ï¿½ï¿½ç‚·
+            // ?¿½c?¿½?¿½Ì‰ï¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½Ô‚ï¿½?¿½?¿½?¿½ç‚·
             jumpHoldCounter -= Time.deltaTime;
         }
         // ===============================
-        // ï¿½ã¸ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½Iï¿½ï¿½
+        // ?¿½ã¸?¿½?¿½?¿½I?¿½?¿½?¿½?¿½?¿½?¿½?¿½W?¿½?¿½?¿½?¿½?¿½v?¿½I?¿½?¿½
         // ===============================
-        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½ï¿½0ï¿½È‰ï¿½ï¿½É‚È‚ï¿½ï¿½ï¿½ï¿½ï¿½
-        // ï¿½iï¿½ã¸ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½Aï¿½ï¿½ï¿½ï¿½ï¿½É“]ï¿½ï¿½ï¿½ï¿½ï¿½j
+        // ?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½x?¿½?¿½0?¿½È‰ï¿½?¿½É‚È‚ï¿½?¿½?¿½?¿½?¿½
+        // ?¿½i?¿½ã¸?¿½?¿½?¿½I?¿½?¿½?¿½A?¿½?¿½?¿½?¿½?¿½É“]?¿½?¿½?¿½?¿½?¿½j
         if (rb.linearVelocity.y <= 0f)
         {
             isJumping = false;
         }
     }
-
     private void UpdateAIControlled()
     {
 
@@ -284,30 +285,30 @@ public class AnimalControlSimple : MonoBehaviour
     //            audioSource.PlayOneShot(jumpSound);
     //    }
     //}
-    //ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½Jï¿½nï¿½ï¿½ï¿½ï¿½(ï¿½Å’ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½v)
+    //?¿½W?¿½?¿½?¿½?¿½?¿½v?¿½J?¿½n?¿½?¿½?¿½?¿½(?¿½Å’ï¿½W?¿½?¿½?¿½?¿½?¿½v)
     void Jump()
     {
-        // ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½oï¿½bï¿½tï¿½@ & ï¿½Rï¿½ï¿½ï¿½[ï¿½eï¿½^ï¿½Cï¿½ï¿½ï¿½Ì—ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Lï¿½ï¿½ï¿½È‚Æ‚ï¿½ï¿½Ì‚İƒWï¿½ï¿½ï¿½ï¿½ï¿½v
+        // ?¿½W?¿½?¿½?¿½?¿½?¿½v?¿½o?¿½b?¿½t?¿½@ & ?¿½R?¿½?¿½?¿½[?¿½e?¿½^?¿½C?¿½?¿½?¿½Ì—ï¿½?¿½?¿½?¿½?¿½?¿½L?¿½?¿½?¿½È‚Æ‚ï¿½?¿½Ì‚İƒW?¿½?¿½?¿½?¿½?¿½v
         if (jumpBufferCounter > 0f && coyoteCounter > 0f)
         {
-            // ï¿½ï¿½ï¿½İ‚ï¿½ Rigidbody ï¿½Ì‘ï¿½ï¿½xï¿½ï¿½ï¿½æ“¾
+            // ?¿½?¿½?¿½İ‚ï¿½ Rigidbody ?¿½Ì‘ï¿½?¿½x?¿½?¿½?¿½æ“¾
             Vector3 vel = rb.linearVelocity;
-            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½iYï¿½jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½pï¿½ï¿½ï¿½xï¿½É•ÏX
-            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‘ï¿½ï¿½xï¿½ÍˆÛï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            // ?¿½?¿½?¿½?¿½?¿½?¿½iY?¿½j?¿½?¿½?¿½?¿½?¿½?¿½?¿½W?¿½?¿½?¿½?¿½?¿½v?¿½p?¿½?¿½?¿½x?¿½É•ÏX
+            // ?¿½?¿½?¿½?¿½?¿½?¿½?¿½Ì‘ï¿½?¿½x?¿½ÍˆÛï¿½?¿½?¿½?¿½?¿½?¿½
             vel.y = jumpForce;
-            // ï¿½ÏXï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½xï¿½ï¿½ Rigidbody ï¿½É”ï¿½ï¿½f
+            // ?¿½ÏX?¿½?¿½?¿½?¿½?¿½?¿½?¿½x?¿½?¿½ Rigidbody ?¿½É”ï¿½?¿½f
             rb.linearVelocity = vel;
-            // ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ‚ï¿½ï¿½pï¿½Ìƒ^ï¿½Cï¿½}ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½Zï¿½bï¿½g
+            // ?¿½{?¿½^?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½Æ‚ï¿½?¿½p?¿½Ìƒ^?¿½C?¿½}?¿½[?¿½?¿½?¿½?¿½?¿½Z?¿½b?¿½g
             jumpHoldCounter = maxJumpHoldTime;
-            // ï¿½ï¿½ï¿½Í‚ÆƒRï¿½ï¿½ï¿½[ï¿½eï¿½^ï¿½Cï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½i1ï¿½ï¿½ÌƒWï¿½ï¿½ï¿½ï¿½ï¿½vï¿½Ågï¿½ï¿½ï¿½Ø‚ï¿½j
+            // ?¿½?¿½?¿½Í‚ÆƒR?¿½?¿½?¿½[?¿½e?¿½^?¿½C?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½i1?¿½?¿½ÌƒW?¿½?¿½?¿½?¿½?¿½v?¿½Åg?¿½?¿½?¿½Ø‚ï¿½j
             jumpBufferCounter = 0f;
             coyoteCounter = 0f;
-            // ï¿½nï¿½Ê‚É‚ï¿½ï¿½é”»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½É‰ï¿½ï¿½ï¿½ï¿½iï¿½ï¿½ï¿½ï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½hï¿½~ï¿½j
+            // ?¿½n?¿½Ê‚É‚ï¿½?¿½é”»?¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½I?¿½É‰ï¿½?¿½?¿½?¿½i?¿½?¿½?¿½?¿½?¿½W?¿½?¿½?¿½?¿½?¿½v?¿½h?¿½~?¿½j
             jumpChecker.isGrounded = false;
-            // ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½Ô‚É“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ‚ï¿½ï¿½Lï¿½^
+            // ?¿½W?¿½?¿½?¿½?¿½?¿½v?¿½?¿½Ô‚É“ï¿½?¿½?¿½?¿½?¿½?¿½?¿½?¿½Æ‚ï¿½?¿½L?¿½^
             isJumping = true;
 
-            // ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½ï¿½1ï¿½ñ‚¾‚ï¿½ï¿½Äï¿½
+            // ?¿½W?¿½?¿½?¿½?¿½?¿½v?¿½?¿½?¿½?¿½1?¿½?¾‚ï¿½?¿½Äï¿½
             if (audioSource && jumpSound)
                 audioSource.PlayOneShot(jumpSound);
         }
@@ -322,6 +323,27 @@ public class AnimalControlSimple : MonoBehaviour
         vel.x = inputDir.x * moveSpeed;
         vel.z = inputDir.z * moveSpeed;
         rb.linearVelocity = vel;
+        //audioSource.PlayOneShot(walkSound);
+
+        if (inputDir.sqrMagnitude > 0.001f) // “®‚¢‚Ä‚¢‚éê‡
+        {
+            // ƒ‹[ƒv—p‚Ì•às‰¹‚ğİ’è
+            if (!audioSource.isPlaying && walkSound != null)
+            {
+                audioSource.clip = walkSound;
+                audioSource.loop = true;
+                audioSource.Play();
+            }
+        }
+        else
+        {
+            // ~‚Ü‚Á‚½ê‡Aƒ‹[ƒv‚ğ’â~
+            if (audioSource.isPlaying && walkSound != null)
+            {
+                audioSource.Stop();
+            }
+        }
+
     }
 
     float turningSpeed = 10f;
@@ -331,6 +353,7 @@ public class AnimalControlSimple : MonoBehaviour
         {
             Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, turningSpeed * Time.fixedDeltaTime);
+            
         }
     }
     private Cooldown idle2AnimCooldown = new(5.0f);

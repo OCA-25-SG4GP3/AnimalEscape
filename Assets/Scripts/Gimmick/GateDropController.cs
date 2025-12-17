@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
+
 
 public class GateDropController : MonoBehaviour
 {
@@ -9,6 +11,14 @@ public class GateDropController : MonoBehaviour
 
     private bool fullyOpened = false;
 
+    public AudioClip gateSound;      // ゲート音のファイル
+    private AudioSource audioSource; // AudioSourceを使うための変数
+
+
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
     // Drop một bước, nhưng nếu đây là lần cuối (finalStep = true) thì hạ 100%
     public void DropStep(bool finalStep = false)
     {
@@ -32,6 +42,7 @@ public class GateDropController : MonoBehaviour
     private System.Collections.IEnumerator SmoothMove(float targetY)
     {
         Vector3 pos = transform.position;
+        audioSource.PlayOneShot(gateSound);
         while (Mathf.Abs(pos.y - targetY) > 0.01f)
         {
             pos.y = Mathf.Lerp(pos.y, targetY, Time.deltaTime * dropSpeed);
