@@ -26,7 +26,7 @@ public class ColorPanelRoomTimer : MonoBehaviour
     }
     void SetSlider()
     {
-        timerSlider.value = startingTime - totalTime; // slider increases as time passes
+        timerSlider.value = startingTime - totalTime; // slider increases as time passes        
     }
 
     void Update()
@@ -100,9 +100,11 @@ public class ColorPanelRoomTimer : MonoBehaviour
         SetSlider();
     }
 
-
     public void AddTime()
-    {
-        totalTime += addTimePerRoom;
+    {        
+        totalTime += addTimePerRoom;        
+        //追加:江頭,イザン
+        //時間を追加する瞬間SetSliderでゲージ値が初期になるようにしています
+        totalTime = timerSlider.maxValue;
     }
 }
