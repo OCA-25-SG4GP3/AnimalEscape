@@ -1972,6 +1972,7 @@ MonoBehaviour:
   starPopEffect: {fileID: 689128422694211566}
   jumpSound: {fileID: 8300000, guid: 1b2c5d0f7b9f30040b06bfb09b96cbe1, type: 3}
   landingSound: {fileID: 8300000, guid: cb6949d082b1ce44bb1b6031187e123f, type: 3}
+  walkSound: {fileID: 8300000, guid: 0a6ed21390ff69b4b88e4dd7be1771bf, type: 3}
   moveEffect: {fileID: 1344314377593938, guid: 9e03786a9517b604d8e930182607a128, type: 3}
   smokeEffect: {fileID: 1735024089641582, guid: 378b2c30ef426554495292cb902cb8f4, type: 3}
   holdJumpForce: 10
