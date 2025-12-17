@@ -149,7 +149,7 @@ public class AnimalControlSimple : MonoBehaviour
                 moveEffectFrame++;
                 if (moveEffectFrame >= 20)
                 {
-                    if(isJumping == false)
+                    if(isJumping == false && jumpChecker.isGrounded)
                     { 
                         Instantiate(moveEffect, transform.position, transform.rotation);
                     }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Unity.Cinemachine;
+using System;
 
 public class ColorPanelGate : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public class ColorPanelGate : MonoBehaviour
     private bool gateOpened = false;
     private readonly List<ColorPanelPuzzle> allPanels = new();
     private readonly List<ColorPanelPuzzle> steppedPanels = new();
+
+    [SerializeField] private GameObject correctEffect;
 
     void Awake()
     {
@@ -58,6 +61,11 @@ public class ColorPanelGate : MonoBehaviour
                     if (usingSides && IsSameSide(panelA, panelB)) return;
                     // Matched pair!
                     OnSuccessfulMatch(panelA, panelB);
+                    GameObject instans_A = Instantiate(correctEffect, panelA.transform.position, panelA.transform.rotation);
+                    GameObject instans_B = Instantiate(correctEffect, panelB.transform.position, panelB.transform.rotation);
+
+                    Destroy(instans_A, 2f);
+                    Destroy(instans_B, 2f);
 
                     return; // stop after first pair
                 }

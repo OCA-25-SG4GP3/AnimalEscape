@@ -23,7 +23,6 @@ public class ColorPanelPuzzle : MonoBehaviour
     private Coroutine resetCoroutine;
 
     public GameObject steppedEffect;
-    public GameObject correctEffect;
 
 
     void Awake()
@@ -90,7 +89,6 @@ public class ColorPanelPuzzle : MonoBehaviour
 
             if (IsCurrentlyUsingHidingMaterial()) //If any hiding mat is assigned
             {
-                Instantiate(correctEffect, transform.position, transform.rotation);
                 RestoreToCorrectMaterial();
                 returnToWhiteCD.StartCooldown();
             }
