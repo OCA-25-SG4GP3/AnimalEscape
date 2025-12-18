@@ -1962,7 +1962,7 @@ MonoBehaviour:
     specialAction: 304
     horizontalAxis: 0
     verticalAxis: 0
-  baseMoveSpeed: 5
+  baseMoveSpeed: 6
   moveSpeed: 5
   jumpForce: 3
   groundMask:
