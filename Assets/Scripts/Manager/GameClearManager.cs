@@ -6,9 +6,11 @@ public class GameClearManager : MonoBehaviour
 {
     [SerializeField] private ClearTime _clearTimeSO;
     [SerializeField] private GameObject finishImageObject;
+     private GameObject fadeObject;
+    [SerializeField] private bool setFinishImageOnClearGame = false;
 
     //[SerializeField] private Text _clearTimeText;
-    [SerializeField] private string nextSceneName = "NextScene"; // 次に移動するシーン�?
+    [SerializeField] private string nextSceneName = "NextScene"; // 次に移動するシーン�?
     bool isFinish = false;
     private void Start()
     {
@@ -24,16 +26,26 @@ public class GameClearManager : MonoBehaviour
             collision.gameObject.SetActive(false);
             playerFinishCount++;
             if (playerFinishCount >= 2) //2 Players are in
-                ClearGameByFinish();
+                SetClearGameByFinish();
         }
     }
-    void ClearGameByFinish()
+    [SerializeField] private float fadeOutDelay = 3.0f;
+    [SerializeField] private float loadNextSceneDelay = 4.0f;
+    public void SetClearGameByFinish()
     {
         if (isFinish) return;
         isFinish = true;
-        finishImageObject.SetActive(true);
-        Invoke("LoadNextScene", 3.0f);
+        Invoke("SetFadeOut", fadeOutDelay);
+        if (setFinishImageOnClearGame) finishImageObject.SetActive(true);
+        Invoke("LoadNextScene", loadNextSceneDelay);
     }
+
+    private void SetFadeOut()
+    {
+        fadeObject = GameObject.FindGameObjectWithTag("FadeObject");
+        fadeObject.GetComponent<Animator>().Play("FadeOut");
+    }
+
     void LoadNextScene() { SceneManager.LoadScene(nextSceneName); }
 
     int playerFinishCount = 0;

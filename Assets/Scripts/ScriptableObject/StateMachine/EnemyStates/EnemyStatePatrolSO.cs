@@ -1,10 +1,10 @@
 using UnityEngine;
-//EnemyStatePatrolSO.cs ¨ “G‚ª„‰ñ‚µ‚Ä‚¢‚éó‘Ô
+//EnemyStatePatrolSO.cs ï¿½ï¿½ ï¿½Gï¿½ï¿½ï¿½ï¿½ï¿½ñ‚µ‚Ä‚ï¿½ï¿½ï¿½ï¿½ï¿½
 
 
 
 [CreateAssetMenu(fileName = "EnemyStatePatrolSO", menuName = "State/EnemyState/EnemyStatePatrolSO")]
-public class EnemyStatePatrolSO : EnemyStateBaseSO ///æ±ºã‚ãŸå ´æ‰€ã«ãƒ‘ãƒˆãƒ­ãƒ¼ãƒ« / å·¡å›?
+public class EnemyStatePatrolSO : EnemyStateBaseSO ///æ±ºã‚ãŸå ´æ‰€ã«ãƒ‘ãƒˆãƒ­ãƒ¼ãƒ« / å·¡ï¿½?
 {
     private Transform _currentPatrolSpotT;
     private int _mode = 0;
@@ -18,7 +18,7 @@ public class EnemyStatePatrolSO : EnemyStateBaseSO ///æ±ºã‚ãŸå ´æ‰€ã«ãƒ‘ãƒˆãƒ
     public override void UpdateState()
     {
         GameObject closestTarget = _logicController.CheckUncaughtTargetsInCone();
-        if (closestTarget || _logicController.infiniteDetectionRange)
+        if (closestTarget)
         {
             if(closestTarget) _logicController.CurrentTarget = closestTarget;
             _logicController.SetState(_logicController.DetectingStateInstance);
@@ -65,7 +65,7 @@ public class EnemyStatePatrolSO : EnemyStateBaseSO ///æ±ºã‚ãŸå ´æ‰€ã«ãƒ‘ãƒˆãƒ
         for (int i = 0; i < _logicController.PatrolSpots.Count; i++)
         {
             if (_logicController.PatrolSpots[i] == null)
-            { Debug.Log("„‰ñêŠ‚ªƒkƒ‹!"); continue; }
+            { Debug.Log("ï¿½ï¿½ï¿½ï¿½êŠï¿½ï¿½ï¿½kï¿½ï¿½!"); continue; }
 
             float dist = Vector3.SqrMagnitude(_logicController.PatrolSpots[i].position - myPos);
             if (dist < closestDist)

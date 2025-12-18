@@ -122,11 +122,11 @@ public class ColorPanelGate : MonoBehaviour
 
         if (isFinalStep)
         {
-            OpenGate();
+            OpenGateFully();
         }
     }
 
-    public void OpenGate()
+    public void OpenGateFully()
     {
         gateOpened = true;
 
@@ -137,20 +137,15 @@ public class ColorPanelGate : MonoBehaviour
         }
 
         // Add time bonus
-        if (colorPanelRoomTimer)
-        {
-            colorPanelRoomTimer.AddTime();
-        }
+        if (colorPanelRoomTimer) { colorPanelRoomTimer.AddTime(); }
 
         // Open gate animation
-        if (gateAnimator)
-        {
-            gateAnimator.Play("GateLift");
-        }
+        //if (gateAnimator)        {            gateAnimator.Play("GateLift");        }
 
         // Auto walk players
-        AutoWalkPlayersToSpot();
-        gateDropController.DropStep(true);
+        //AutoWalkPlayersToSpot();
+
+        gateDropController.DropStep(true, AutoWalkPlayersToSpot);
     }
 
     private void AutoWalkPlayersToSpot()
@@ -160,16 +155,20 @@ public class ColorPanelGate : MonoBehaviour
         var playerDistManager = FindAnyObjectByType<PlayerDistanceManager>();
         if (!playerDistManager) return;
 
+        bool isLastGate = GameObject.FindObjectsByType<ColorPanelGate>(FindObjectsSortMode.None).All(g => g == this || g.IsGateOpened());
+
         var player1AnimalControl = playerDistManager.Player1.GetComponent<AnimalControlSimple>();
         if (player1AnimalControl && playerAIMoveToTransform[0])
         {
-            player1AnimalControl.SetMoveTo(playerAIMoveToTransform[0].position);
+            player1AnimalControl.UnlockInput(); // Unlock before setting AI control
+            player1AnimalControl.SetMoveTo(playerAIMoveToTransform[0].position, isLastGate);
         }
 
         var player2AnimalControl = playerDistManager.Player2.GetComponent<AnimalControlSimple>();
         if (player2AnimalControl && playerAIMoveToTransform[1])
         {
-            player2AnimalControl.SetMoveTo(playerAIMoveToTransform[1].position);
+            player2AnimalControl.UnlockInput(); // Unlock before setting AI control
+            player2AnimalControl.SetMoveTo(playerAIMoveToTransform[1].position, isLastGate);
         }
     }
 }

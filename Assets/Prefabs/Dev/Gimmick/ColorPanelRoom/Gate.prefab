@@ -79,7 +79,8 @@ MonoBehaviour:
   startY: 0
   endY: -6
   partialStepPercentage: 0.1
-  dropSpeed: 1.5
+  dropSpeed: 0.5
+  finalDropSpeed: 3
 --- !u!1 &3875006494217275180
 GameObject:
   m_ObjectHideFlags: 0

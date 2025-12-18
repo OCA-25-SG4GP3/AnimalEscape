@@ -72,6 +72,12 @@ public class ColorPanelRoomTimer : MonoBehaviour
         ButtonSceneChanger.ChangeScene("TemporaryGameOver");
     }
 
+    public void SetGameOverByOneCaught() //全員捕まえた理由でゲームオーバー
+    {
+        if (gameOverImage.activeSelf) return;
+        gameOverImage.SetActive(true);
+        Invoke("ResetSceneByGameOverImpl", timeBeforeGameOverScreen);
+    }
     public void SetGameOverByAllCaught() //全員捕まえた理由でゲームオーバー
     {
         if (gameOverImage.activeSelf) return;
@@ -84,6 +90,13 @@ public class ColorPanelRoomTimer : MonoBehaviour
         totalTime = 0;
         // UpdateTimeText();
 
+        SpawnZookeepers();
+        isGameOver = true;
+        SetSlider();
+    }
+
+    private void SpawnZookeepers()
+    {
         foreach (Transform spawnT in spawnTs)
         {
             if (spawnT == null || zookeeperPrefab == null)
@@ -96,10 +109,7 @@ public class ColorPanelRoomTimer : MonoBehaviour
             AILogicController aiLogic = inst.GetComponent<AILogicController>();
             aiLogic.SetStateByEnum(AILogicController.SelectedState.InfiniteChase);
         }
-        isGameOver = true;
-        SetSlider();
     }
-
 
     public void AddTime()
     {

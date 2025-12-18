@@ -23,19 +23,19 @@ public struct PlayerInputKeys
 public class AnimalControlSimple : MonoBehaviour
 {
     PlayerInfoSystem playerInfoSystem;
-    [SerializeField] public PlayerInputKeys inputKeys = new(); //Player 1, Player 2 ?��ʁX?��Ɍ�?��߂�
+    [SerializeField] public PlayerInputKeys inputKeys = new(); //Player 1, Player 2 
     Animator animator;
     [SerializeField] public float baseMoveSpeed = 5f;
     [SerializeField] public float moveSpeed = 5f; public void SetMoveSpeed(float _moveSpeed) { moveSpeed = _moveSpeed; }
+    [SerializeField] private float moveSpeedOnFinishMult = 1.3f;
     [SerializeField] public float jumpForce = 5f;
     [SerializeField] public LayerMask groundMask;
     [SerializeField] public float groundCheckRadius = 0.1f;
     [SerializeField, Header("Not a prefab")] private GameObject starPopEffect;
 
-    //?��?��?��n?��?��SE?��?��?��?��?��?��
-    public AudioClip jumpSound;      // ?��W?��?��?��?��?��v?��?��?��̃t?��@?��C?��?��
-    public AudioClip landingSound; // ?��?��?��n?��?��
-    [NonSerializedAttribute] public AudioSource audioSource; // AudioSource?��?��?��g?��?��?��?��?��߂̕ϐ�
+    public AudioClip jumpSound;      //
+    public AudioClip landingSound; // 
+    [NonSerializedAttribute] public AudioSource audioSource; // AudioSource
 
     Rigidbody rb;
     Vector3 inputDir;
@@ -47,15 +47,20 @@ public class AnimalControlSimple : MonoBehaviour
 
     public GameObject smokeEffect;
     bool isAIControlled = false; public bool IsAIControlled => isAIControlled;
-    [NonSerializedAttribute] public bool isJumping = false;  // ?��W?��?��?��?��?��v?��?��?��?��?��ǂ�?��?��?��?��ǐՂ�?��?��t?��?��?��O
-    PlayerInput playerInput;
+    public void SetAIControlled(bool value) { isAIControlled = value; }
+    bool isInputLocked = false;
+    public void LockInput() { isInputLocked = true; }
+    public void UnlockInput() { isInputLocked = false; }
+    [NonSerializedAttribute] public bool isJumping = false;
+    //PlayerInput playerInput;
     OptionMenu optionMenu;
 
-    //�W�����v�z�[���h�p�ǉ�
-    [SerializeField] public float holdJumpForce = 10f;      // ���������Ă���Ԃ̒ǉ���
-    public float maxJumpHoldTime = 0.2f;   // �ő�ŉ����鎞��
-    public float jumpHoldCounter;   // ������������c�莞��
-    public bool jumpHeld;   // ���݃W�����v�{�^����������Ă��邩�ǂ���
+    // ジャンプホールド用の追加設定
+    [SerializeField] public float holdJumpForce = 10f;      // ボタンを押している間の追加力
+    public float maxJumpHoldTime = 0.2f;   // 最大で押し続けられる時間
+    public float jumpHoldCounter;   // ジャンプホールドの残り時間
+    public bool jumpHeld;   // 現在ジャンプボタンを押し続けているかどうか
+    bool finishOnAIReachTarget = false;
 
     void Awake()
     {
@@ -63,7 +68,7 @@ public class AnimalControlSimple : MonoBehaviour
         jumpChecker = GetComponentInChildren<JumpChecker>();
         rb = GetComponent<Rigidbody>();
         playerInfoSystem = GameObject.FindAnyObjectByType<PlayerInfoSystem>();
-        playerInput = GetComponent<PlayerInput>();
+        //playerInput = GetComponent<PlayerInput>();
         optionMenu = FindAnyObjectByType<OptionMenu>();
     }
 
@@ -71,7 +76,6 @@ public class AnimalControlSimple : MonoBehaviour
     void Start()
     {
         moveSpeed = baseMoveSpeed;
-
         audioSource = GetComponent<AudioSource>();
     }
     private Vector2 moveInput;
@@ -79,36 +83,28 @@ public class AnimalControlSimple : MonoBehaviour
     {
         moveInput = context.ReadValue<Vector2>();
     }
-    //public void OnJump(InputAction.CallbackContext context)
-    //{
-    //    if (!context.performed) return; // only trigger on performed
 
-    //    jumpPressed = true;
-    //}
-    //�����A���������m
     public void OnJump(InputAction.CallbackContext context)
     {
         if (isAIControlled)
         {
-            jumpPressed = false;  // �W�����v���͂����������Ƃ��L�^�i�W�����v�o�b�t�@�p�j
-            jumpHeld = false;   // ����������Ԃ�����
+            jumpPressed = false;
+            jumpHeld = false;
             return;
         }
 
         if (context.performed)
         {
-            jumpPressed = true;  // �W�����v���͂����������Ƃ��L�^�i�W�����v�o�b�t�@�p�j
-            jumpHeld = true;    // �{�^���������Ă����Ԃɂ���
+            jumpPressed = true;
+            jumpHeld = true;
         }
 
         if (context.canceled)
         {
-            jumpHeld = false;   // ����������Ԃ�����
+            jumpHeld = false;
         }
 
     }
-
-
 
     Vector3 aiMoveTarget;
     public void SetMoveTo(Vector3 newMoveTarget)
@@ -119,6 +115,14 @@ public class AnimalControlSimple : MonoBehaviour
         // Clear any existing player input to prevent sliding
         moveInput = Vector2.zero;
         inputDir = Vector3.zero;
+
+        if (animator.HasParameterOfType("IsWalking", AnimatorControllerParameterType.Bool))
+            animator.SetBool("IsWalking", true);
+    }
+    public void SetMoveTo(Vector3 newMoveTarget, bool isLastGate)
+    {
+        SetMoveTo(newMoveTarget);
+        if (isLastGate) finishOnAIReachTarget = true;
     }
 
     private void UpdateInput()
@@ -126,7 +130,7 @@ public class AnimalControlSimple : MonoBehaviour
         float h = 0f;
         float v = 0f;
 
-        if (!isStuned)
+        if (!isStuned && !isInputLocked)
         {
             h += moveInput.x;
             v += moveInput.y;
@@ -149,8 +153,8 @@ public class AnimalControlSimple : MonoBehaviour
                 moveEffectFrame++;
                 if (moveEffectFrame >= 20)
                 {
-                    if(isJumping == false && jumpChecker.isGrounded)
-                    { 
+                    if (isJumping == false && jumpChecker.isGrounded)
+                    {
                         Instantiate(moveEffect, transform.position, transform.rotation);
                     }
                     moveEffectFrame = 0;
@@ -161,7 +165,6 @@ public class AnimalControlSimple : MonoBehaviour
 
         inputDir = new Vector3(h, 0f, v).normalized;
 
-        // V?��L?��[?��?��?��?��?��?��?��ꂽ?��u?��ԂɃG?��t?��F?��N?��g?��Đ�
         //DEBUG
 #if UNITY_EDITOR
 
@@ -175,8 +178,11 @@ public class AnimalControlSimple : MonoBehaviour
     [SerializeField] private float jumpBufferTime = 0.15f; // store input
     [SerializeField] private float coyoteTime = 0.1f;      // allow jump after leaving ground
 
+    // Tracks remaining time to buffer a jump input (allows jump shortly after pressing button)
     private float jumpBufferCounter = 0f;
+    // Tracks remaining time for "coyote time" (allows jump shortly after leaving ground)
     private float coyoteCounter = 0f;
+    // Stores whether jump button was pressed this frame (reset to false each Update)
     bool jumpPressed = false;
     void Update()
     {
@@ -206,33 +212,18 @@ public class AnimalControlSimple : MonoBehaviour
         UpdateStunedState();
 
         // ===============================
-        // ���������W�����v�i���������j
-        // ===============================
 
-        // �����F
-        // �E�W�����v�{�^�������������Ă���
-        // �E���݃W�����v��
-        // �E���������\�Ȏ��Ԃ��c���Ă���
         if (jumpHeld && isJumping && jumpHoldCounter > 0f)
         {
-            // ���݂̑��x���擾
             Vector3 vel = rb.linearVelocity;
 
-            // �����Ă���ԁA��������������x�𑫂�
-            // Time.deltaTime ���|���邱�ƂŃt���[�����[�g�ˑ���h��
             vel.y += holdJumpForce * Time.deltaTime;
 
-            // ���x�𔽉f
             rb.linearVelocity = vel;
 
-            // �c��̉����������Ԃ����炷
             jumpHoldCounter -= Time.deltaTime;
         }
-        // ===============================
-        // �㏸���I�������W�����v�I��
-        // ===============================
-        // ��������x��0�ȉ��ɂȂ�����
-        // �i�㏸���I���A�����ɓ]�����j
+
         if (rb.linearVelocity.y <= 0f)
         {
             isJumping = false;
@@ -241,7 +232,6 @@ public class AnimalControlSimple : MonoBehaviour
 
     private void UpdateAIControlled()
     {
-
         // Move straight toward target
         transform.position = Vector3.MoveTowards(transform.position, aiMoveTarget, moveSpeed * Time.deltaTime);
 
@@ -249,68 +239,63 @@ public class AnimalControlSimple : MonoBehaviour
 
         if (direction != Vector3.zero)
         {
+            // Flatten direction to horizontal plane (ignore Y axis)
+            direction.y = 0f;
+            direction.Normalize();
+
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, turningSpeed * Time.deltaTime);
         }
-
 
         //Stop when close
         if (Vector3.Distance(transform.position, aiMoveTarget) < 0.1f)
         {
             isAIControlled = false;
+            if (animator.HasParameterOfType("IsWalking", AnimatorControllerParameterType.Bool))
+                animator.SetBool("IsWalking", false);
+
+            if (finishOnAIReachTarget)
+            {
+                OnAIReachTarget();
+            }
+        }
+    }
+
+    private void OnAIReachTarget()
+    {
+        GameClearManager gameClearManager = FindAnyObjectByType<GameClearManager>();
+        if (gameClearManager)
+        {
+            gameClearManager.SetClearGameByFinish();
+            //Last AI MOVE to exit point
+            rb.isKinematic = true;
+            SetMoveSpeed(baseMoveSpeed * moveSpeedOnFinishMult);
+            SetMoveTo(transform.position + Vector3.right * 1000.0f); //Move to far away
         }
     }
 
     void FixedUpdate()
     {
-        moveSpeed = baseMoveSpeed;
-        //moveSpeed = playerInfoSystem.GetDistanceAffectedPlayerSpeed(baseMoveSpeed);
         Move();
         Jump();
     }
 
-    //void Jump()
-    //{
-    //    if (jumpBufferCounter > 0f && coyoteCounter > 0f)
-    //    {
-    //        Vector3 vel = rb.linearVelocity;
-    //        vel.y = jumpForce;
-    //        rb.linearVelocity = vel;
-
-    //        jumpBufferCounter = 0f; // consume input
-    //        coyoteCounter = 0f;     // consume coyote
-    //        jumpChecker.isGrounded = false; // prevent infinite jump
-    //        isJumping = true;
-
-    //        // Play sound only here
-    //        if (audioSource != null && jumpSound != null)
-    //            audioSource.PlayOneShot(jumpSound);
-    //    }
-    //}
-    //�W�����v�J�n����(�Œ�W�����v)
     void Jump()
     {
-        // �W�����v�o�b�t�@ & �R���[�e�^�C���̗������L���ȂƂ��̂݃W�����v
         if (jumpBufferCounter > 0f && coyoteCounter > 0f)
         {
-            // ���݂� Rigidbody �̑��x���擾
             Vector3 vel = rb.linearVelocity;
-            // ������iY�j�������W�����v�p���x�ɕύX
-            // �������̑��x�͈ێ������
             vel.y = jumpForce;
-            // �ύX�������x�� Rigidbody �ɔ��f
             rb.linearVelocity = vel;
-            // �{�^���������������Ƃ��p�̃^�C�}�[�����Z�b�g
+
             jumpHoldCounter = maxJumpHoldTime;
-            // ���͂ƃR���[�e�^�C��������i1��̃W�����v�Ŏg���؂�j
             jumpBufferCounter = 0f;
             coyoteCounter = 0f;
-            // �n�ʂɂ��锻��������I�ɉ����i�����W�����v�h�~�j
+
             jumpChecker.isGrounded = false;
-            // �W�����v��Ԃɓ��������Ƃ��L�^
+
             isJumping = true;
 
-            // �W�����v����1�񂾂��Đ�
             if (audioSource && jumpSound)
                 audioSource.PlayOneShot(jumpSound);
         }
@@ -341,10 +326,10 @@ public class AnimalControlSimple : MonoBehaviour
     {
         if (!animator) return;
 
-        bool isMoving = inputDir.sqrMagnitude > 0.001f;
+        bool isMoving = inputDir.sqrMagnitude > 0.001f && !isAIControlled;
 
-
-        if (animator.HasParameterOfType("IsWalking", AnimatorControllerParameterType.Bool))
+        // Don't override walking animation if AI is controlling it
+        if (!isAIControlled && animator.HasParameterOfType("IsWalking", AnimatorControllerParameterType.Bool))
             animator.SetBool("IsWalking", isMoving);
 
         if (animator.HasParameterOfType("IsJumping", AnimatorControllerParameterType.Bool))
@@ -428,16 +413,6 @@ public class AnimalControlSimple : MonoBehaviour
 
         //Debug.Log($"{name} recovered from Frozen state!");
     }
-
-    /* private void OnTriggerEnter(Collider other)
-     {
-         if (other.gameObject.CompareTag("Dart"))
-         {
-             EnterStunedState();
-         }
-     }*/
-
-    //PAUSE MENU INPUT HANDLING
 
     public void OnPauseMenu(InputAction.CallbackContext context)
     {

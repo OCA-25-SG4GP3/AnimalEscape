@@ -21,7 +21,7 @@ public class DebugCheat : MonoBehaviour
             if (activeGate != null)
             {
                 Debug.Log($"DEBUG CHEAT : Alpha2 - Opening {activeGate.gameObject.name}");
-                activeGate.OpenGate();
+                activeGate.OpenGateFully();
             }
         }
     }
