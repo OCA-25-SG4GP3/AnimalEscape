@@ -415,7 +415,7 @@ public class AnimalControlSimple : MonoBehaviour
 
 public static class AnimatorExtensions
 {
-    public static bool HasParameterOfType(this Animator animator, string paramName, AnimatorControllerParameterType.Bool))
+    public static bool HasParameterOfType(this Animator animator, string paramName, AnimatorControllerParameterType type)
     {
         foreach (var param in animator.parameters)
         {
