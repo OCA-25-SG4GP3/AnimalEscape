@@ -11,16 +11,20 @@ public class ColorPanelPuzzle : MonoBehaviour
     [NonSerializedAttribute] public Material correctPanelMaterial;
     [SerializeField] private Material pressedMaterial;
     public bool upSide = true; //is this upside or downside (to prevent double press / exploit)
-    [SerializeField, Header("éš ã—ãŸã„å ´åˆãƒãƒ†ãƒªã‚¢ãƒ«")] private Material hidingMaterial;
-    [SerializeField, Header("ä½•ç§’ã¾ã§ãƒªã‚»ãƒƒãƒˆ")] private float autoResetTimer = 1.0f;
+    [SerializeField, Header("éš ã—ãŸãE ´åˆãEãƒEƒªã‚¢ãƒ«")] private Material hidingMaterial;
+    [SerializeField, Header("ä½•ç§’ã¾ã§ãƒªã‚»ãƒEƒˆ")] private float autoResetTimer = 1.0f;
 
-    public AudioClip pushSound;      // ï¿½Wï¿½ï¿½ï¿½ï¿½ï¿½vï¿½ï¿½ï¿½Ìƒtï¿½@ï¿½Cï¿½ï¿½
-    private AudioSource audioSource; // AudioSourceï¿½ï¿½ï¿½gï¿½ï¿½ï¿½ï¿½ï¿½ß‚Ì•Ïï¿½
+    public AudioClip pushSound;      // E½WE½E½E½E½E½vE½E½E½ÌƒtE½@E½CE½E½
+    private AudioSource audioSource; // AudioSourceE½E½E½gE½E½E½E½E½ß‚Ì•Ïï¿½
 
 
-    public bool isStepped = false; //æŠ¼ã•ã‚Œã¦ã„ã‚‹ã‹ã©ã†ã‹
+    public bool isStepped = false; //æŠ¼ã•ã‚Œã¦ãE‚‹ã‹ã©ãE‹
     [SerializeField] private Cooldown returnToWhiteCD = new(3.0f);
     private Coroutine resetCoroutine;
+
+    public GameObject steppedEffect;
+
+
     void Awake()
     {
         colorPanelGate = GetActiveGate();
@@ -75,7 +79,9 @@ public class ColorPanelPuzzle : MonoBehaviour
 
             isStepped = true;
             animator.Play("ColorPanelPressedAnim");
-            //audioSource.PlayOneShot(pushSound); //ï¿½jï¿½ó‚³‚ï¿½ï¿½Æƒoï¿½Oï¿½ï¿½
+            //audioSource.PlayOneShot(pushSound); //E½jE½ó‚³‚ï¿½E½ÆƒoE½OE½E½
+            Instantiate(steppedEffect, transform.position, transform.rotation);
+            //audioSource.PlayOneShot(pushSound); //”j‰ó‚³‚ê‚é‚ÆƒoƒO‚é
             //AudioSource.PlayClipAtPoint(pushSound, transform.position, 10000.0f); this volume is capped at 1
             PlayPushedSFX();
 
