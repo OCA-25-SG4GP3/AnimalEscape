@@ -1,6 +1,6 @@
 using UnityEngine;
 
-//EnemyStateDetectingSO.cs �� �G���v���C���[�𔭌��E�T�m���̏��
+//EnemyStateDetectingSO.cs 
 
 
 [CreateAssetMenu(fileName = "EnemyStateDetectingSO", menuName = "State/EnemyState/EnemyStateDetectingSO")]
@@ -14,14 +14,14 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
     {
         _logicController.AlertMark.SetActive(true);
     }
-  public void SetInfiniteDetectionRange(bool isEnabled)
+    public void SetInfiniteDetectionRange(bool isEnabled)
     {
         infiniteDetectionRange = isEnabled;
     }
     public override void UpdateState()
     {
         //////////////////////////////////
-        //他�?�候補したオブジェクト�?�中、もっと近いターゲ�?トが�?れ�?�、それを今�?�ターゲ�?トにする
+        //他�?�候補したオブジェクト�?�中、もっと近いターゲ�?トが�?れ�?�、それを今�?�ターゲ�?トにする
         GameObject closerFoundObject = _logicController.CheckUncaughtTargetsInCone();
 
         if (closerFoundObject)
@@ -32,10 +32,14 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
 
         if (_logicController.CurrentTarget && (IsTargetClose(maxChaseDistance) || infiniteDetectionRange))
         {
-            SetChaseTargetPos(); //追�?かけ�?
-            if (IsWithinCatchRange(_logicController.CurrentTarget))///捕獲の距離に入るかど�?�?
+            SetChaseTargetPos(); //追�?かけ�?
+            if (IsWithinCatchRange(_logicController.CurrentTarget))///捕獲の距離に入るかど�?�?
             {
+                ColorPanelRoomTimer colorPanelRoomTimer = FindAnyObjectByType<ColorPanelRoomTimer>();
+                if (colorPanelRoomTimer) colorPanelRoomTimer.SetGameOverByOneCaught();
+#if UNITY_EDITOR
                 Debug.Log("GAME OVER!");
+#endif
                 //_logicController.SetState(_logicController.CarryCaughtStateInstance);
                 // _logicController.CarryCaughtState.CatchObject(_logicController.currentTargetObj);
                 return;
@@ -62,7 +66,7 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
         Vector3 center = _logicController.transform.position;
         float radius = maxChaseDistance;
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(center, radius); //ターゲ�?トが�?げる距離
+        Gizmos.DrawWireSphere(center, radius); //ターゲ�?トが�?げる距離
 
         ConeHelper.DrawConeGizmo(_logicController.GetConeInfo());
     }

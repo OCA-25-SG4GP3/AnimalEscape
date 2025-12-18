@@ -294,6 +294,10 @@ PrefabInstance:
       propertyPath: nextSceneName
       value: GameClear
       objectReference: {fileID: 0}
+    - target: {fileID: 5285371516247232952, guid: b3db85ab0317b384da224a93313c10e7, type: 3}
+      propertyPath: setFinishImageOnClearGame
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6989550815197594825, guid: b3db85ab0317b384da224a93313c10e7, type: 3}
       propertyPath: m_LocalPosition.x
       value: 14.29
@@ -341,10 +345,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 7689637438096378673, guid: b3db85ab0317b384da224a93313c10e7, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 0}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b3db85ab0317b384da224a93313c10e7, type: 3}
 --- !u!1001 &46569977
 PrefabInstance:

@@ -11,16 +11,21 @@ public class ColorPanelPuzzle : MonoBehaviour
     [NonSerializedAttribute] public Material correctPanelMaterial;
     [SerializeField] private Material pressedMaterial;
     public bool upSide = true; //is this upside or downside (to prevent double press / exploit)
-    [SerializeField, Header("隠したい場合マテリアル")] private Material hidingMaterial;
-    [SerializeField, Header("何秒までリセット")] private float autoResetTimer = 1.0f;
+    [SerializeField, Header("隠したぁE��合�EチE��アル")] private Material hidingMaterial;
+    [SerializeField, Header("何秒までリセチE��")] private float autoResetTimer = 1.0f;
+    [SerializeField, Header("何秒までリセチE��")] private float autoHideTimer = 3.0f;
 
-    public AudioClip pushSound;      // �W�����v���̃t�@�C��
-    private AudioSource audioSource; // AudioSource���g�����߂̕ϐ�
+    public AudioClip pushSound;      
+    private AudioSource audioSource; 
 
 
-    public bool isStepped = false; //押されているかどうか
-    [SerializeField] private Cooldown returnToWhiteCD = new(3.0f);
+    public bool isStepped = false; //押されてぁE��かどぁE��
     private Coroutine resetCoroutine;
+    private Coroutine hideCoroutine;
+
+    public GameObject steppedEffect;
+
+
     void Awake()
     {
         colorPanelGate = GetActiveGate();
@@ -47,11 +52,6 @@ public class ColorPanelPuzzle : MonoBehaviour
 
     void Update()
     {
-        if (hidingMaterial && IsCurrentlyUsingCorrectMaterial() && !returnToWhiteCD.IsCooldown)
-        {
-            RestoreToHidingMaterial();
-        }
-
         // Switch gates if current gate is opened
         if (colorPanelGate != null && colorPanelGate.IsGateOpened())
         {
@@ -75,16 +75,24 @@ public class ColorPanelPuzzle : MonoBehaviour
 
             isStepped = true;
             animator.Play("ColorPanelPressedAnim");
+            //audioSource.PlayOneShot(pushSound); //�E�j�E�󂳂��E�ƃo�E�O�E��E�
+            Instantiate(steppedEffect, transform.position, transform.rotation);
             //audioSource.PlayOneShot(pushSound); //�j�󂳂��ƃo�O��
             //AudioSource.PlayClipAtPoint(pushSound, transform.position, 10000.0f); this volume is capped at 1
             PlayPushedSFX();
 
             meshRen.material = pressedMaterial;
 
-            if (IsCurrentlyUsingHidingMaterial()) //If any hiding mat is assigned
+            if (hidingMaterial) //If hiding material is assigned
             {
                 RestoreToCorrectMaterial();
-                returnToWhiteCD.StartCooldown();
+
+                // Start hide timer to restore to hiding material later
+                if (hideCoroutine != null)
+                {
+                    StopCoroutine(hideCoroutine);
+                }
+                hideCoroutine = StartCoroutine(HideAfterDelay(autoHideTimer));
             }
 
             colorPanelGate.PanelStepped(this); //last order so it change first then checked
@@ -133,11 +141,9 @@ public class ColorPanelPuzzle : MonoBehaviour
             isStepped = false;
             animator.Play("ColorPanelReleasedAnim");
             colorPanelGate.PanelReleased(this);
-            if (hidingMaterial)
-            {
-                RestoreToHidingMaterial();
-            }
-            else
+
+            // Don't change material here, let hideCoroutine handle it if using hiding material
+            if (!hidingMaterial)
             {
                 meshRen.material = correctPanelMaterial;
             }
@@ -150,13 +156,22 @@ public class ColorPanelPuzzle : MonoBehaviour
         isStepped = false;
         animator.Play("ColorPanelReleasedAnim");
         colorPanelGate.PanelReleased(this);
+
+        // Don't change material here, let hideCoroutine handle it
+        if (!hidingMaterial)
+        {
+            meshRen.material = correctPanelMaterial;
+        }
+    }
+
+    private IEnumerator HideAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // After timer expires, hide the panel again (regardless of current material)
         if (hidingMaterial)
         {
             RestoreToHidingMaterial();
-        }
-        else
-        {
-            meshRen.material = correctPanelMaterial;
         }
     }
 

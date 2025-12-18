@@ -79,7 +79,8 @@ MonoBehaviour:
   startY: 0
   endY: -6
   partialStepPercentage: 0.1
-  dropSpeed: 1.5
+  dropSpeed: 0.5
+  finalDropSpeed: 3
 --- !u!1 &3875006494217275180
 GameObject:
   m_ObjectHideFlags: 0
@@ -157,7 +158,9 @@ MonoBehaviour:
   playerAIMoveToTransform:
   - {fileID: 7765054538324620922}
   - {fileID: 3890901011434622329}
+  previousGate: {fileID: 0}
   successfulPresses: 0
+  correctEffect: {fileID: 4841759713630215894, guid: 89eb543696833864ca0ab1afb5d2061d, type: 3}
 --- !u!1 &5445295737580257442
 GameObject:
   m_ObjectHideFlags: 0
