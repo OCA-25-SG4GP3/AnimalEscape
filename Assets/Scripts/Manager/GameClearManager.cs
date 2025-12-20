@@ -34,6 +34,7 @@ public class GameClearManager : MonoBehaviour
     public void SetClearGameByFinish()
     {
         if (isFinish) return;
+
         isFinish = true;
         Invoke("SetFadeOut", fadeOutDelay);
         if (setFinishImageOnClearGame) finishImageObject.SetActive(true);

@@ -15,7 +15,7 @@ public class ColorPanelGate : MonoBehaviour
     // Auto-detected components
     private GateDropController gateDropController;
     private ColorPanelRoomTimer colorPanelRoomTimer;
-    private CinemachineCamera cm;
+    [SerializeField] private CinemachineCamera sidewayCm; //not front
     private Animator gateAnimator;
 
     [SerializeField, ReadOnly, Header("ボタンの成功数（すべて）")] private int successfulPresses = 0;
@@ -24,6 +24,7 @@ public class ColorPanelGate : MonoBehaviour
     private readonly List<ColorPanelPuzzle> steppedPanels = new();
 
     [SerializeField] private GameObject correctEffect;
+    GameManager gameManager;
 
     void Awake()
     {
@@ -31,7 +32,8 @@ public class ColorPanelGate : MonoBehaviour
         gateDropController = GetComponentInChildren<GateDropController>();
         gateAnimator = GetComponent<Animator>();
         colorPanelRoomTimer = FindAnyObjectByType<ColorPanelRoomTimer>();
-        cm = FindAnyObjectByType<CinemachineCamera>();
+        gameManager = FindAnyObjectByType<GameManager>();
+        sidewayCm = gameManager.SidewayCm;
     }
 
 
@@ -96,7 +98,7 @@ public class ColorPanelGate : MonoBehaviour
 
     private void OnSuccessfulMatch(ColorPanelPuzzle panelA, ColorPanelPuzzle panelB)
     {
-        if (gateOpened) return;
+        if (gateOpened) return; //so it doesnt process on all gates
 
         successfulPresses++;
         bool isFinalStep = successfulPresses >= panelPairsRequired;
@@ -131,9 +133,9 @@ public class ColorPanelGate : MonoBehaviour
         gateOpened = true;
 
         // Move camera
-        if (cm && cameraFollowObjectT)
+        if (sidewayCm && cameraFollowObjectT)
         {
-            cm.Follow = cameraFollowObjectT;
+            sidewayCm.Follow = cameraFollowObjectT;
         }
 
         // Add time bonus
@@ -145,10 +147,10 @@ public class ColorPanelGate : MonoBehaviour
         // Auto walk players
         //AutoWalkPlayersToSpot();
 
-        gateDropController.DropStep(true, AutoWalkPlayersToSpot);
+        gateDropController.DropStep(true, OnGateFullyOpened);
     }
 
-    private void AutoWalkPlayersToSpot()
+    private void OnGateFullyOpened()
     {
         if (playerAIMoveToTransform == null || playerAIMoveToTransform.Length < 2) return;
 
@@ -170,5 +172,7 @@ public class ColorPanelGate : MonoBehaviour
             player2AnimalControl.UnlockInput(); // Unlock before setting AI control
             player2AnimalControl.SetMoveTo(playerAIMoveToTransform[1].position, isLastGate);
         }
+
+      
     }
 }

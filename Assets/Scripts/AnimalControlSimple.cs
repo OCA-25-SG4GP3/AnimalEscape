@@ -7,18 +7,7 @@ using UnityEngine.InputSystem.Utilities;
 using UnityEngine.Splines;
 using UnityEngine.UIElements;
 
-[System.Serializable]
-public struct PlayerInputKeys
-{
-    public KeyCode forward;
-    public KeyCode backward;
-    public KeyCode left;
-    public KeyCode right;
-    public KeyCode jump;
-    public KeyCode specialAction; //Slide / Throw
-    public KeyCode horizontalAxis; //Slide / Throw
-    public KeyCode verticalAxis; //Slide / Throw
-}
+
 [RequireComponent(typeof(Rigidbody))]
 public class AnimalControlSimple : MonoBehaviour
 {
@@ -40,6 +29,7 @@ public class AnimalControlSimple : MonoBehaviour
     Rigidbody rb;
     Vector3 inputDir;
     JumpChecker jumpChecker;
+    Camera mainCamera;
 
     public GameObject moveEffect;
     private bool moveEffectFlag = false;
@@ -60,7 +50,7 @@ public class AnimalControlSimple : MonoBehaviour
     public float maxJumpHoldTime = 0.2f;   // 最大で押し続けられる時間
     public float jumpHoldCounter;   // ジャンプホールドの残り時間
     public bool jumpHeld;   // 現在ジャンプボタンを押し続けているかどうか
-    bool finishOnAIReachTarget = false;
+    bool isLastGateDone = false;
     private bool allowExternalForce = false;
     private float externalForceTimer = 0f;
 
@@ -76,12 +66,15 @@ public class AnimalControlSimple : MonoBehaviour
 
     void Awake()
     {
+        gameManager = FindAnyObjectByType<GameManager>();
+
         animator = GetComponentInChildren<Animator>();
         jumpChecker = GetComponentInChildren<JumpChecker>();
         rb = GetComponent<Rigidbody>();
         playerInfoSystem = GameObject.FindAnyObjectByType<PlayerInfoSystem>();
         //playerInput = GetComponent<PlayerInput>();
         optionMenu = FindAnyObjectByType<OptionMenu>();
+        mainCamera = Camera.main;
     }
 
 
@@ -134,9 +127,9 @@ public class AnimalControlSimple : MonoBehaviour
     public void SetMoveTo(Vector3 newMoveTarget, bool isLastGate)
     {
         SetMoveTo(newMoveTarget);
-        if (isLastGate) finishOnAIReachTarget = true;
+        if (isLastGate) isLastGateDone = true;
     }
-
+    GameManager gameManager;
     private void UpdateInput()
     {
         float h = 0f;
@@ -175,7 +168,8 @@ public class AnimalControlSimple : MonoBehaviour
             }
         }
 
-        inputDir = new Vector3(h, 0f, v).normalized;
+        // Convert input to camera-relative direction
+        inputDir = GetCameraRelativeDirection(h, v);
 
         //DEBUG
 #if UNITY_EDITOR
@@ -232,24 +226,7 @@ public class AnimalControlSimple : MonoBehaviour
         TurnToLookDir(inputDir);
         UpdateAnimator();
         UpdateStunedState();
-
-        // ===============================
-
-        if (jumpHeld && isJumping && jumpHoldCounter > 0f)
-        {
-            Vector3 vel = rb.linearVelocity;
-
-            vel.y += holdJumpForce * Time.deltaTime;
-
-            rb.linearVelocity = vel;
-
-            jumpHoldCounter -= Time.deltaTime;
-        }
-
-        if (rb.linearVelocity.y <= 0f)
-        {
-            isJumping = false;
-        }
+        UpdateJumpHold();
     }
 
     private void UpdateAIControlled()
@@ -276,14 +253,14 @@ public class AnimalControlSimple : MonoBehaviour
             if (animator.HasParameterOfType("IsWalking", AnimatorControllerParameterType.Bool))
                 animator.SetBool("IsWalking", false);
 
-            if (finishOnAIReachTarget)
+            if (isLastGateDone)
             {
-                OnAIReachTarget();
+                OnAIReachLastGate();
             }
         }
     }
 
-    private void OnAIReachTarget()
+    private void OnAIReachLastGate()
     {
         GameClearManager gameClearManager = FindAnyObjectByType<GameClearManager>();
         if (gameClearManager)
@@ -293,6 +270,9 @@ public class AnimalControlSimple : MonoBehaviour
             rb.isKinematic = true;
             SetMoveSpeed(baseMoveSpeed * moveSpeedOnFinishMult);
             SetMoveTo(transform.position + Vector3.right * 1000.0f); //Move to far away
+
+            // Disable camera instead of nulling Follow to prevent teleportation
+            gameManager.FrontCm.enabled = false;
         }
     }
 
@@ -423,6 +403,54 @@ public class AnimalControlSimple : MonoBehaviour
         }
     }
 
+    private void UpdateJumpHold()
+    {
+        // Apply additional upward force while holding jump button during a jump
+        if (jumpHeld && isJumping && jumpHoldCounter > 0f)
+        {
+            Vector3 vel = rb.linearVelocity;
+            vel.y += holdJumpForce * Time.deltaTime;
+            rb.linearVelocity = vel;
+            jumpHoldCounter -= Time.deltaTime;
+        }
+
+        // Stop jumping state when falling
+        if (rb.linearVelocity.y <= 0f)
+        {
+            isJumping = false;
+        }
+    }
+
+    /// <summary>
+    /// Converts raw input (h, v) to camera-relative direction on the ground plane.
+    /// Handles eagle-eye camera looking down at an angle.
+    /// </summary>
+    private Vector3 GetCameraRelativeDirection(float horizontal, float vertical)
+    {
+        if (mainCamera == null)
+        {
+            // Fallback to world-space input if no camera found
+            return new Vector3(horizontal, 0f, vertical).normalized;
+        }
+
+        // Get camera's forward and right directions
+        Vector3 cameraForward = mainCamera.transform.forward;
+        Vector3 cameraRight = mainCamera.transform.right;
+
+        // Project camera directions onto the horizontal plane (Y = 0)
+        cameraForward.y = 0f;
+        cameraRight.y = 0f;
+
+        // Normalize to ensure consistent movement speed
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        // Calculate movement direction relative to camera
+        Vector3 direction = (cameraForward * vertical + cameraRight * horizontal).normalized;
+
+        return direction;
+    }
+
     public void ExitStunedState()
     {
         if (!isStuned) return;
@@ -464,17 +492,5 @@ public class AnimalControlSimple : MonoBehaviour
         if (!optionMenu.IsPaused) return;
         if (context.performed)
             optionMenu.ToggleOption();
-    }
-}
-// Extension helper
-public static class AnimatorExtensions
-{
-    public static bool HasParameterOfType(this Animator animator, string paramName, AnimatorControllerParameterType type)
-    {
-        foreach (var param in animator.parameters)
-        {
-            if (param.name == paramName && param.type == type) return true;
-        }
-        return false;
     }
 }

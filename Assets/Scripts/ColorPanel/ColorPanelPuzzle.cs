@@ -192,7 +192,6 @@ public class ColorPanelPuzzle : MonoBehaviour
                 Vector3 totalForce = (horizontalForce * horizontalResetPush) + (Vector3.up * upResetPush);
                 animalControl.ApplyExternalForce(totalForce, 0.5f);
 
-                Debug.Log($"Panel reset pushed player with force: {totalForce}");
             }
 
             playerInside = null;
