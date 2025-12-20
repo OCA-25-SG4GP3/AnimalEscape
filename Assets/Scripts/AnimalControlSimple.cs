@@ -130,7 +130,7 @@ public class AnimalControlSimple : MonoBehaviour
         if (isLastGate) isLastGateDone = true;
     }
     GameManager gameManager;
-    private void UpdateInput()
+    private void UpdateInputMove()
     {
         float h = 0f;
         float v = 0f;
@@ -194,22 +194,14 @@ public class AnimalControlSimple : MonoBehaviour
     {
         if (!isAIControlled)
         {
-            UpdateInput();
+            UpdateInputMove();
+            UpdateInputJump();
         }
         else
         {
             UpdateAIControlled();
         }
 
-        if (!isStuned && jumpPressed)
-        {
-            jumpBufferCounter = jumpBufferTime; // store input
-        }
-        else
-        {
-            jumpBufferCounter -= Time.deltaTime; // countdown every frame
-        }
-        jumpPressed = false;
 
         coyoteCounter = jumpChecker.isGrounded ? coyoteTime : coyoteCounter - Time.deltaTime;
 
@@ -227,6 +219,19 @@ public class AnimalControlSimple : MonoBehaviour
         UpdateAnimator();
         UpdateStunedState();
         UpdateJumpHold();
+    }
+
+    private void UpdateInputJump()
+    {
+        if (!isStuned && jumpPressed && !isInputLocked)
+        {
+            jumpBufferCounter = jumpBufferTime; // store input
+        }
+        else
+        {
+            jumpBufferCounter -= Time.deltaTime; // countdown every frame
+        }
+        jumpPressed = false;
     }
 
     private void UpdateAIControlled()

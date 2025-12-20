@@ -8,8 +8,9 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
 {
     [SerializeField] private GameObject[] _playerPrefab;
     [SerializeField] private Transform[] _spawnPoints;
+    [SerializeField] private GameManager _gameManager;
     [SerializeField] private CinemachineTargetGroup _targetGroup;
-
+    [SerializeField] private bool followZAxis = true;
 
     [Header("Listening to")]
     [SerializeField] protected VoidEventSO _onEnterGameEvent;
@@ -17,9 +18,19 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
 
     private PlayerInput _player1; public PlayerInput Player1 => _player1;
     private PlayerInput _player2; public PlayerInput Player2 => _player2;
+    private GameObject _player1CameraTarget;
+    private GameObject _player2CameraTarget;
+
     protected override void Awake()
     {
         base.Awake();
+
+        // Set the camera to track the TargetGroup
+        if (_gameManager != null && _gameManager.FrontCm != null && _targetGroup != null)
+        {
+            _gameManager.FrontCm.Target.TrackingTarget = _targetGroup.transform;
+        }
+
         SpawnPlayers();
     }
 
@@ -36,7 +47,19 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
         _player1 = PlayerInput.Instantiate(_playerPrefab[0], controlScheme: "Player1", pairWithDevices: new[] { Keyboard.current });
         _player1.transform.position = _spawnPoints[0].position;
         _player1.transform.Rotate(0, 180, 0);
-        _targetGroup.AddMember(_player1.transform, 1f, 2f);
+
+        // Create camera target for Player 1 (follows horizontal position only)
+        _player1CameraTarget = new GameObject("Player1_CameraTarget");
+        _player1CameraTarget.transform.position = _player1.transform.position;
+        var follow1 = _player1CameraTarget.AddComponent<FollowPlayerXZ>();
+        follow1.playerTransform = _player1.transform;
+        follow1.SetFollowZ(followZAxis);
+
+        if (_targetGroup != null)
+        {
+            _targetGroup.AddMember(_player1CameraTarget.transform, 1f, 2f);
+        }
+
         PlayerInfoSystem.playerInfos[0] = _player1.GetComponent<PlayerInfo>();
         players.Add(_player1); // add to list
 
@@ -45,7 +68,19 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
         {
             _player2 = PlayerInput.Instantiate(_playerPrefab[1], controlScheme: "Player2", pairWithDevices: new[] { Keyboard.current });
             _player2.transform.position = _spawnPoints[1].position;
-            _targetGroup.AddMember(_player2.transform, 1f, 2f);
+
+            // Create camera target for Player 2 (follows horizontal position only)
+            _player2CameraTarget = new GameObject("Player2_CameraTarget");
+            _player2CameraTarget.transform.position = _player2.transform.position;
+            var follow2 = _player2CameraTarget.AddComponent<FollowPlayerXZ>();
+            follow2.playerTransform = _player2.transform;
+            follow2.SetFollowZ(followZAxis);
+
+            if (_targetGroup != null)
+            {
+                _targetGroup.AddMember(_player2CameraTarget.transform, 1f, 2f);
+            }
+
             PlayerInfoSystem.playerInfos[1] = _player2.GetComponent<PlayerInfo>();
             players.Add(_player2); // add to list
         }

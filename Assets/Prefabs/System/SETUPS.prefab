@@ -272,8 +272,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2414261462157141018}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.3056953, y: 0, z: 0, w: 0.9521294}
-  m_LocalPosition: {x: 0, y: 0.007514477, z: -0.009465694}
+  m_LocalRotation: {x: 0.21615916, y: 0.67325723, z: -0.21615916, w: 0.67325723}
+  m_LocalPosition: {x: -11.594467, y: 9.204685, z: 0.0000015497208}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -536,7 +536,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 0}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -841,7 +841,7 @@ Transform:
   m_GameObject: {fileID: 7565822382810839821}
   serializedVersion: 2
   m_LocalRotation: {x: 0.21615916, y: 0.67325723, z: -0.21615916, w: 0.67325723}
-  m_LocalPosition: {x: -13.08, y: 7.45, z: 1.99}
+  m_LocalPosition: {x: -19, y: 7.45, z: 2.99}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -904,11 +904,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   TrackerSettings:
     BindingMode: 4
-    PositionDamping: {x: 1, y: 1, z: 1}
+    PositionDamping: {x: 1, y: 5, z: 1}
     AngularDampingMode: 0
     RotationDamping: {x: 1, y: 1, z: 1}
     QuaternionDamping: 1
-  FollowOffset: {x: -13.08, y: 7.45, z: 1.99}
+  FollowOffset: {x: -19, y: 7.45, z: 1.99}
 --- !u!114 &8920778728270307332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -955,7 +955,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4eb4843bae7d24943842ea23130dcd55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FramingMode: 2
+  FramingMode: 0
   FramingSize: 0.8
   CenterOffset: {x: 0, y: -0.12}
   Damping: 2
@@ -1511,6 +1511,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7641979351042261133, guid: 728b050bcd03dad49aedc7449d968a7e, type: 3}
+      propertyPath: followZAxis
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7641979351042261133, guid: 728b050bcd03dad49aedc7449d968a7e, type: 3}
+      propertyPath: _gameManager
+      value: 
+      objectReference: {fileID: 6544199582621874292}
     - target: {fileID: 7641979351042261133, guid: 728b050bcd03dad49aedc7449d968a7e, type: 3}
       propertyPath: _targetGroup
       value: 

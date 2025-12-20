@@ -14,8 +14,6 @@ public class GameClearManager : MonoBehaviour
     bool isFinish = false;
     private void Start()
     {
-        Debug.Log($"Clear Time: {_clearTimeSO.TimeInSeconds} seconds");
-        //  if(_clearTimeText) _clearTimeText.text = $"使用時間\n{_clearTimeSO.TimeInSeconds:F2}s";
     }
 
     void OnCollisionEnter(Collision collision)
