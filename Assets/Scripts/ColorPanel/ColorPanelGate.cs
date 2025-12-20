@@ -11,7 +11,8 @@ public class ColorPanelGate : MonoBehaviour
     [SerializeField] private Transform cameraFollowObjectT;
     [SerializeField, Header("扉が開いたら、どこに動く")] private Transform[] playerAIMoveToTransform = new Transform[2];
     [SerializeField, Header("前のゲート")] private ColorPanelGate previousGate;
-
+    [SerializeField] private GameObject ca01Prefab; // Reference to Ca01 prefab in the scene
+    private BoxCollider ca01BoxCollider; // Reference to BoxCollider of Ca01
     // Auto-detected components
     private GateDropController gateDropController;
     private ColorPanelRoomTimer colorPanelRoomTimer;
@@ -32,6 +33,12 @@ public class ColorPanelGate : MonoBehaviour
         gateAnimator = GetComponent<Animator>();
         colorPanelRoomTimer = FindAnyObjectByType<ColorPanelRoomTimer>();
         cm = FindAnyObjectByType<CinemachineCamera>();
+
+        // Find and store the BoxCollider of Ca01 prefab (if exists)
+        if (ca01Prefab != null)
+        {
+            ca01BoxCollider = ca01Prefab.GetComponent<BoxCollider>();
+        }
     }
 
 
@@ -126,6 +133,7 @@ public class ColorPanelGate : MonoBehaviour
         }
     }
 
+
     public void OpenGateFully()
     {
         gateOpened = true;
@@ -139,14 +147,20 @@ public class ColorPanelGate : MonoBehaviour
         // Add time bonus
         if (colorPanelRoomTimer) { colorPanelRoomTimer.AddTime(); }
 
-        // Open gate animation
-        //if (gateAnimator)        {            gateAnimator.Play("GateLift");        }
+        // Open gate animation (if desired)
+        //if (gateAnimator) { gateAnimator.Play("GateLift"); }
 
-        // Auto walk players
-        //AutoWalkPlayersToSpot();
-
+        // Auto walk players to spot
         gateDropController.DropStep(true, AutoWalkPlayersToSpot);
+
+        // Disable the BoxCollider on Ca01 prefab after the gate opens
+        if (ca01BoxCollider != null)
+        {
+            ca01BoxCollider.enabled = false; // Disable the BoxCollider
+       /*     Debug.Log("Ca01 BoxCollider disabled.");*/
+        }
     }
+
 
     private void AutoWalkPlayersToSpot()
     {

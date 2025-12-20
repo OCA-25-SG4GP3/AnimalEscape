@@ -352,7 +352,11 @@ public class AnimalControlSimple : MonoBehaviour
     private bool stunedComplete = false;
 
     public bool IsStunedComplete => stunedComplete; // public read-only flag
-
+    public void SetCaughtState()
+    {
+        //animator.SetBool
+        animator.Play("LPn01_struggle");
+    }
     public void SetStunnedState(float stunedDurationOverride = -1f)
     {
         if (stunedDurationOverride > 0f)

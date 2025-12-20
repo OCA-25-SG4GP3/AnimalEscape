@@ -8,6 +8,8 @@ public class ColorPanelPuzzle : MonoBehaviour
     ColorPanelGate colorPanelGate;
     Animator animator;
     [SerializeField] public MeshRenderer meshRen;
+    [SerializeField] public MeshFilter btnMeshFilter;
+    [SerializeField] public MeshFilter frameMeshFilter;
     [NonSerializedAttribute] public Material correctPanelMaterial;
     [SerializeField] private Material pressedMaterial;
     public bool upSide = true; //is this upside or downside (to prevent double press / exploit)
@@ -15,8 +17,8 @@ public class ColorPanelPuzzle : MonoBehaviour
     [SerializeField, Header("何秒までリセチE��")] private float autoResetTimer = 1.0f;
     [SerializeField, Header("何秒までリセチE��")] private float autoHideTimer = 3.0f;
 
-    public AudioClip pushSound;      
-    private AudioSource audioSource; 
+    public AudioClip pushSound;
+    private AudioSource audioSource;
 
 
     public bool isStepped = false; //押されてぁE��かどぁE��
@@ -25,7 +27,19 @@ public class ColorPanelPuzzle : MonoBehaviour
 
     public GameObject steppedEffect;
 
-
+    enum EButtonType
+    {
+        Box, Circle, Star, Triang
+    }
+    [SerializeField] EButtonType buttonType;
+    [SerializeField] Mesh boxMesh;
+    [SerializeField] Mesh starMesh;
+    [SerializeField] Mesh triangleMesh;
+    [SerializeField] Mesh circleMesh;
+    [SerializeField] Mesh frameBoxMesh;
+    [SerializeField] Mesh frameTriangMesh;
+    [SerializeField] Mesh frameStarMesh;
+    [SerializeField] Mesh frameCircleMesh;
     void Awake()
     {
         colorPanelGate = GetActiveGate();
@@ -34,6 +48,27 @@ public class ColorPanelPuzzle : MonoBehaviour
         colorPanelGate.RegisterPanel(this);
         if (hidingMaterial) meshRen.material = hidingMaterial;
         audioSource = GetComponent<AudioSource>();
+
+
+        switch (buttonType)
+        {
+            case EButtonType.Box:
+                btnMeshFilter.mesh = boxMesh;
+                frameMeshFilter.mesh = frameBoxMesh;
+                break;
+            case EButtonType.Circle:
+                btnMeshFilter.mesh = circleMesh;
+                frameMeshFilter.mesh = frameCircleMesh;
+                break;
+            case EButtonType.Triang:
+                btnMeshFilter.mesh = triangleMesh;
+                frameMeshFilter.mesh = frameTriangMesh;
+                break;
+            case EButtonType.Star:
+                btnMeshFilter.mesh = starMesh;
+                frameMeshFilter.mesh = frameStarMesh;
+                break;
+        }
     }
 
     ColorPanelGate GetActiveGate()

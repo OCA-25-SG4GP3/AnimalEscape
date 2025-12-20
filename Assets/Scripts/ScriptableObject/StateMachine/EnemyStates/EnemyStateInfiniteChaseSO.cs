@@ -38,7 +38,7 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
                 //For now we us both because we dont have miss
                 animator.SetBool("IsDiving", true); //今回はまだスキップする。
                 animator.SetBool("IsCatching", true); //TODO move this to Caught State for better animation flow
-
+                closestTarget.GetComponent<AnimalControlSimple>().SetCaughtState();
                 closestTarget.GetComponent<CatchPosition>().SetCatch(this);
                 _logicController.rbNavMesh.ClearPath();
 
