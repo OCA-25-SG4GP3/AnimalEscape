@@ -15,8 +15,8 @@ public class ColorPanelPuzzle : MonoBehaviour
     [SerializeField, Header("何秒までリセチE��")] private float autoResetTimer = 1.0f;
     [SerializeField, Header("何秒までリセチE��")] private float autoHideTimer = 3.0f;
 
-    public AudioClip pushSound;      
-    private AudioSource audioSource; 
+    public AudioClip pushSound;
+    private AudioSource audioSource;
 
 
     public bool isStepped = false; //押されてぁE��かどぁE��
@@ -63,7 +63,7 @@ public class ColorPanelPuzzle : MonoBehaviour
             }
         }
     }
-
+    GameObject playerInside;
     void OnTriggerEnter(Collider other)
     {
 
@@ -101,6 +101,7 @@ public class ColorPanelPuzzle : MonoBehaviour
             {
                 StopCoroutine(resetCoroutine);
             }
+            playerInside = other.gameObject;
             resetCoroutine = StartCoroutine(ResetStepAfterDelay(autoResetTimer));
         }
     }
@@ -147,8 +148,14 @@ public class ColorPanelPuzzle : MonoBehaviour
             {
                 meshRen.material = correctPanelMaterial;
             }
+
+            // Clear playerInside since they left
+            playerInside = null;
         }
     }
+
+    [SerializeField] private float upResetPush = 20.0f;
+    [SerializeField] private float horizontalResetPush = 20.0f;
     private IEnumerator ResetStepAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -161,6 +168,34 @@ public class ColorPanelPuzzle : MonoBehaviour
         if (!hidingMaterial)
         {
             meshRen.material = correctPanelMaterial;
+        }
+
+        if(playerInside)
+        {
+            // Apply random force in one of 4 directions (forward, back, left, right) plus upward
+            AnimalControlSimple animalControl = playerInside.GetComponent<AnimalControlSimple>();
+            if (animalControl != null)
+            {
+                // Choose random horizontal direction (0=forward, 1=right, 2=back, 3=left)
+                int randomDir = UnityEngine.Random.Range(0, 4);
+                Vector3 horizontalForce = Vector3.zero;
+
+                switch (randomDir)
+                {
+                    case 0: horizontalForce = Vector3.forward; break;
+                    case 1: horizontalForce = Vector3.right; break;
+                    case 2: horizontalForce = Vector3.back; break;
+                    case 3: horizontalForce = Vector3.left; break;
+                }
+
+                // Combine horizontal and upward force
+                Vector3 totalForce = (horizontalForce * horizontalResetPush) + (Vector3.up * upResetPush);
+                animalControl.ApplyExternalForce(totalForce, 0.5f);
+
+                Debug.Log($"Panel reset pushed player with force: {totalForce}");
+            }
+
+            playerInside = null;
         }
     }
 

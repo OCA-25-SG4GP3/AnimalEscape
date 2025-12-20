@@ -61,6 +61,18 @@ public class AnimalControlSimple : MonoBehaviour
     public float jumpHoldCounter;   // ジャンプホールドの残り時間
     public bool jumpHeld;   // 現在ジャンプボタンを押し続けているかどうか
     bool finishOnAIReachTarget = false;
+    private bool allowExternalForce = false;
+    private float externalForceTimer = 0f;
+
+    /// <summary>
+    /// Apply an external force to the player and temporarily disable movement override
+    /// </summary>
+    public void ApplyExternalForce(Vector3 force, float duration = 0.5f)
+    {
+        rb.AddForce(force, ForceMode.Impulse);
+        allowExternalForce = true;
+        externalForceTimer = duration;
+    }
 
     void Awake()
     {
@@ -207,6 +219,16 @@ public class AnimalControlSimple : MonoBehaviour
 
         coyoteCounter = jumpChecker.isGrounded ? coyoteTime : coyoteCounter - Time.deltaTime;
 
+        // Handle external force timer
+        if (allowExternalForce)
+        {
+            externalForceTimer -= Time.deltaTime;
+            if (externalForceTimer <= 0f)
+            {
+                allowExternalForce = false;
+            }
+        }
+
         TurnToLookDir(inputDir);
         UpdateAnimator();
         UpdateStunedState();
@@ -306,6 +328,10 @@ public class AnimalControlSimple : MonoBehaviour
     void Move()
     {
         if (rb.isKinematic) return;
+
+        // Don't override velocity if external force is active
+        if (allowExternalForce) return;
+
         Vector3 vel = rb.linearVelocity;
         vel.x = inputDir.x * moveSpeed;
         vel.z = inputDir.z * moveSpeed;
