@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Cinemachine;
 using System;
 
+[SelectionBase]
 public class ColorPanelGate : MonoBehaviour
 {
     [SerializeField] private bool usingSides = true;

@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine.Audio;
 using UnityEngine;
-
+[SelectionBase]
 public class ColorPanelPuzzle : MonoBehaviour
 {
     ColorPanelGate colorPanelGate;
