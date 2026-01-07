@@ -4304,6 +4304,18 @@ PrefabInstance:
       propertyPath: 'spawnTs.Array.data[1]'
       value: 
       objectReference: {fileID: 1160552335}
+    - target: {fileID: 6818088179846896616, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6818088179846896616, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6818088179846896616, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 57
+      objectReference: {fileID: 0}
     - target: {fileID: 6861499188423993549, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -9511,6 +9523,10 @@ PrefabInstance:
     - target: {fileID: 6000766854149456536, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: maxDistance
       value: 14
+      objectReference: {fileID: 0}
+    - target: {fileID: 6058260439838976373, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 2.99
       objectReference: {fileID: 0}
     - target: {fileID: 6467717242955905633, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_LocalRotation.x
