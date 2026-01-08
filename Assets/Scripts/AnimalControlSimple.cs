@@ -57,6 +57,9 @@ public class AnimalControlSimple : MonoBehaviour
     public float jumpHoldCounter;   // ������������c�莞��
     public bool jumpHeld;   // ���݃W�����v�{�^����������Ă��邩�ǂ���
 
+    private bool wasGrounded = true; // 前フレームで地面にいたか
+
+
     void Awake()
     {
         animator = GetComponentInChildren<Animator>();
@@ -160,6 +163,20 @@ public class AnimalControlSimple : MonoBehaviour
         }
 
         inputDir = new Vector3(h, 0f, v).normalized;
+
+
+        bool isGroundedNow = jumpChecker.isGrounded;
+
+        // 空中 → 着地した瞬間
+        if (!wasGrounded && isGroundedNow)
+        {
+            // 着地後、少しの間ボタンを踏める
+            GetComponent<PlayerInfo>().stepableTimer = 0.15f; // 好きに調整
+        }
+
+        wasGrounded = isGroundedNow;
+
+
 
         // V?��L?��[?��?��?��?��?��?��?��ꂽ?��u?��ԂɃG?��t?��F?��N?��g?��Đ�
         //DEBUG
@@ -309,6 +326,10 @@ public class AnimalControlSimple : MonoBehaviour
             jumpChecker.isGrounded = false;
             // �W�����v��Ԃɓ��������Ƃ��L�^
             isJumping = true;
+
+
+            // ジャンプをした事実を記録（着地判定用）
+            GetComponent<PlayerInfo>().stepableTimer = 0f;
 
             // �W�����v����1�񂾂��Đ�
             if (audioSource && jumpSound)

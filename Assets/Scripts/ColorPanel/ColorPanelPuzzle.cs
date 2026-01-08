@@ -76,6 +76,7 @@ public class ColorPanelPuzzle : MonoBehaviour
             //TODO need cache to reduce lag ?
             var playerInfo = other.GetComponent<PlayerInfo>();
             if (!playerInfo.IsFallingDown()) return;
+            if (!playerInfo.CanStepButton) return;
 
             isStepped = true;
             animator.Play("ColorPanelPressedAnim");
