@@ -31,7 +31,7 @@ public class ColorPanelRoomTimer : MonoBehaviour
         //ゲート開通時にタイム追加が超過しゲージが動かなくなる対策です            
         if(totalTime > timerSlider.maxValue)
         {
-            totalTime = startingTime;
+            totalTime = timerSlider.maxValue;
         }
     }
 
