@@ -11,7 +11,7 @@ public class AILogicController : MonoBehaviour
 
     [SerializeField] public GameObject CurrentTarget; //ターゲ?��?ト中オブジェク?��?
     [SerializeField] public Transform CatchSlot; //Probably not needed anymore
-    [SerializeField] public GameObject AlertMark; //"!!!" ?��?キス?��?
+    //[SerializeField] public GameObject AlertMark; //"!!!" ?��?キス?��?
     [SerializeField] public List<Transform> PatrolSpots;
     Rigidbody rb;
 

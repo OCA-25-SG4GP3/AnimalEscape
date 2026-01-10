@@ -7,7 +7,7 @@ public class RigidbodyNavMesh : MonoBehaviour
     //Please respect the size of the baked radius
     Rigidbody rb;
     NavMeshPath navMeshPath;
-    float moveSpeed = 2.0f;
+    [SerializeField] float moveSpeed = 2.0f;
     int cornerIndex = 0;
     void Awake()
     {

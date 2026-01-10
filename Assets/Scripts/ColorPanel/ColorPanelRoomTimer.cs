@@ -17,6 +17,10 @@ public class ColorPanelRoomTimer : MonoBehaviour
     [SerializeField] private RectTransform zookeeperIcon;
     [SerializeField] Slider timerSlider;
     float startingTime;
+
+    // ============ 追加: Zookeeperがスポーン済みかどうかのフラグ ============
+    private bool zookeepersSpawned = false;
+
     void Awake()
     {
         startingTime = totalTime;
@@ -24,6 +28,7 @@ public class ColorPanelRoomTimer : MonoBehaviour
         timerSlider.maxValue = totalTime; // totalTime = max time
         timerSlider.value = 0;            // start at 0
     }
+
     void SetSlider()
     {
         timerSlider.value = startingTime - totalTime; // slider increases as time passes
@@ -46,7 +51,6 @@ public class ColorPanelRoomTimer : MonoBehaviour
         {
             totalTime -= Time.deltaTime;
             if (totalTime < 0) totalTime = 0;
-
             //UpdateTimeText();
             SetSlider();
         }
@@ -63,7 +67,6 @@ public class ColorPanelRoomTimer : MonoBehaviour
     // {
     //     int minutes = Mathf.FloorToInt(totalTime / 60f);
     //     int seconds = Mathf.FloorToInt(totalTime % 60f);
-
     //     timeText.text = originalString + minutes.ToString("00") + ":" + seconds.ToString("00");
     // }
 
@@ -78,6 +81,7 @@ public class ColorPanelRoomTimer : MonoBehaviour
         gameOverImage.SetActive(true);
         Invoke("ResetSceneByGameOverImpl", timeBeforeGameOverScreen);
     }
+
     public void SetGameOverByAllCaught() //全員捕まえた理由でゲームオーバー
     {
         if (gameOverImage.activeSelf) return;
@@ -89,7 +93,6 @@ public class ColorPanelRoomTimer : MonoBehaviour
     {
         totalTime = 0;
         // UpdateTimeText();
-
         SpawnZookeepers();
         isGameOver = true;
         SetSlider();
@@ -97,6 +100,10 @@ public class ColorPanelRoomTimer : MonoBehaviour
 
     private void SpawnZookeepers()
     {
+        // ============ 追加: スポーン済みフラグを立てる ============
+        zookeepersSpawned = true;
+        // ========================================================
+
         foreach (Transform spawnT in spawnTs)
         {
             if (spawnT == null || zookeeperPrefab == null)
@@ -104,7 +111,6 @@ public class ColorPanelRoomTimer : MonoBehaviour
                 Debug.LogError("Zookeeper spawn 場所がない!");
                 continue;
             }
-
             var inst = Instantiate(zookeeperPrefab, spawnT);
             AILogicController aiLogic = inst.GetComponent<AILogicController>();
             aiLogic.SetStateByEnum(AILogicController.SelectedState.InfiniteChase);
@@ -113,6 +119,13 @@ public class ColorPanelRoomTimer : MonoBehaviour
 
     public void AddTime()
     {
+        // ============ 追加: Zookeeperスポーン後は時間を追加しない ============
+        if (zookeepersSpawned)
+        {
+            Debug.Log("Zookeeperがスポーン済みのため、時間は追加しない");
+            return;
+        }
+
         totalTime += addTimePerRoom;
     }
 }

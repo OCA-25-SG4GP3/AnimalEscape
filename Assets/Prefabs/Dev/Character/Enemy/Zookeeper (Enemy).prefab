@@ -187,11 +187,10 @@ MonoBehaviour:
   Targets: []
   CurrentTarget: {fileID: 0}
   CatchSlot: {fileID: 322551110205001273}
-  AlertMark: {fileID: 6034243719339532902}
+  AlertMark: {fileID: 0}
   PatrolSpots:
   - {fileID: 0}
   - {fileID: 0}
-  infiniteDetectionRange: 0
   selectedState: 0
   _currentState: {fileID: 0}
   DetectingState: {fileID: 11400000, guid: 1aedc55e540144348b89078b067d9c3b, type: 2}

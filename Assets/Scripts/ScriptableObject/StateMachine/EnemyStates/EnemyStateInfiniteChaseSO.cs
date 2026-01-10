@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 //EnemyStateInfiniteChaseSO.cs 
 
@@ -12,13 +13,16 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
     public override void EnterState()
     {
         colorPanelRoomTimer = GameObject.FindAnyObjectByType<ColorPanelRoomTimer>();
-        _logicController.AlertMark.SetActive(true);
+       // _logicController.AlertMark.SetActive(true);
         animator.SetBool("IsWalking", true);
         _logicController.rbNavMesh.Resume();
 
         //  _logicController.CurrentTarget = FindClosestUnTargetedTarget(); //Obtain once
     }
     bool isCarrying = false; //運んでいますか
+    [SerializeField] private float diveCheckRadius = 2f; // 飛び込みチェックの範囲
+    [SerializeField] private LayerMask playerLayer; // プレイヤーのレイヤー
+    [SerializeField] private bool showDiveGizmo = true; // デバッグ用
     public override void UpdateState()
     {
         if (isCarrying) return;
@@ -26,36 +30,54 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         // Find the closest uncaught target and set it as the chase target
         GameObject closestTarget = FindClosestUncaughtTarget(); //Always check for closest one.
         if (closestTarget) _logicController.SetChaseTarget(closestTarget);
+    
 
         if (IsValidChaseTarget()) //ターゲットが存在する
         {
             //GameObject untargetedTarget = _logicController.CurrentTarget;
-
             SetChaseTargetPos();
             if (IsWithinCatchRange(closestTarget))
             {
+                // ============ 追加: 飛び込み判定用のSphere Checkを作成 ============
+                Vector3 diveCheckPosition = Owner.transform.position + Owner.transform.forward * (diveCheckRadius * 0.5f);
+                Collider[] hitColliders = Physics.OverlapSphere(diveCheckPosition, diveCheckRadius, playerLayer);
+
+                bool isHitPlayer = false;
+
+                // プレイヤーが飛び込み範囲内にいるかチェック
+                foreach (Collider col in hitColliders)
+                {
+                    if (col.gameObject == closestTarget)
+                    {
+                        isHitPlayer = true;
+                        break;
+                    }
+                }
+                // ================================================================
+
                 isCarrying = true;
-                //For now we us both because we dont have miss
-                animator.SetBool("IsDiving", true); //今回はまだスキップする。
-                animator.SetBool("IsCatching", true); //TODO move this to Caught State for better animation flow
+                animator.SetBool("IsDiving", true);
 
-                closestTarget.GetComponent<CatchPosition>().SetCatch(this);
-                _logicController.rbNavMesh.ClearPath();
+                if (isHitPlayer) // プレイヤーに当たった場合
+                {
+                    animator.SetBool("IsCatching", true); //TODO move this to Caught State for better animation flow
+                    closestTarget.GetComponent<CatchPosition>().SetCatch(this);
+                    _logicController.rbNavMesh.ClearPath();
+                    closestTarget.GetComponent<PlayerInfo>().SetCaught();
+                    ColorPanelRoomTimer colorPanelRoomTimer = FindAnyObjectByType<ColorPanelRoomTimer>();
+                    if (colorPanelRoomTimer) colorPanelRoomTimer.SetGameOverByOneCaught();
+                }
+                else // プレイヤーに外した場合
+                {
+                    animator.SetBool("IsMissing", true); // ミスアニメーション
+                    Debug.Log("Zookeeper missed the dive!");
+                    // ここにミス時の処理を追加（例：少し硬直する、など）
+                }
 
-                closestTarget.GetComponent<PlayerInfo>().SetCaught();
-
-                ColorPanelRoomTimer colorPanelRoomTimer = FindAnyObjectByType<ColorPanelRoomTimer>();
-                if (colorPanelRoomTimer) colorPanelRoomTimer.SetGameOverByOneCaught();
-
-                //TryGameOver();
-
-                //_logicController.SetState(_logicController.LoiterStateInstance);
-
-                //Destroy(closestTarget);
-                // Handle catch logic
                 return;
             }
         }
+
         else //ターゲットそもそも存在しない
         {
 #if UNITY_EDITOR
@@ -70,6 +92,7 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         }
     }
 
+    // ==================================================
     private bool IsValidChaseTarget()
     {
         return _logicController.CurrentTarget != null && _logicController.CurrentTarget.activeSelf; //Because When Finish, !activeSelf
@@ -88,10 +111,10 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         animator.SetBool("IsWalking", false);
         animator.SetBool("IsDiving", false);
         animator.SetBool("IsCatching", false);
-        _logicController.AlertMark.SetActive(false);
+      //  _logicController.AlertMark.SetActive(false);
         _logicController.rbNavMesh.ClearPath();
     }
-
+    
     public override void DrawStateGizmo()
     {
         if (_logicController.CurrentTarget == null) return;
@@ -101,6 +124,12 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         Gizmos.DrawWireSphere(center, _catchRange);
 
         ConeHelper.DrawConeGizmo(_logicController.GetConeInfo());
+
+        if (!showDiveGizmo) return;
+
+        Gizmos.color = Color.yellow;
+        Vector3 diveCheckPosition = Owner.transform.position + Owner.transform.forward * (diveCheckRadius * 0.5f);
+        Gizmos.DrawWireSphere(diveCheckPosition, diveCheckRadius);
     }
 
     private void SetChaseTargetPos()
