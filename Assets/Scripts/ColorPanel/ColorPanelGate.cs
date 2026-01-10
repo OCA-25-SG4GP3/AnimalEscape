@@ -17,6 +17,7 @@ public class ColorPanelGate : MonoBehaviour
     private GateDropController gateDropController;
     private ColorPanelRoomTimer colorPanelRoomTimer;
     [SerializeField] private CinemachineCamera sidewayCm; //not front
+    private CinemachineCamera frontCm;
     private Animator gateAnimator;
 
     [SerializeField, ReadOnly, Header("ボタンの成功数（すべて）")] private int successfulPresses = 0;
@@ -34,7 +35,12 @@ public class ColorPanelGate : MonoBehaviour
         gateAnimator = GetComponent<Animator>();
         colorPanelRoomTimer = FindAnyObjectByType<ColorPanelRoomTimer>();
         gameManager = FindAnyObjectByType<GameManager>();
-        sidewayCm = gameManager.SidewayCm;
+
+        if (gameManager != null)
+        {
+            sidewayCm = gameManager.SidewayCm;
+            frontCm = gameManager.FrontCm;
+        }
     }
 
 
@@ -133,12 +139,6 @@ public class ColorPanelGate : MonoBehaviour
     {
         gateOpened = true;
 
-        // Move camera
-        if (sidewayCm && cameraFollowObjectT)
-        {
-            sidewayCm.Follow = cameraFollowObjectT;
-        }
-
         // Add time bonus
         if (colorPanelRoomTimer) { colorPanelRoomTimer.AddTime(); }
 
@@ -153,6 +153,20 @@ public class ColorPanelGate : MonoBehaviour
 
     private void OnGateFullyOpened()
     {
+        // Move cameras to follow the next area (only after gate is fully opened)
+        if (cameraFollowObjectT)
+        {
+            if (sidewayCm)
+            {
+                sidewayCm.Follow = cameraFollowObjectT;
+            }
+
+            if (frontCm)
+            {
+                frontCm.Follow = cameraFollowObjectT;
+            }
+        }
+
         if (playerAIMoveToTransform == null || playerAIMoveToTransform.Length < 2) return;
 
         var playerDistManager = FindAnyObjectByType<PlayerDistanceManager>();
@@ -174,6 +188,6 @@ public class ColorPanelGate : MonoBehaviour
             player2AnimalControl.SetMoveTo(playerAIMoveToTransform[1].position, isLastGate);
         }
 
-      
+
     }
 }
