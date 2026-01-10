@@ -1,9 +1,9 @@
 using UnityEngine;
-//EnemyStateStandbySO.cs ¨ “G‚ª‘Ò‹@iƒXƒ^ƒ“ƒoƒCj’†‚Ìó‘Ô
+//EnemyStateStandbySO.cs ï¿½ï¿½ ï¿½Gï¿½ï¿½ï¿½Ò‹@ï¿½iï¿½Xï¿½^ï¿½ï¿½ï¿½oï¿½Cï¿½jï¿½ï¿½ï¿½Ìï¿½ï¿½
 
 
 [CreateAssetMenu(fileName = "EnemyStateStandbySO", menuName = "State/EnemyState/EnemyStateStandbySO")]
-public class EnemyStateStandbySO : EnemyStateBaseSO ///æ±ºã‚ãŸå ´æ‰€ã«ãƒ‘ãƒˆãƒ­ãƒ¼ãƒ« / å·¡å›?
+public class EnemyStateStandbySO : EnemyStateBaseSO ///æ±ºã‚ãŸå ´æ‰€ã«ãƒ‘ãƒˆãƒ­ãƒ¼ãƒ« / å·¡ï¿½?
 {
     public override void EnterState()
     {
@@ -13,7 +13,7 @@ public class EnemyStateStandbySO : EnemyStateBaseSO ///æ±ºã‚ãŸå ´æ‰€ã«ãƒ‘ãƒˆã
     public override void UpdateState()
     {
         GameObject closestTarget = _logicController.CheckUncaughtTargetsInCone();
-        if (closestTarget || _logicController.infiniteDetectionRange)
+        if (closestTarget)
         {
             if(closestTarget) _logicController.CurrentTarget = closestTarget;
             _logicController.SetState(_logicController.DetectingStateInstance);

@@ -12,6 +12,7 @@ TagManager:
   - Goal
   - Jail
   - Ground
+  - FadeObject
   layers:
   - Default
   - TransparentFX

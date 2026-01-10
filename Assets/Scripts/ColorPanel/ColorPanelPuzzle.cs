@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using UnityEngine.Audio;
 using UnityEngine;
-
+[SelectionBase]
 public class ColorPanelPuzzle : MonoBehaviour
 {
     ColorPanelGate colorPanelGate;
@@ -11,16 +11,17 @@ public class ColorPanelPuzzle : MonoBehaviour
     [NonSerializedAttribute] public Material correctPanelMaterial;
     [SerializeField] private Material pressedMaterial;
     public bool upSide = true; //is this upside or downside (to prevent double press / exploit)
-    [SerializeField, Header("éš ã—ãŸãE ´åˆãEãƒEƒªã‚¢ãƒ«")] private Material hidingMaterial;
-    [SerializeField, Header("ä½•ç§’ã¾ã§ãƒªã‚»ãƒEƒˆ")] private float autoResetTimer = 1.0f;
+    [SerializeField, Header("éš ã—ãŸãEï¿½ï¿½åˆï¿½EãƒEï¿½ï¿½ã‚¢ãƒ«")] private Material hidingMaterial;
+    [SerializeField, Header("ä½•ç§’ã¾ã§ãƒªã‚»ãƒEï¿½ï¿½")] private float autoResetTimer = 1.0f;
+    [SerializeField, Header("ä½•ç§’ã¾ã§ãƒªã‚»ãƒEï¿½ï¿½")] private float autoHideTimer = 3.0f;
 
-    public AudioClip pushSound;      // E½WE½E½E½E½E½vE½E½E½ÌƒtE½@E½CE½E½
-    private AudioSource audioSource; // AudioSourceE½E½E½gE½E½E½E½E½ß‚Ì•Ïï¿½
+    public AudioClip pushSound;
+    private AudioSource audioSource;
 
 
-    public bool isStepped = false; //æŠ¼ã•ã‚Œã¦ãE‚‹ã‹ã©ãE‹
-    [SerializeField] private Cooldown returnToWhiteCD = new(3.0f);
+    public bool isStepped = false; //æŠ¼ã•ã‚Œã¦ãEï¿½ï¿½ã‹ã©ãEï¿½ï¿½
     private Coroutine resetCoroutine;
+    private Coroutine hideCoroutine;
 
     public GameObject steppedEffect;
 
@@ -51,11 +52,6 @@ public class ColorPanelPuzzle : MonoBehaviour
 
     void Update()
     {
-        if (hidingMaterial && IsCurrentlyUsingCorrectMaterial() && !returnToWhiteCD.IsCooldown)
-        {
-            RestoreToHidingMaterial();
-        }
-
         // Switch gates if current gate is opened
         if (colorPanelGate != null && colorPanelGate.IsGateOpened())
         {
@@ -67,7 +63,7 @@ public class ColorPanelPuzzle : MonoBehaviour
             }
         }
     }
-
+    GameObject playerInside;
     void OnTriggerEnter(Collider other)
     {
 
@@ -80,18 +76,24 @@ public class ColorPanelPuzzle : MonoBehaviour
 
             isStepped = true;
             animator.Play("ColorPanelPressedAnim");
-            //audioSource.PlayOneShot(pushSound); //E½jE½ó‚³‚ï¿½E½ÆƒoE½OE½E½
+            //audioSource.PlayOneShot(pushSound); //ï¿½Eï¿½jï¿½Eï¿½ó‚³‚ï¿½ï¿½Eï¿½Æƒoï¿½Eï¿½Oï¿½Eï¿½ï¿½Eï¿½
             Instantiate(steppedEffect, transform.position, transform.rotation);
-            //audioSource.PlayOneShot(pushSound); //”j‰ó‚³‚ê‚é‚ÆƒoƒO‚é
+            //audioSource.PlayOneShot(pushSound); //ï¿½jï¿½ó‚³‚ï¿½ï¿½Æƒoï¿½Oï¿½ï¿½
             //AudioSource.PlayClipAtPoint(pushSound, transform.position, 10000.0f); this volume is capped at 1
             PlayPushedSFX();
 
             meshRen.material = pressedMaterial;
 
-            if (IsCurrentlyUsingHidingMaterial()) //If any hiding mat is assigned
+            if (hidingMaterial) //If hiding material is assigned
             {
                 RestoreToCorrectMaterial();
-                returnToWhiteCD.StartCooldown();
+
+                // Start hide timer to restore to hiding material later
+                if (hideCoroutine != null)
+                {
+                    StopCoroutine(hideCoroutine);
+                }
+                hideCoroutine = StartCoroutine(HideAfterDelay(autoHideTimer));
             }
 
             colorPanelGate.PanelStepped(this); //last order so it change first then checked
@@ -100,6 +102,7 @@ public class ColorPanelPuzzle : MonoBehaviour
             {
                 StopCoroutine(resetCoroutine);
             }
+            playerInside = other.gameObject;
             resetCoroutine = StartCoroutine(ResetStepAfterDelay(autoResetTimer));
         }
     }
@@ -140,16 +143,20 @@ public class ColorPanelPuzzle : MonoBehaviour
             isStepped = false;
             animator.Play("ColorPanelReleasedAnim");
             colorPanelGate.PanelReleased(this);
-            if (hidingMaterial)
-            {
-                RestoreToHidingMaterial();
-            }
-            else
+
+            // Don't change material here, let hideCoroutine handle it if using hiding material
+            if (!hidingMaterial)
             {
                 meshRen.material = correctPanelMaterial;
             }
+
+            // Clear playerInside since they left
+            playerInside = null;
         }
     }
+
+    [SerializeField] private float upResetPush = 20.0f;
+    [SerializeField] private float horizontalResetPush = 20.0f;
     private IEnumerator ResetStepAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -157,13 +164,49 @@ public class ColorPanelPuzzle : MonoBehaviour
         isStepped = false;
         animator.Play("ColorPanelReleasedAnim");
         colorPanelGate.PanelReleased(this);
+
+        // Don't change material here, let hideCoroutine handle it
+        if (!hidingMaterial)
+        {
+            meshRen.material = correctPanelMaterial;
+        }
+
+        if(playerInside)
+        {
+            // Apply random force in one of 4 directions (forward, back, left, right) plus upward
+            AnimalControlSimple animalControl = playerInside.GetComponent<AnimalControlSimple>();
+            if (animalControl != null)
+            {
+                // Choose random horizontal direction (0=forward, 1=right, 2=back, 3=left)
+                int randomDir = UnityEngine.Random.Range(0, 4);
+                Vector3 horizontalForce = Vector3.zero;
+
+                switch (randomDir)
+                {
+                    case 0: horizontalForce = Vector3.forward; break;
+                    case 1: horizontalForce = Vector3.right; break;
+                    case 2: horizontalForce = Vector3.back; break;
+                    case 3: horizontalForce = Vector3.left; break;
+                }
+
+                // Combine horizontal and upward force
+                Vector3 totalForce = (horizontalForce * horizontalResetPush) + (Vector3.up * upResetPush);
+                animalControl.ApplyExternalForce(totalForce, 0.5f);
+
+            }
+
+            playerInside = null;
+        }
+    }
+
+    private IEnumerator HideAfterDelay(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        // After timer expires, hide the panel again (regardless of current material)
         if (hidingMaterial)
         {
             RestoreToHidingMaterial();
-        }
-        else
-        {
-            meshRen.material = correctPanelMaterial;
         }
     }
 
