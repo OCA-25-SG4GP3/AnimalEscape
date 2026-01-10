@@ -9,6 +9,7 @@ public class FadeInImgManager : MonoBehaviour
     void Start()
     {
         img = GetComponent<Image>();
+        if(!img.enabled) img.enabled = true;
     }
 
     void Update()
