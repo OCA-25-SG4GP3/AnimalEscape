@@ -96,6 +96,7 @@ public class ColorPanelGate : MonoBehaviour
         // Can accept panels if there's no previous gate, or if the previous gate is opened
         return previousGate == null || previousGate.IsGateOpened();
     }
+    [SerializeField] private AudioClip correctSFX;
 
     private void OnSuccessfulMatch(ColorPanelPuzzle panelA, ColorPanelPuzzle panelB)
     {
@@ -115,7 +116,30 @@ public class ColorPanelGate : MonoBehaviour
             steppedPanels.Remove(panelB);
             allPanels.Remove(panelA);
             allPanels.Remove(panelB);
+
+            //
+            GameObject audioObj = new GameObject("");
+            //
+            audioObj.transform.position = Camera.main.transform.position;
+            //
+            var audioSrc = audioObj.AddComponent<AudioSource>();
+            
+            ////////////
+            audioSrc.clip = correctSFX;
+            audioSrc.Play();
+            
+            //audioSrc.PlayOneShot(correctSFX);
+            //audioSrc.PlayOneShot(correct2SFX);
+            //audioSrc.PlayOneShot(correct3SFX);
+            ////////////
+            
+            //2秒後消す
+            Destroy(audioObj, 2.0f);
+
+            //Instantiate(audioPrefab,,);
         }
+
+      //  [SerializeField] GameObject audioPrefab;
 
         // Drop the gate step by step
         if (gateDropController)
