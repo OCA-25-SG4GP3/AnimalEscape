@@ -7,42 +7,29 @@ using UnityEngine.InputSystem.Utilities;
 using UnityEngine.Splines;
 using UnityEngine.UIElements;
 
-[System.Serializable]
-public struct PlayerInputKeys
-{
-    public KeyCode forward;
-    public KeyCode backward;
-    public KeyCode left;
-    public KeyCode right;
-    public KeyCode jump;
-    public KeyCode specialAction; //Slide / Throw
-    public KeyCode horizontalAxis; //Slide / Throw
-    public KeyCode verticalAxis; //Slide / Throw
-}
+
 [RequireComponent(typeof(Rigidbody))]
 public class AnimalControlSimple : MonoBehaviour
 {
     PlayerInfoSystem playerInfoSystem;
-    [SerializeField] public PlayerInputKeys inputKeys = new(); //Player 1, Player 2 ??øΩ?øΩ ÅX??øΩ?øΩ…åÔøΩ??øΩ?øΩﬂÇÔøΩ
+    [SerializeField] public PlayerInputKeys inputKeys = new(); //Player 1, Player 2 
     Animator animator;
     [SerializeField] public float baseMoveSpeed = 5f;
     [SerializeField] public float moveSpeed = 5f; public void SetMoveSpeed(float _moveSpeed) { moveSpeed = _moveSpeed; }
+    [SerializeField] private float moveSpeedOnFinishMult = 1.3f;
     [SerializeField] public float jumpForce = 5f;
     [SerializeField] public LayerMask groundMask;
     [SerializeField] public float groundCheckRadius = 0.1f;
     [SerializeField, Header("Not a prefab")] private GameObject starPopEffect;
 
-    //íÖínÇÃSEÇì¸ÇÍÇÈ
-    public AudioClip jumpSound;      // ÉWÉÉÉìÉvâπÇÃÉtÉ@ÉCÉã
-    public AudioClip landingSound;   // íÖínâπ
-    public AudioClip walkSound;      // ï‡Ç≠
-
-    [SerializeField] public float soundPitch = 2.5f;        
-    [NonSerializedAttribute] public AudioSource audioSource; // AudioSourceÇégÇ§ÇΩÇﬂÇÃïœêî
+    public AudioClip jumpSound;      //
+    public AudioClip landingSound; // 
+    [NonSerializedAttribute] public AudioSource audioSource; // AudioSource
 
     Rigidbody rb;
     Vector3 inputDir;
     JumpChecker jumpChecker;
+    Camera mainCamera;
 
     public GameObject moveEffect;
     private bool moveEffectFlag = false;
@@ -50,31 +37,50 @@ public class AnimalControlSimple : MonoBehaviour
 
     public GameObject smokeEffect;
     bool isAIControlled = false; public bool IsAIControlled => isAIControlled;
-    [NonSerializedAttribute] public bool isJumping = false;  // ??øΩ?øΩW??øΩ?øΩ??øΩ?øΩ??øΩ?øΩ??øΩ?øΩ??øΩ?øΩv??øΩ?øΩ??øΩ?øΩ??øΩ?øΩ??øΩ?øΩ??øΩ?øΩ«ÇÔøΩ??øΩ?øΩ??øΩ?øΩ??øΩ?øΩ??øΩ?øΩ«ê’ÇÔøΩ??øΩ?øΩ??øΩ?øΩt??øΩ?øΩ??øΩ?øΩ??øΩ?øΩO
-    PlayerInput playerInput;
+    public void SetAIControlled(bool value) { isAIControlled = value; }
+    bool isInputLocked = false;
+    public void LockInput() { isInputLocked = true; }
+    public void UnlockInput() { isInputLocked = false; }
+    [NonSerializedAttribute] public bool isJumping = false;
+    //PlayerInput playerInput;
     OptionMenu optionMenu;
 
-    //?øΩW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩz?øΩ[?øΩ?øΩ?øΩh?øΩp?øΩ«âÔøΩ
-    [SerializeField] public float holdJumpForce = 10f;      // ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩƒÇÔøΩ?øΩ?øΩ‘ÇÃí«âÔøΩ?øΩ?øΩ
-    public float maxJumpHoldTime = 0.2f;   // ?øΩ≈ëÔøΩ≈âÔøΩ?øΩ?øΩ?øΩÈéûÔøΩ?øΩ
-    public float jumpHoldCounter;   // ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩc?øΩËéûÔøΩ?øΩ
-    public bool jumpHeld;   // ?øΩ?øΩ?øΩ›ÉW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩ{?øΩ^?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩƒÇÔøΩ?øΩÈÇ©?øΩ«ÇÔøΩ?øΩ?øΩ
+    // „Ç∏„É£„É≥„Éó„Éõ„Éº„É´„ÉâÁî®„ÅÆËøΩÂä†Ë®≠ÂÆö
+    [SerializeField] public float holdJumpForce = 10f;      // „Éú„Çø„É≥„ÇíÊäº„Åó„Å¶„ÅÑ„ÇãÈñì„ÅÆËøΩÂä†Âäõ
+    public float maxJumpHoldTime = 0.2f;   // ÊúÄÂ§ß„ÅßÊäº„ÅóÁ∂ö„Åë„Çâ„Çå„ÇãÊôÇÈñì
+    public float jumpHoldCounter;   // „Ç∏„É£„É≥„Éó„Éõ„Éº„É´„Éâ„ÅÆÊÆã„ÇäÊôÇÈñì
+    public bool jumpHeld;   // ÁèæÂú®„Ç∏„É£„É≥„Éó„Éú„Çø„É≥„ÇíÊäº„ÅóÁ∂ö„Åë„Å¶„ÅÑ„Çã„Åã„Å©„ÅÜ„Åã
+    bool isLastGateDone = false;
+    private bool allowExternalForce = false;
+    private float externalForceTimer = 0f;
+
+    /// <summary>
+    /// Apply an external force to the player and temporarily disable movement override
+    /// </summary>
+    public void ApplyExternalForce(Vector3 force, float duration = 0.5f)
+    {
+        rb.AddForce(force, ForceMode.Impulse);
+        allowExternalForce = true;
+        externalForceTimer = duration;
+    }
 
     void Awake()
     {
+        gameManager = FindAnyObjectByType<GameManager>();
+
         animator = GetComponentInChildren<Animator>();
         jumpChecker = GetComponentInChildren<JumpChecker>();
         rb = GetComponent<Rigidbody>();
         playerInfoSystem = GameObject.FindAnyObjectByType<PlayerInfoSystem>();
-        playerInput = GetComponent<PlayerInput>();
+        //playerInput = GetComponent<PlayerInput>();
         optionMenu = FindAnyObjectByType<OptionMenu>();
+        mainCamera = Camera.main;
     }
 
 
     void Start()
     {
         moveSpeed = baseMoveSpeed;
-
         audioSource = GetComponent<AudioSource>();
     }
     private Vector2 moveInput;
@@ -82,36 +88,28 @@ public class AnimalControlSimple : MonoBehaviour
     {
         moveInput = context.ReadValue<Vector2>();
     }
-    //public void OnJump(InputAction.CallbackContext context)
-    //{
-    //    if (!context.performed) return; // only trigger on performed
 
-    //    jumpPressed = true;
-    //}
-    //?øΩ?øΩ?øΩ?øΩ?øΩA?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩm
     public void OnJump(InputAction.CallbackContext context)
     {
         if (isAIControlled)
         {
-            jumpPressed = false;  // ?øΩW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩ?øΩ?øΩÕÇÔøΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ∆ÇÔøΩ?øΩL?øΩ^?øΩi?øΩW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩo?øΩb?øΩt?øΩ@?øΩp?øΩj
-            jumpHeld = false;   // ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ‘ÇÔøΩ?øΩ?øΩ?øΩ?øΩ
+            jumpPressed = false;
+            jumpHeld = false;
             return;
         }
 
         if (context.performed)
         {
-            jumpPressed = true;  // ?øΩW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩ?øΩ?øΩÕÇÔøΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ∆ÇÔøΩ?øΩL?øΩ^?øΩi?øΩW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩo?øΩb?øΩt?øΩ@?øΩp?øΩj
-            jumpHeld = true;    // ?øΩ{?øΩ^?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩƒÇÔøΩ?øΩ?øΩ?øΩ‘Ç…ÇÔøΩ?øΩ?øΩ
+            jumpPressed = true;
+            jumpHeld = true;
         }
 
         if (context.canceled)
         {
-            jumpHeld = false;   // ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ‘ÇÔøΩ?øΩ?øΩ?øΩ?øΩ
+            jumpHeld = false;
         }
 
     }
-
-
 
     Vector3 aiMoveTarget;
     public void SetMoveTo(Vector3 newMoveTarget)
@@ -122,14 +120,22 @@ public class AnimalControlSimple : MonoBehaviour
         // Clear any existing player input to prevent sliding
         moveInput = Vector2.zero;
         inputDir = Vector3.zero;
-    }
 
-    private void UpdateInput()
+        if (animator.HasParameterOfType("IsWalking", AnimatorControllerParameterType.Bool))
+            animator.SetBool("IsWalking", true);
+    }
+    public void SetMoveTo(Vector3 newMoveTarget, bool isLastGate)
+    {
+        SetMoveTo(newMoveTarget);
+        if (isLastGate) isLastGateDone = true;
+    }
+    GameManager gameManager;
+    private void UpdateInputMove()
     {
         float h = 0f;
         float v = 0f;
 
-        if (!isStuned)
+        if (!isStuned && !isInputLocked)
         {
             h += moveInput.x;
             v += moveInput.y;
@@ -152,16 +158,19 @@ public class AnimalControlSimple : MonoBehaviour
                 moveEffectFrame++;
                 if (moveEffectFrame >= 20)
                 {
-                    Instantiate(moveEffect, transform.position, transform.rotation);
+                    if (isJumping == false && jumpChecker.isGrounded)
+                    {
+                        Instantiate(moveEffect, transform.position, transform.rotation);
+                    }
                     moveEffectFrame = 0;
                     moveEffectFlag = false;
                 }
             }
         }
 
-        inputDir = new Vector3(h, 0f, v).normalized;
+        // Convert input to camera-relative direction
+        inputDir = GetCameraRelativeDirection(h, v);
 
-        // V??øΩ?øΩL??øΩ?øΩ[??øΩ?øΩ??øΩ?øΩ??øΩ?øΩ??øΩ?øΩ??øΩ?øΩ??øΩ?øΩ??øΩ?øΩÍÇΩ??øΩ?øΩu??øΩ?øΩ‘Ç…ÉG??øΩ?øΩt??øΩ?øΩF??øΩ?øΩN??øΩ?øΩg??øΩ?øΩƒêÔøΩ
         //DEBUG
 #if UNITY_EDITOR
 
@@ -175,21 +184,46 @@ public class AnimalControlSimple : MonoBehaviour
     [SerializeField] private float jumpBufferTime = 0.15f; // store input
     [SerializeField] private float coyoteTime = 0.1f;      // allow jump after leaving ground
 
+    // Tracks remaining time to buffer a jump input (allows jump shortly after pressing button)
     private float jumpBufferCounter = 0f;
+    // Tracks remaining time for "coyote time" (allows jump shortly after leaving ground)
     private float coyoteCounter = 0f;
+    // Stores whether jump button was pressed this frame (reset to false each Update)
     bool jumpPressed = false;
     void Update()
     {
         if (!isAIControlled)
         {
-            UpdateInput();
+            UpdateInputMove();
+            UpdateInputJump();
         }
         else
         {
             UpdateAIControlled();
         }
 
-        if (!isStuned && jumpPressed)
+
+        coyoteCounter = jumpChecker.isGrounded ? coyoteTime : coyoteCounter - Time.deltaTime;
+
+        // Handle external force timer
+        if (allowExternalForce)
+        {
+            externalForceTimer -= Time.deltaTime;
+            if (externalForceTimer <= 0f)
+            {
+                allowExternalForce = false;
+            }
+        }
+
+        TurnToLookDir(inputDir);
+        UpdateAnimator();
+        UpdateStunedState();
+        UpdateJumpHold();
+    }
+
+    private void UpdateInputJump()
+    {
+        if (!isStuned && jumpPressed && !isInputLocked)
         {
             jumpBufferCounter = jumpBufferTime; // store input
         }
@@ -198,49 +232,10 @@ public class AnimalControlSimple : MonoBehaviour
             jumpBufferCounter -= Time.deltaTime; // countdown every frame
         }
         jumpPressed = false;
-
-        coyoteCounter = jumpChecker.isGrounded ? coyoteTime : coyoteCounter - Time.deltaTime;
-
-        TurnToLookDir(inputDir);
-        UpdateAnimator();
-        UpdateStunedState();
-
-        // ===============================
-        // ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩi?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩj
-        // ===============================
-
-        // ?øΩ?øΩ?øΩ?øΩ?øΩF
-        // ?øΩE?øΩW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩ{?øΩ^?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩƒÇÔøΩ?øΩ?øΩ
-        // ?øΩE?øΩ?øΩ?øΩ›ÉW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩ?øΩ
-        // ?øΩE?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ¬î\?øΩ»éÔøΩ?øΩ‘ÇÔøΩ?øΩc?øΩ?øΩ?øΩƒÇÔøΩ?øΩ?øΩ
-        if (jumpHeld && isJumping && jumpHoldCounter > 0f)
-        {
-            // ?øΩ?øΩ?øΩ›ÇÃëÔøΩ?øΩx?øΩ?øΩ?øΩÊìæ
-            Vector3 vel = rb.linearVelocity;
-
-            // ?øΩ?øΩ?øΩ?øΩ?øΩƒÇÔøΩ?øΩ?øΩ‘ÅA?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ¬èÔøΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩx?øΩ?´ÇÔøΩ
-            // Time.deltaTime ?øΩ?øΩ?øΩ|?øΩ?øΩ?øΩÈÇ±?øΩ∆Ç≈Ét?øΩ?øΩ?øΩ[?øΩ?øΩ?øΩ?øΩ?øΩ[?øΩg?øΩÀëÔøΩ?øΩ?øΩh?øΩ?øΩ
-            vel.y += holdJumpForce * Time.deltaTime;
-
-            // ?øΩ?øΩ?øΩx?øΩ?Ωâf
-            rb.linearVelocity = vel;
-
-            // ?øΩc?øΩ?øΩÃâÔøΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ‘ÇÔøΩ?øΩ?øΩ?øΩÁÇ∑
-            jumpHoldCounter -= Time.deltaTime;
-        }
-        // ===============================
-        // ?øΩ„è∏?øΩ?øΩ?øΩI?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩI?øΩ?øΩ
-        // ===============================
-        // ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩx?øΩ?øΩ0?øΩ»âÔøΩ?øΩ…Ç»ÇÔøΩ?øΩ?øΩ?øΩ?øΩ
-        // ?øΩi?øΩ„è∏?øΩ?øΩ?øΩI?øΩ?øΩ?øΩA?øΩ?øΩ?øΩ?øΩ?øΩ…ì]?øΩ?øΩ?øΩ?øΩ?øΩj
-        if (rb.linearVelocity.y <= 0f)
-        {
-            isJumping = false;
-        }
     }
+
     private void UpdateAIControlled()
     {
-
         // Move straight toward target
         transform.position = Vector3.MoveTowards(transform.position, aiMoveTarget, moveSpeed * Time.deltaTime);
 
@@ -248,68 +243,66 @@ public class AnimalControlSimple : MonoBehaviour
 
         if (direction != Vector3.zero)
         {
+            // Flatten direction to horizontal plane (ignore Y axis)
+            direction.y = 0f;
+            direction.Normalize();
+
             Quaternion lookRotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, turningSpeed * Time.deltaTime);
         }
-
 
         //Stop when close
         if (Vector3.Distance(transform.position, aiMoveTarget) < 0.1f)
         {
             isAIControlled = false;
+            if (animator.HasParameterOfType("IsWalking", AnimatorControllerParameterType.Bool))
+                animator.SetBool("IsWalking", false);
+
+            if (isLastGateDone)
+            {
+                OnAIReachLastGate();
+            }
+        }
+    }
+
+    private void OnAIReachLastGate()
+    {
+        GameClearManager gameClearManager = FindAnyObjectByType<GameClearManager>();
+        if (gameClearManager)
+        {
+            gameClearManager.SetClearGameByFinish();
+            //Last AI MOVE to exit point
+            rb.isKinematic = true;
+            SetMoveSpeed(baseMoveSpeed * moveSpeedOnFinishMult);
+            SetMoveTo(transform.position + Vector3.right * 1000.0f); //Move to far away
+
+            // Disable camera instead of nulling Follow to prevent teleportation
+            gameManager.FrontCm.enabled = false;
         }
     }
 
     void FixedUpdate()
     {
-        moveSpeed = baseMoveSpeed;
-        //moveSpeed = playerInfoSystem.GetDistanceAffectedPlayerSpeed(baseMoveSpeed);
         Move();
         Jump();
     }
 
-    //void Jump()
-    //{
-    //    if (jumpBufferCounter > 0f && coyoteCounter > 0f)
-    //    {
-    //        Vector3 vel = rb.linearVelocity;
-    //        vel.y = jumpForce;
-    //        rb.linearVelocity = vel;
-
-    //        jumpBufferCounter = 0f; // consume input
-    //        coyoteCounter = 0f;     // consume coyote
-    //        jumpChecker.isGrounded = false; // prevent infinite jump
-    //        isJumping = true;
-
-    //        // Play sound only here
-    //        if (audioSource != null && jumpSound != null)
-    //            audioSource.PlayOneShot(jumpSound);
-    //    }
-    //}
-    //?øΩW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩJ?øΩn?øΩ?øΩ?øΩ?øΩ(?øΩ≈íÔøΩW?øΩ?øΩ?øΩ?øΩ?øΩv)
     void Jump()
     {
-        // ?øΩW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩo?øΩb?øΩt?øΩ@ & ?øΩR?øΩ?øΩ?øΩ[?øΩe?øΩ^?øΩC?øΩ?øΩ?øΩÃóÔøΩ?øΩ?øΩ?øΩ?øΩ?øΩL?øΩ?øΩ?øΩ»Ç∆ÇÔøΩ?øΩÃÇ›ÉW?øΩ?øΩ?øΩ?øΩ?øΩv
         if (jumpBufferCounter > 0f && coyoteCounter > 0f)
         {
-            // ?øΩ?øΩ?øΩ›ÇÔøΩ Rigidbody ?øΩÃëÔøΩ?øΩx?øΩ?øΩ?øΩÊìæ
             Vector3 vel = rb.linearVelocity;
-            // ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩiY?øΩj?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩp?øΩ?øΩ?øΩx?øΩ…ïœçX
-            // ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩÃëÔøΩ?øΩx?øΩÕà€éÔøΩ?øΩ?øΩ?øΩ?øΩ?øΩ
             vel.y = jumpForce;
-            // ?øΩœçX?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩx?øΩ?øΩ Rigidbody ?øΩ…îÔøΩ?øΩf
             rb.linearVelocity = vel;
-            // ?øΩ{?øΩ^?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ∆ÇÔøΩ?øΩp?øΩÃÉ^?øΩC?øΩ}?øΩ[?øΩ?øΩ?øΩ?øΩ?øΩZ?øΩb?øΩg
+
             jumpHoldCounter = maxJumpHoldTime;
-            // ?øΩ?øΩ?øΩÕÇ∆ÉR?øΩ?øΩ?øΩ[?øΩe?øΩ^?øΩC?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩi1?øΩ?øΩÃÉW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩ≈ég?øΩ?øΩ?øΩÿÇÔøΩj
             jumpBufferCounter = 0f;
             coyoteCounter = 0f;
-            // ?øΩn?øΩ Ç…ÇÔøΩ?øΩÈîª?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩI?øΩ…âÔøΩ?øΩ?øΩ?øΩi?øΩ?øΩ?øΩ?øΩ?øΩW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩh?øΩ~?øΩj
+
             jumpChecker.isGrounded = false;
-            // ?øΩW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩ?øΩ‘Ç…ìÔøΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ?øΩ∆ÇÔøΩ?øΩL?øΩ^
+
             isJumping = true;
 
-            // ?øΩW?øΩ?øΩ?øΩ?øΩ?øΩv?øΩ?øΩ?øΩ?øΩ1?øΩ?æÇÔøΩ?øΩƒêÔøΩ
             if (audioSource && jumpSound)
                 audioSource.PlayOneShot(jumpSound);
         }
@@ -320,32 +313,14 @@ public class AnimalControlSimple : MonoBehaviour
     void Move()
     {
         if (rb.isKinematic) return;
+
+        // Don't override velocity if external force is active
+        if (allowExternalForce) return;
+
         Vector3 vel = rb.linearVelocity;
         vel.x = inputDir.x * moveSpeed;
         vel.z = inputDir.z * moveSpeed;
         rb.linearVelocity = vel;
-        //audioSource.PlayOneShot(walkSound);
-
-        if (inputDir.sqrMagnitude > 0.001f) // ìÆÇ¢ÇƒÇ¢ÇÈèÍçá
-        {
-            // ÉãÅ[ÉvópÇÃï‡çsâπÇê›íË
-            if (!audioSource.isPlaying && walkSound != null)
-            {
-                audioSource.clip = walkSound;
-                audioSource.pitch = soundPitch;
-                audioSource.loop = true;
-                audioSource.Play();
-            }
-        }
-        else
-        {
-            // é~Ç‹Ç¡ÇΩèÍçáÅAÉãÅ[ÉvÇí‚é~
-            if (audioSource.isPlaying && walkSound != null)
-            {
-                audioSource.Stop();
-            }
-        }
-
     }
 
     float turningSpeed = 10f;
@@ -355,7 +330,6 @@ public class AnimalControlSimple : MonoBehaviour
         {
             Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, turningSpeed * Time.fixedDeltaTime);
-            
         }
     }
     private Cooldown idle2AnimCooldown = new(5.0f);
@@ -363,10 +337,10 @@ public class AnimalControlSimple : MonoBehaviour
     {
         if (!animator) return;
 
-        bool isMoving = inputDir.sqrMagnitude > 0.001f;
+        bool isMoving = inputDir.sqrMagnitude > 0.001f && !isAIControlled;
 
-
-        if (animator.HasParameterOfType("IsWalking", AnimatorControllerParameterType.Bool))
+        // Don't override walking animation if AI is controlling it
+        if (!isAIControlled && animator.HasParameterOfType("IsWalking", AnimatorControllerParameterType.Bool))
             animator.SetBool("IsWalking", isMoving);
 
         if (animator.HasParameterOfType("IsJumping", AnimatorControllerParameterType.Bool))
@@ -434,6 +408,54 @@ public class AnimalControlSimple : MonoBehaviour
         }
     }
 
+    private void UpdateJumpHold()
+    {
+        // Apply additional upward force while holding jump button during a jump
+        if (jumpHeld && isJumping && jumpHoldCounter > 0f)
+        {
+            Vector3 vel = rb.linearVelocity;
+            vel.y += holdJumpForce * Time.deltaTime;
+            rb.linearVelocity = vel;
+            jumpHoldCounter -= Time.deltaTime;
+        }
+
+        // Stop jumping state when falling
+        if (rb.linearVelocity.y <= 0f)
+        {
+            isJumping = false;
+        }
+    }
+
+    /// <summary>
+    /// Converts raw input (h, v) to camera-relative direction on the ground plane.
+    /// Handles eagle-eye camera looking down at an angle.
+    /// </summary>
+    private Vector3 GetCameraRelativeDirection(float horizontal, float vertical)
+    {
+        if (mainCamera == null)
+        {
+            // Fallback to world-space input if no camera found
+            return new Vector3(horizontal, 0f, vertical).normalized;
+        }
+
+        // Get camera's forward and right directions
+        Vector3 cameraForward = mainCamera.transform.forward;
+        Vector3 cameraRight = mainCamera.transform.right;
+
+        // Project camera directions onto the horizontal plane (Y = 0)
+        cameraForward.y = 0f;
+        cameraRight.y = 0f;
+
+        // Normalize to ensure consistent movement speed
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        // Calculate movement direction relative to camera
+        Vector3 direction = (cameraForward * vertical + cameraRight * horizontal).normalized;
+
+        return direction;
+    }
+
     public void ExitStunedState()
     {
         if (!isStuned) return;
@@ -450,16 +472,6 @@ public class AnimalControlSimple : MonoBehaviour
 
         //Debug.Log($"{name} recovered from Frozen state!");
     }
-
-    /* private void OnTriggerEnter(Collider other)
-     {
-         if (other.gameObject.CompareTag("Dart"))
-         {
-             EnterStunedState();
-         }
-     }*/
-
-    //PAUSE MENU INPUT HANDLING
 
     public void OnPauseMenu(InputAction.CallbackContext context)
     {
@@ -485,17 +497,5 @@ public class AnimalControlSimple : MonoBehaviour
         if (!optionMenu.IsPaused) return;
         if (context.performed)
             optionMenu.ToggleOption();
-    }
-}
-// Extension helper
-public static class AnimatorExtensions
-{
-    public static bool HasParameterOfType(this Animator animator, string paramName, AnimatorControllerParameterType type)
-    {
-        foreach (var param in animator.parameters)
-        {
-            if (param.name == paramName && param.type == type) return true;
-        }
-        return false;
     }
 }

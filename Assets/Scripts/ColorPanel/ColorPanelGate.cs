@@ -2,7 +2,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Unity.Cinemachine;
+using System;
 
+[SelectionBase]
 public class ColorPanelGate : MonoBehaviour
 {
     [SerializeField] private bool usingSides = true;
@@ -14,7 +16,7 @@ public class ColorPanelGate : MonoBehaviour
     // Auto-detected components
     private GateDropController gateDropController;
     private ColorPanelRoomTimer colorPanelRoomTimer;
-    private CinemachineCamera cm;
+    [SerializeField] private CinemachineCamera sidewayCm; //not front
     private Animator gateAnimator;
 
     [SerializeField, ReadOnly, Header("ボタンの成功数（すべて）")] private int successfulPresses = 0;
@@ -22,13 +24,17 @@ public class ColorPanelGate : MonoBehaviour
     private readonly List<ColorPanelPuzzle> allPanels = new();
     private readonly List<ColorPanelPuzzle> steppedPanels = new();
 
+    [SerializeField] private GameObject correctEffect;
+    GameManager gameManager;
+
     void Awake()
     {
         // Auto-detect components
         gateDropController = GetComponentInChildren<GateDropController>();
         gateAnimator = GetComponent<Animator>();
         colorPanelRoomTimer = FindAnyObjectByType<ColorPanelRoomTimer>();
-        cm = FindAnyObjectByType<CinemachineCamera>();
+        gameManager = FindAnyObjectByType<GameManager>();
+        sidewayCm = gameManager.SidewayCm;
     }
 
 
@@ -58,6 +64,11 @@ public class ColorPanelGate : MonoBehaviour
                     if (usingSides && IsSameSide(panelA, panelB)) return;
                     // Matched pair!
                     OnSuccessfulMatch(panelA, panelB);
+                    GameObject instans_A = Instantiate(correctEffect, panelA.transform.position, panelA.transform.rotation);
+                    GameObject instans_B = Instantiate(correctEffect, panelB.transform.position, panelB.transform.rotation);
+
+                    Destroy(instans_A, 2f);
+                    Destroy(instans_B, 2f);
 
                     return; // stop after first pair
                 }
@@ -88,7 +99,7 @@ public class ColorPanelGate : MonoBehaviour
 
     private void OnSuccessfulMatch(ColorPanelPuzzle panelA, ColorPanelPuzzle panelB)
     {
-        if (gateOpened) return;
+        if (gateOpened) return; //so it doesnt process on all gates
 
         successfulPresses++;
         bool isFinalStep = successfulPresses >= panelPairsRequired;
@@ -114,54 +125,55 @@ public class ColorPanelGate : MonoBehaviour
 
         if (isFinalStep)
         {
-            OpenGate();
+            OpenGateFully();
         }
     }
 
-    public void OpenGate()
+    public void OpenGateFully()
     {
         gateOpened = true;
 
         // Move camera
-        if (cm && cameraFollowObjectT)
+        if (sidewayCm && cameraFollowObjectT)
         {
-            cm.Follow = cameraFollowObjectT;
+            sidewayCm.Follow = cameraFollowObjectT;
         }
 
         // Add time bonus
-        if (colorPanelRoomTimer)
-        {
-            colorPanelRoomTimer.AddTime();
-        }
+        if (colorPanelRoomTimer) { colorPanelRoomTimer.AddTime(); }
 
         // Open gate animation
-        if (gateAnimator)
-        {
-            gateAnimator.Play("GateLift");
-        }
+        //if (gateAnimator)        {            gateAnimator.Play("GateLift");        }
 
         // Auto walk players
-        AutoWalkPlayersToSpot();
-        gateDropController.DropStep(true);
+        //AutoWalkPlayersToSpot();
+
+        gateDropController.DropStep(true, OnGateFullyOpened);
     }
 
-    private void AutoWalkPlayersToSpot()
+    private void OnGateFullyOpened()
     {
         if (playerAIMoveToTransform == null || playerAIMoveToTransform.Length < 2) return;
 
         var playerDistManager = FindAnyObjectByType<PlayerDistanceManager>();
         if (!playerDistManager) return;
 
+        bool isLastGate = GameObject.FindObjectsByType<ColorPanelGate>(FindObjectsSortMode.None).All(g => g == this || g.IsGateOpened());
+
         var player1AnimalControl = playerDistManager.Player1.GetComponent<AnimalControlSimple>();
         if (player1AnimalControl && playerAIMoveToTransform[0])
         {
-            player1AnimalControl.SetMoveTo(playerAIMoveToTransform[0].position);
+            player1AnimalControl.UnlockInput(); // Unlock before setting AI control
+            player1AnimalControl.SetMoveTo(playerAIMoveToTransform[0].position, isLastGate);
         }
 
         var player2AnimalControl = playerDistManager.Player2.GetComponent<AnimalControlSimple>();
         if (player2AnimalControl && playerAIMoveToTransform[1])
         {
-            player2AnimalControl.SetMoveTo(playerAIMoveToTransform[1].position);
+            player2AnimalControl.UnlockInput(); // Unlock before setting AI control
+            player2AnimalControl.SetMoveTo(playerAIMoveToTransform[1].position, isLastGate);
         }
+
+      
     }
 }

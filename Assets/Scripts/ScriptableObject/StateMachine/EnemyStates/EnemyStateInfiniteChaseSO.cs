@@ -1,6 +1,6 @@
 using UnityEngine;
 
-//EnemyStateInfiniteChaseSO.cs �� �G�������ɒǐՂ𑱂�����
+//EnemyStateInfiniteChaseSO.cs 
 
 
 [CreateAssetMenu(fileName = "EnemyStateInfiniteChaseSO", menuName = "State/EnemyState/EnemyStateInfiniteChaseSO")]
@@ -16,32 +16,38 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         animator.SetBool("IsWalking", true);
         _logicController.rbNavMesh.Resume();
 
-        _logicController.CurrentTarget = FindClosestUnTargetedTarget(); //Obtain once
+        //  _logicController.CurrentTarget = FindClosestUnTargetedTarget(); //Obtain once
     }
     bool isCarrying = false; //運んでいますか
     public override void UpdateState()
     {
         if (isCarrying) return;
 
+        // Find the closest uncaught target and set it as the chase target
+        GameObject closestTarget = FindClosestUncaughtTarget(); //Always check for closest one.
+        if (closestTarget) _logicController.SetChaseTarget(closestTarget);
 
-        if (IsValidChaseTarget()) //ターゲット存在する
+        if (IsValidChaseTarget()) //ターゲットが存在する
         {
-            GameObject untargetedTarget = _logicController.CurrentTarget;
+            //GameObject untargetedTarget = _logicController.CurrentTarget;
 
             SetChaseTargetPos();
-            if (IsWithinCatchRange(untargetedTarget))
+            if (IsWithinCatchRange(closestTarget))
             {
                 isCarrying = true;
                 //For now we us both because we dont have miss
                 animator.SetBool("IsDiving", true); //今回はまだスキップする。
                 animator.SetBool("IsCatching", true); //TODO move this to Caught State for better animation flow
 
-                untargetedTarget.GetComponent<CatchPosition>().SetCatch(this);
+                closestTarget.GetComponent<CatchPosition>().SetCatch(this);
                 _logicController.rbNavMesh.ClearPath();
 
-                untargetedTarget.GetComponent<PlayerInfo>().SetCaught();
+                closestTarget.GetComponent<PlayerInfo>().SetCaught();
 
-                TryGameOver();
+                ColorPanelRoomTimer colorPanelRoomTimer = FindAnyObjectByType<ColorPanelRoomTimer>();
+                if (colorPanelRoomTimer) colorPanelRoomTimer.SetGameOverByOneCaught();
+
+                //TryGameOver();
 
                 //_logicController.SetState(_logicController.LoiterStateInstance);
 
@@ -52,18 +58,21 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         }
         else //ターゲットそもそも存在しない
         {
+#if UNITY_EDITOR
             Debug.Log("No Animal found");
+#endif
             // Optional: no targets in scene
             // Find the closest uncaught target regardless of cone or distance
-            GameObject closestTarget = FindClosestUncaughtTarget();
-            if (IsValidChaseTarget()) _logicController.CurrentTarget = closestTarget;
-            else _logicController.SetState(_logicController.LoiterStateInstance);
+            //GameObject closestTarget = FindClosestUncaughtTarget();
+            //if (IsValidChaseTarget()) _logicController.CurrentTarget = closestTarget;
+            //else _logicController.SetState(_logicController.LoiterStateInstance);
+            _logicController.SetState(_logicController.LoiterStateInstance);
         }
     }
 
     private bool IsValidChaseTarget()
     {
-        return _logicController.CurrentTarget != null && _logicController.CurrentTarget.activeSelf;
+        return _logicController.CurrentTarget != null && _logicController.CurrentTarget.activeSelf; //Because When Finish, !activeSelf
     }
 
     private void TryGameOver()
