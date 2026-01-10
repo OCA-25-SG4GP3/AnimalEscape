@@ -9,12 +9,11 @@ public class AILogicController : MonoBehaviour
 
     [SerializeField] public GameObject[] Targets; //TODO move this to singular data in gamemanager
 
-    [SerializeField] public GameObject CurrentTarget; //ターゲ?��?ト中オブジェク?��?
+    [SerializeField] public GameObject CurrentTarget; //ターゲ?��?ト中オブジェク?��?
     [SerializeField] public Transform CatchSlot; //Probably not needed anymore
-    [SerializeField] public GameObject AlertMark; //"!!!" ?��?キス?��?
+    [SerializeField] public GameObject AlertMark; //"!!!" ?��?キス?��?
     [SerializeField] public List<Transform> PatrolSpots;
     Rigidbody rb;
-    [SerializeField] public bool infiniteDetectionRange = false;
 
     public enum SelectedState
     {
@@ -69,17 +68,14 @@ public class AILogicController : MonoBehaviour
         //ShowBones(ModelObj.transform, 0);
 
     }
+    public void SetChaseTarget(GameObject target) {CurrentTarget = target; }
+
     void ShowBones(Transform parent, int depth)
     {
         string indent = new string(' ', depth * 2);
         Debug.Log(indent + parent.name);
         foreach (Transform child in parent)
         { ShowBones(child, depth + 1); }
-    }
-    public void SetInfiniteDetectionRange(bool isEnabled)
-    {
-        infiniteDetectionRange = isEnabled;
-        CurrentTarget = PlayerInfoSystem.GetAny().gameObject;
     }
     private void Start()
     {
@@ -153,7 +149,7 @@ public class AILogicController : MonoBehaviour
 
     public void SetState(EnemyStateBaseSO newState)
     {
-        //前�??��AIを終わらせ?��?
+        //前�??��AIを終わらせ?��?
         if (_currentState != null) _currentState.ExitState();
 
         if (!newState) return;
@@ -161,24 +157,24 @@ public class AILogicController : MonoBehaviour
         newState.SetLogicController(this);
         newState.EnterState();
 
-        //前�??��AIを上書?��?
+        //前�??��AIを上書?��?
         _currentState = newState;
     }
 
-    public GameObject CheckUncaughtTargetsInCone() //捕まえらな?��?も�??��をチェ?��?ク
+    public GameObject CheckUncaughtTargetsInCone() //捕まえらな?��?も�??��をチェ?��?ク
     {
-        Func<GameObject, bool> isIgnore = (obj) => //すでに牢屋に入ったら、チェ�?クしな�?�?
+        Func<GameObject, bool> isIgnore = (obj) => //すでに牢屋に入ったら、チェ�?クしな�?�?
         {
             var playerInfo = obj.GetComponent<PlayerInfo>();
             if (!playerInfo) Debug.LogWarning("This [" + obj.name + "] has no PlayerInfo!");
             return playerInfo.hasCaught;
         };
         if (Targets.Length > 0)
-            return ConeHelper.CheckClosestTargetInCone //視野角に、チェ?��?ク
+            return ConeHelper.CheckClosestTargetInCone //視野角に、チェ?��?ク
           (
             GetConeInfo(),
             Targets,
-            isIgnore //捕まえたも�??��を除外す?��?
+            isIgnore //捕まえたも�??��を除外す?��?
           );
         else
             return null;
@@ -195,7 +191,7 @@ public class AILogicController : MonoBehaviour
         return coneInfo;
     }
 
-    bool IsOnSight(Vector3 targetPos) //直線に?��?る、ものがな?��?か�? (障害物がある�?)
+    bool IsOnSight(Vector3 targetPos) //直線に?��?る、ものがな?��?か�? (障害物がある�?)
     {
         Vector3 dir = targetPos - transform.position;
         Ray ray = new Ray(transform.position, dir);

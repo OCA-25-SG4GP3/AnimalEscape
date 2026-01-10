@@ -2,53 +2,60 @@ using UnityEngine;
 
 public class GameStartUI : MonoBehaviour
 {
-    //ƒQ[ƒ€ƒI[ƒo[AƒNƒŠƒA‚Æ“¯‚¶‚æ‚¤‚É‚Ï‚Á‚Æ‚¾‚µ‚Ä‚Ï‚Á‚ÆÁ‚·‚æ‚¤‚É‚·‚é
+    //ï¿½Qï¿½[ï¿½ï¿½ï¿½Iï¿½[ï¿½oï¿½[ï¿½Aï¿½Nï¿½ï¿½ï¿½Aï¿½Æ“ï¿½ï¿½ï¿½ï¿½æ‚¤ï¿½É‚Ï‚ï¿½ï¿½Æ‚ï¿½ï¿½ï¿½ï¿½Ä‚Ï‚ï¿½ï¿½Æï¿½ï¿½ï¿½ï¿½æ‚¤ï¿½É‚ï¿½ï¿½ï¿½
     [SerializeField] private Vector3 firstPosition = new Vector3(0.0f, 0.0f, 0.0f);
-    [SerializeField] private bool isApear = false;  //•¶š‚ğoŒ»‚³‚¹‚é‚©
-    [SerializeField] private float uiAppearSeconds = 2.0f;//UI‚ÌoŒ»ŠÔ    
-    [SerializeField] private float decelTimeSpeedNDeltaTime = 1.0f;//oŒ»ŠÔ‚ªŒ¸‘¬‚·‚é‘¬‚³
+    [SerializeField] private bool isApear = false;  //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é‚©
+    [SerializeField] private float uiAppearSeconds = 2.0f;//UIï¿½Ìoï¿½ï¿½ï¿½ï¿½ï¿½ï¿½    
+    [SerializeField] private float decelTimeSpeedNDeltaTime = 1.0f;//ï¿½oï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½é‘¬ï¿½ï¿½
+
+    [SerializeField] private GameObject fadeObject;
 
     private void Awake()
     {
-        //‰ŠúˆÊ’uİ’è
+        //ï¿½ï¿½ï¿½ï¿½ï¿½Ê’uï¿½İ’ï¿½
         //Vector3 newPosition = transform.position;
         //newPosition = new Vector3(-(Screen.width * 0.5f), Screen.height * 0.5f, 0.0f);
         //transform.position = newPosition;
         //isAppear = true;
 
-        //UI‚ğ‰ŠúˆÊ’u‚Éİ’è(‰æ–ÊŠO)
-        transform.position = firstPosition;        
-        //n‚Ü‚Á‚½uŠÔoŒ»‚³‚¹‚½‚¢‚Ì‚Å
+        //UIï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê’uï¿½Éİ’ï¿½(ï¿½ï¿½ÊŠO)
+        transform.position = firstPosition;
+        //ï¿½nï¿½Ü‚ï¿½ï¿½ï¿½ï¿½uï¿½Ôoï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì‚ï¿½
         isApear = true;
-    }    
+    }
+
+    void Start()
+    {
+        fadeObject.GetComponent<Animator>().Play("FadeIn");
+    }
 
     // Update is called once per frame
     void Update()
-    {        
+    {
         if (isApear)
-        { 
-            //uiAppearFrame -= decelTimeSpeed * Time.deltaTime;//UI‚Ì•\¦ŠÔ‚ğŒ¸‚ç‚µ‚Ä‚¢‚­
-            uiAppearSeconds -= decelTimeSpeedNDeltaTime * Time.unscaledDeltaTime;//UI‚Ì•\¦ŠÔ‚ğŒ¸‚ç‚µ‚Ä‚¢‚­
-            Vector3 newPosition = transform.position;        //ƒIƒuƒWƒFƒNƒg‚ÌÀ•W‚ğ‘ã“ü
+        {
+            //uiAppearFrame -= decelTimeSpeed * Time.deltaTime;//UIï¿½Ì•\ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½ï¿½ï¿½ç‚µï¿½Ä‚ï¿½ï¿½ï¿½
+            uiAppearSeconds -= decelTimeSpeedNDeltaTime * Time.unscaledDeltaTime;//UIï¿½Ì•\ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½ï¿½ï¿½ç‚µï¿½Ä‚ï¿½ï¿½ï¿½
+            Vector3 newPosition = transform.position;        //ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½Ìï¿½ï¿½Wï¿½ï¿½ï¿½ï¿½
             newPosition = new Vector3(Screen.width * 0.5f,
-                           Screen.height * 0.5f, 0);         //éŒ¾‚µ‚½•Ï”‚ÉŒ´“_‚ğ‘ã“ü             
-            transform.position = newPosition;                //V‚µ‚­ì‚Á‚½•Ï”‚ğƒIƒuƒWƒFƒNƒg‚É“ü‚ê‚È‚¨‚·                        
+                           Screen.height * 0.5f, 0);         //ï¿½éŒ¾ï¿½ï¿½ï¿½ï¿½ï¿½Ïï¿½ï¿½ÉŒï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½             
+            transform.position = newPosition;                //ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ïï¿½ï¿½ï¿½ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½É“ï¿½ï¿½ï¿½È‚ï¿½ï¿½ï¿½                        
         }
-        //UI‚Ì•\¦ŠÔ‚ª0ˆÈ‰º‚É‚È‚Á‚½‚ç
+        //UIï¿½Ì•\ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½0ï¿½È‰ï¿½ï¿½É‚È‚ï¿½ï¿½ï¿½ï¿½ï¿½
         if (uiAppearSeconds <= 0.0f)
         {
-            Time.timeScale = 1;//ŠÔ’â~‚ğ‰ğœ‚µ‚Ä
-            isApear = false;     //oŒ»‚ğ‰ğœ‚µ‚Ä
-            Destroy(gameObject); //ƒIƒuƒWƒFƒNƒg‚ğ”jŠü‚·‚é           
+            Time.timeScale = 1;//ï¿½ï¿½ï¿½Ô’ï¿½~ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            isApear = false;     //ï¿½oï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            Destroy(gameObject); //ï¿½Iï¿½uï¿½Wï¿½Fï¿½Nï¿½gï¿½ï¿½jï¿½ï¿½ï¿½ï¿½ï¿½ï¿½           
         }
     }
     private void FixedUpdate()
     {
-        //UI‚Ì•\¦ŠÔ‚ª0’´‰ß‚È‚ç
+        //UIï¿½Ì•\ï¿½ï¿½ï¿½ï¿½ï¿½Ô‚ï¿½0ï¿½ï¿½ï¿½ß‚È‚ï¿½
         if (uiAppearSeconds > 0.0f)
         {
-            //oŒ»‚µ‚Ä‚¢‚éŠÔ‚ÍƒQ[ƒ€‚ÌŠÔ‚ğ~‚ß‚é
-            Time.timeScale = 0;          
+            //ï¿½oï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½Ô‚ÍƒQï¿½[ï¿½ï¿½ï¿½Ìï¿½ï¿½Ô‚ï¿½ï¿½~ï¿½ß‚ï¿½
+            Time.timeScale = 0;
         }
     }
 }
