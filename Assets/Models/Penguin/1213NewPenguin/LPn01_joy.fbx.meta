@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 24c7b53f66defb249bc085835500a97e
+guid: eabf6d17c6e90cb45acdf8f7c71417e2
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -31,11 +31,11 @@ ModelImporter:
     extraUserProperties: []
     clipAnimations:
     - serializedVersion: 16
-      name: LPn01_struggle
-      takeName: LPn01_struggle
-      internalID: -1298720526978308705
+      name: LPn01_joy
+      takeName: LPn01_joy
+      internalID: -295753482080208922
       firstFrame: 0
-      lastFrame: 60
+      lastFrame: 66
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
