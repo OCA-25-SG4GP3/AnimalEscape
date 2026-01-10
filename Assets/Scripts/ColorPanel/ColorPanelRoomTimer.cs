@@ -28,10 +28,10 @@ public class ColorPanelRoomTimer : MonoBehaviour
     {
         timerSlider.value = startingTime - totalTime; // slider increases as time passes
         //編集:江頭
-        //ゲート開通時にタイム追加が超過してしまう対策です        
+        //ゲート開通時にタイム追加が超過しゲージが動かなくなる対策です            
         if(totalTime > timerSlider.maxValue)
         {
-            totalTime = startingTime;
+            totalTime = timerSlider.maxValue;
         }
     }
 
