@@ -5,6 +5,23 @@ public class PlayerInfo : MonoBehaviour
 {
     [SerializeField] public bool hasCaught = false;
     [SerializeField] public Transform ropePointT;
+
+    // ジャンプ後、ボタンを踏める残り時間
+    public float stepableTimer = 0f;
+
+    // ボタン側が見る用
+    public bool CanStepButton => stepableTimer > 0f;
+
+    void Update()
+    {
+        // タイマーを減らす
+        if (stepableTimer > 0f)
+        {
+            stepableTimer -= Time.deltaTime;
+        }
+    }
+
+
     static public void UpdateCDText(TMP_Text cooldownText, Cooldown skillCD)
     {
         float cdRemaining = skillCD.GetCooldownRemainingSecond();
