@@ -215,7 +215,12 @@ public class AnimalControlSimple : MonoBehaviour
             }
         }
 
-        TurnToLookDir(inputDir);
+        //編集:江頭
+        //ポーズ時限定の処理にしました
+        if (Time.timeScale != 0)
+        {
+            TurnToLookDir(inputDir);
+        }
         UpdateAnimator();
         UpdateStunedState();
         UpdateJumpHold();

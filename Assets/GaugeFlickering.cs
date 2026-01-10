@@ -21,7 +21,6 @@ public class GaugeFlickering : MonoBehaviour
         {
             PlayGaugeFlicker();
         }
-
     }
 
     public void PlayGaugeFlicker() //一応デバグからも呼びますので、publicにしています
