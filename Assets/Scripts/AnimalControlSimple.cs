@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
@@ -20,6 +20,9 @@ public class AnimalControlSimple : MonoBehaviour
     [SerializeField] public float jumpForce = 5f;
     [SerializeField] public LayerMask groundMask;
     [SerializeField] public float groundCheckRadius = 0.1f;
+
+    [SerializeField] float fallGravityMultiplier = 2.5f;
+    [SerializeField] float lowJumpGravityMultiplier = 2.0f;
     [SerializeField, Header("Not a prefab")] private GameObject starPopEffect;
 
     public AudioClip jumpSound;      //
@@ -438,6 +441,23 @@ public class AnimalControlSimple : MonoBehaviour
 
     private void UpdateJumpHold()
     {
+        Vector3 vel = rb.linearVelocity;
+
+        // Falling → faster fall (no hang time)
+        if (vel.y < 0f)
+        {
+            vel.y += Physics.gravity.y * (fallGravityMultiplier - 1f) * Time.deltaTime;
+        }
+        // Rising but jump released → cut jump short
+        else if (vel.y > 0f && !jumpHeld)
+        {
+            vel.y += Physics.gravity.y * (lowJumpGravityMultiplier - 1f) * Time.deltaTime;
+        }
+
+        rb.linearVelocity = vel;
+    }
+    /*private void UpdateJumpHold()
+    {
         // Apply additional upward force while holding jump button during a jump
         if (jumpHeld && isJumping && jumpHoldCounter > 0f)
         {
@@ -452,8 +472,7 @@ public class AnimalControlSimple : MonoBehaviour
         {
             isJumping = false;
         }
-    }
-
+    }*/
     /// <summary>
     /// Converts raw input (h, v) to camera-relative direction on the ground plane.
     /// Handles eagle-eye camera looking down at an angle.
