@@ -1,7 +1,8 @@
-using System;
+﻿using System;
 using System.Collections;
-using UnityEngine.Audio;
 using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.ProBuilder;
 [SelectionBase]
 public class ColorPanelPuzzle : MonoBehaviour
 {
@@ -66,7 +67,7 @@ public class ColorPanelPuzzle : MonoBehaviour
     GameObject playerInside;
     void OnTriggerEnter(Collider other)
     {
-
+        
         if (other.CompareTag("Player"))
         {
             //TODO need cache to reduce lag ?
@@ -75,6 +76,15 @@ public class ColorPanelPuzzle : MonoBehaviour
             if (!playerInfo.CanStepButton) return;
 
             isStepped = true;
+            AnimalControlSimple animal = other.GetComponent<AnimalControlSimple>();
+            if (animal != null)
+            {
+                animal.LockInput();
+                animal.SetMoveSpeed(0f);
+
+                Rigidbody rb = animal.GetComponent<Rigidbody>();
+                rb.linearVelocity = Vector3.zero; // fully stop movement
+            }
             animator.Play("ColorPanelPressedAnim");
             //audioSource.PlayOneShot(pushSound); //�E�j�E�󂳂��E�ƃo�E�O�E��E�
             Instantiate(steppedEffect, transform.position, transform.rotation);
@@ -137,6 +147,12 @@ public class ColorPanelPuzzle : MonoBehaviour
     }
     void OnTriggerExit(Collider other)
     {
+        AnimalControlSimple animal = other.GetComponent<AnimalControlSimple>();
+        if (animal != null)
+        {
+            animal.UnlockInput();
+            animal.SetMoveSpeed(animal.baseMoveSpeed);
+        }
         if (other.CompareTag("Player"))
         {
             if (!isStepped) return;
@@ -171,13 +187,16 @@ public class ColorPanelPuzzle : MonoBehaviour
             meshRen.material = correctPanelMaterial;
         }
 
-        if(playerInside)
+        if (playerInside)
         {
-            // Apply random force in one of 4 directions (forward, back, left, right) plus upward
             AnimalControlSimple animalControl = playerInside.GetComponent<AnimalControlSimple>();
             if (animalControl != null)
             {
-                // Choose random horizontal direction (0=forward, 1=right, 2=back, 3=left)
+                // 🔓 unlock FIRST so physics can move
+                animalControl.UnlockInput();
+                animalControl.SetMoveSpeed(animalControl.baseMoveSpeed);
+
+                // Choose random horizontal direction
                 int randomDir = UnityEngine.Random.Range(0, 4);
                 Vector3 horizontalForce = Vector3.zero;
 
@@ -189,10 +208,12 @@ public class ColorPanelPuzzle : MonoBehaviour
                     case 3: horizontalForce = Vector3.left; break;
                 }
 
-                // Combine horizontal and upward force
-                Vector3 totalForce = (horizontalForce * horizontalResetPush) + (Vector3.up * upResetPush);
-                animalControl.ApplyExternalForce(totalForce, 0.5f);
+                Vector3 totalForce =
+                    (horizontalForce * horizontalResetPush) +
+                    (Vector3.up * upResetPush);
 
+                // 💥 push player out
+                animalControl.ApplyExternalForce(totalForce, 0.5f);
             }
 
             playerInside = null;
