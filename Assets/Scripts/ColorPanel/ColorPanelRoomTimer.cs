@@ -53,7 +53,9 @@ public class ColorPanelRoomTimer : MonoBehaviour
             totalTime -= Time.deltaTime;
             if (totalTime < 0)
             {
-                totalTime = timerSlider.maxValue;
+                //編集:江頭
+                //totalTimeを0で維持し、ゲージが端に行ったとき戻るのを防ぐため
+                totalTime = 0;
             }
 
             //UpdateTimeText();
