@@ -209,7 +209,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  m_Actions: {fileID: 0}
   m_NotificationBehavior: 2
   m_UIInputModule: {fileID: 0}
   m_DeviceLostEvent:
@@ -407,6 +407,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hasCaught: 0
   ropePointT: {fileID: 1303312904621203486}
+  stepableTimer: 0
 --- !u!136 &4505055279703155771
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -453,11 +454,14 @@ MonoBehaviour:
     verticalAxis: 0
   baseMoveSpeed: 5
   moveSpeed: 5
-  jumpForce: 3
+  moveSpeedOnFinishMult: 1.3
+  jumpForce: 5
   groundMask:
     serializedVersion: 2
     m_Bits: 4294967295
   groundCheckRadius: 0.3
+  fallGravityMultiplier: 3.5
+  lowJumpGravityMultiplier: 2.5
   starPopEffect: {fileID: 4199815467251410385}
   jumpSound: {fileID: 8300000, guid: 1b2c5d0f7b9f30040b06bfb09b96cbe1, type: 3}
   landingSound: {fileID: 8300000, guid: cb6949d082b1ce44bb1b6031187e123f, type: 3}
