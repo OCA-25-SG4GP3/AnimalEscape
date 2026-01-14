@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Auto detect text files and normalize line endings to LF
 * text=auto
 
@@ -19,3 +20,7 @@
 *.fbx binary
 *.mp3 binary
 *.pdf binary
+=======
+# C# source files
+*.cs text eol=crlf encoding=utf-8
+>>>>>>> dev
