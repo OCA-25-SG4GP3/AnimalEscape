@@ -11,6 +11,7 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
     [SerializeField] private GameManager _gameManager;
     [SerializeField] private CinemachineTargetGroup _targetGroup;
     [SerializeField] private bool followZAxis = true;
+    [SerializeField] private bool autoTargetToTargetGroup = true;
 
     [Header("Listening to")]
     [SerializeField] protected VoidEventSO _onEnterGameEvent;
@@ -25,8 +26,8 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
     {
         base.Awake();
 
-        // Set the camera to track the TargetGroup
-        if (_gameManager != null && _gameManager.FrontCm != null && _targetGroup != null)
+        // Set the camera to track the TargetGroup (only if enabled)
+        if (autoTargetToTargetGroup && _gameManager != null && _gameManager.FrontCm != null && _targetGroup != null)
         {
             _gameManager.FrontCm.Target.TrackingTarget = _targetGroup.transform;
         }
