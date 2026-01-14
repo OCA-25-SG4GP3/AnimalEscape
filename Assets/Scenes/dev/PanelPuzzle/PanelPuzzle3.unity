@@ -792,6 +792,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ef121ca781a6b74db382d90f3e2b0d5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fadeSpeed: 1
 --- !u!114 &117397495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9258,6 +9259,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: -20.00003
       objectReference: {fileID: 0}
+    - target: {fileID: 788211061822199728, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.0000015497208
+      objectReference: {fileID: 0}
     - target: {fileID: 874079475112767789, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -9317,6 +9322,10 @@ PrefabInstance:
     - target: {fileID: 3145791401497859409, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_LocalScale.y
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3394540720467042579, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3740987094845606514, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_Name
@@ -9393,6 +9402,10 @@ PrefabInstance:
     - target: {fileID: 5587163878795341995, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_SortingOrder
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6058260439838976373, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 1.99
       objectReference: {fileID: 0}
     - target: {fileID: 6112570238065172459, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_Color.b
