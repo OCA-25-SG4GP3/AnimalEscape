@@ -27,6 +27,12 @@ public class ColorPanelRoomTimer : MonoBehaviour
     void SetSlider()
     {
         timerSlider.value = startingTime - totalTime; // slider increases as time passes
+        //編集:江頭
+        //ゲート開通時にタイム追加が超過しゲージが動かなくなる対策です            
+        if(totalTime > timerSlider.maxValue)
+        {
+            totalTime = timerSlider.maxValue;
+        }
     }
 
     void Update()
@@ -45,7 +51,10 @@ public class ColorPanelRoomTimer : MonoBehaviour
         if (totalTime > 0)
         {
             totalTime -= Time.deltaTime;
-            if (totalTime < 0) totalTime = 0;
+            if (totalTime < 0)
+            {
+                totalTime = timerSlider.maxValue;
+            }
 
             //UpdateTimeText();
             SetSlider();
@@ -113,6 +122,6 @@ public class ColorPanelRoomTimer : MonoBehaviour
 
     public void AddTime()
     {
-        totalTime += addTimePerRoom;
+        totalTime += addTimePerRoom;        
     }
 }

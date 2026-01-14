@@ -71,6 +71,11 @@ public class AnimalControlSimple : MonoBehaviour
         externalForceTimer = duration;
     }
 
+<<<<<<< HEAD
+=======
+    private bool wasGrounded = true; // 前フレームで地面にいたか
+
+>>>>>>> dev
 
     void Awake()
     {
@@ -181,6 +186,24 @@ public class AnimalControlSimple : MonoBehaviour
         // Convert input to camera-relative direction
         inputDir = GetCameraRelativeDirection(h, v);
 
+<<<<<<< HEAD
+=======
+
+        bool isGroundedNow = jumpChecker.isGrounded;
+
+        // 空中 → 着地した瞬間
+        if (!wasGrounded && isGroundedNow)
+        {
+            // 着地後、少しの間ボタンを踏める
+            GetComponent<PlayerInfo>().stepableTimer = 0.15f; // 好きに調整
+        }
+
+        wasGrounded = isGroundedNow;
+
+
+
+        //DEBUG
+>>>>>>> dev
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.B))
         {
@@ -220,7 +243,12 @@ public class AnimalControlSimple : MonoBehaviour
             }
         }
 
-        TurnToLookDir(inputDir);
+        //編集:江頭
+        //ポーズ時限定の処理にしました
+        if (Time.timeScale != 0)
+        {
+            TurnToLookDir(inputDir);
+        }
         UpdateAnimator();
         UpdateStunedState();
         UpdateJumpHold();
@@ -307,6 +335,12 @@ public class AnimalControlSimple : MonoBehaviour
             jumpChecker.isGrounded = false;
 
             isJumping = true;
+
+
+
+            // ジャンプをした事実を記録（着地判定用）
+            GetComponent<PlayerInfo>().stepableTimer = 0f;
+
 
             if (audioSource && jumpSound)
                 audioSource.PlayOneShot(jumpSound);
