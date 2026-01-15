@@ -1,9 +1,11 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Unity.Cinemachine;
 using System;
+using static ColorPanelPuzzle;
 
+[SelectionBase]
 public class ColorPanelGate : MonoBehaviour
 {
     [SerializeField] private bool usingSides = true;
@@ -11,12 +13,12 @@ public class ColorPanelGate : MonoBehaviour
     [SerializeField] private Transform cameraFollowObjectT;
     [SerializeField, Header("扉が開いたら、どこに動く")] private Transform[] playerAIMoveToTransform = new Transform[2];
     [SerializeField, Header("前のゲート")] private ColorPanelGate previousGate;
-    [SerializeField] private GameObject ca01Prefab; // Reference to Ca01 prefab in the scene
-    private BoxCollider ca01BoxCollider; // Reference to BoxCollider of Ca01
+
     // Auto-detected components
     private GateDropController gateDropController;
     private ColorPanelRoomTimer colorPanelRoomTimer;
-    private CinemachineCamera cm;
+    [SerializeField] private CinemachineCamera sidewayCm; //not front
+    private CinemachineCamera frontCm;
     private Animator gateAnimator;
 
     [SerializeField, ReadOnly, Header("ボタンの成功数（すべて）")] private int successfulPresses = 0;
@@ -25,6 +27,7 @@ public class ColorPanelGate : MonoBehaviour
     private readonly List<ColorPanelPuzzle> steppedPanels = new();
 
     [SerializeField] private GameObject correctEffect;
+    GameManager gameManager;
 
     void Awake()
     {
@@ -32,12 +35,12 @@ public class ColorPanelGate : MonoBehaviour
         gateDropController = GetComponentInChildren<GateDropController>();
         gateAnimator = GetComponent<Animator>();
         colorPanelRoomTimer = FindAnyObjectByType<ColorPanelRoomTimer>();
-        cm = FindAnyObjectByType<CinemachineCamera>();
+        gameManager = FindAnyObjectByType<GameManager>();
 
-        // Find and store the BoxCollider of Ca01 prefab (if exists)
-        if (ca01Prefab != null)
+        if (gameManager != null)
         {
-            ca01BoxCollider = ca01Prefab.GetComponent<BoxCollider>();
+            sidewayCm = gameManager.SidewayCm;
+            frontCm = gameManager.FrontCm;
         }
     }
 
@@ -63,7 +66,8 @@ public class ColorPanelGate : MonoBehaviour
             {
                 ColorPanelPuzzle panelA = activePanels[i];
                 ColorPanelPuzzle panelB = activePanels[j];
-                if (panelA.correctPanelMaterial.name == panelB.correctPanelMaterial.name)
+                bool isSameMesh = panelA.buttonType == panelB.buttonType; 
+                if (panelA.correctPanelMaterial.name == panelB.correctPanelMaterial.name && isSameMesh)
                 {
                     if (usingSides && IsSameSide(panelA, panelB)) return;
                     // Matched pair!
@@ -100,10 +104,11 @@ public class ColorPanelGate : MonoBehaviour
         // Can accept panels if there's no previous gate, or if the previous gate is opened
         return previousGate == null || previousGate.IsGateOpened();
     }
+    [SerializeField] private AudioClip correctSFX;
 
     private void OnSuccessfulMatch(ColorPanelPuzzle panelA, ColorPanelPuzzle panelB)
     {
-        if (gateOpened) return;
+        if (gateOpened) return; //so it doesnt process on all gates
 
         successfulPresses++;
         bool isFinalStep = successfulPresses >= panelPairsRequired;
@@ -119,7 +124,30 @@ public class ColorPanelGate : MonoBehaviour
             steppedPanels.Remove(panelB);
             allPanels.Remove(panelA);
             allPanels.Remove(panelB);
+
+            //
+            GameObject audioObj = new GameObject("");
+            //
+            audioObj.transform.position = Camera.main.transform.position;
+            //
+            var audioSrc = audioObj.AddComponent<AudioSource>();
+            
+            ////////////
+            audioSrc.clip = correctSFX;
+            audioSrc.Play();
+            
+            //audioSrc.PlayOneShot(correctSFX);
+            //audioSrc.PlayOneShot(correct2SFX);
+            //audioSrc.PlayOneShot(correct3SFX);
+            ////////////
+            
+            //2秒後消す
+            Destroy(audioObj, 2.0f);
+
+            //Instantiate(audioPrefab,,);
         }
+
+      //  [SerializeField] GameObject audioPrefab;
 
         // Drop the gate step by step
         if (gateDropController)
@@ -133,37 +161,38 @@ public class ColorPanelGate : MonoBehaviour
         }
     }
 
-
     public void OpenGateFully()
     {
         gateOpened = true;
 
-        // Move camera
-        if (cm && cameraFollowObjectT)
-        {
-            cm.Follow = cameraFollowObjectT;
-        }
-
         // Add time bonus
         if (colorPanelRoomTimer) { colorPanelRoomTimer.AddTime(); }
 
-        // Open gate animation (if desired)
-        //if (gateAnimator) { gateAnimator.Play("GateLift"); }
+        // Open gate animation
+        //if (gateAnimator)        {            gateAnimator.Play("GateLift");        }
 
-        // Auto walk players to spot
-        gateDropController.DropStep(true, AutoWalkPlayersToSpot);
+        // Auto walk players
+        //AutoWalkPlayersToSpot();
 
-        // Disable the BoxCollider on Ca01 prefab after the gate opens
-        if (ca01BoxCollider != null)
-        {
-            ca01BoxCollider.enabled = false; // Disable the BoxCollider
-       /*     Debug.Log("Ca01 BoxCollider disabled.");*/
-        }
+        gateDropController.DropStep(true, OnGateFullyOpened);
     }
 
-
-    private void AutoWalkPlayersToSpot()
+    private void OnGateFullyOpened()
     {
+        // Move cameras to follow the next area (only after gate is fully opened)
+        if (cameraFollowObjectT)
+        {
+            if (sidewayCm)
+            {
+                sidewayCm.Follow = cameraFollowObjectT;
+            }
+
+            if (frontCm)
+            {
+                frontCm.Follow = cameraFollowObjectT;
+            }
+        }
+
         if (playerAIMoveToTransform == null || playerAIMoveToTransform.Length < 2) return;
 
         var playerDistManager = FindAnyObjectByType<PlayerDistanceManager>();
@@ -184,5 +213,7 @@ public class ColorPanelGate : MonoBehaviour
             player2AnimalControl.UnlockInput(); // Unlock before setting AI control
             player2AnimalControl.SetMoveTo(playerAIMoveToTransform[1].position, isLastGate);
         }
+
+
     }
 }

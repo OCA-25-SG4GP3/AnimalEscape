@@ -1,3 +1,4 @@
+﻿using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,11 +12,9 @@ public class GameClearManager : MonoBehaviour
 
     //[SerializeField] private Text _clearTimeText;
     [SerializeField] private string nextSceneName = "NextScene"; // 次に移動するシーン�?
-    bool isFinish = false;
+    [NonSerializedAttribute] public bool isFinish = false;
     private void Start()
     {
-        Debug.Log($"Clear Time: {_clearTimeSO.TimeInSeconds} seconds");
-        //  if(_clearTimeText) _clearTimeText.text = $"使用時間\n{_clearTimeSO.TimeInSeconds:F2}s";
     }
 
     void OnCollisionEnter(Collision collision)
@@ -34,6 +33,7 @@ public class GameClearManager : MonoBehaviour
     public void SetClearGameByFinish()
     {
         if (isFinish) return;
+
         isFinish = true;
         Invoke("SetFadeOut", fadeOutDelay);
         if (setFinishImageOnClearGame) finishImageObject.SetActive(true);

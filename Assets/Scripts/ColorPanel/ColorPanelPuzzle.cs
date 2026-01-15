@@ -1,8 +1,9 @@
-using System;
+﻿using System;
 using System.Collections;
-using UnityEngine.Audio;
 using UnityEngine;
-
+using UnityEngine.Audio;
+using UnityEngine.ProBuilder;
+[SelectionBase]
 public class ColorPanelPuzzle : MonoBehaviour
 {
     ColorPanelGate colorPanelGate;
@@ -27,11 +28,11 @@ public class ColorPanelPuzzle : MonoBehaviour
 
     public GameObject steppedEffect;
 
-    enum EButtonType
+    public enum EButtonType
     {
         Box, Circle, Star, Triang
-    }
-    [SerializeField] EButtonType buttonType;
+    };
+    [SerializeField] public EButtonType buttonType;
     [SerializeField] Mesh boxMesh;
     [SerializeField] Mesh starMesh;
     [SerializeField] Mesh triangleMesh;
@@ -49,7 +50,11 @@ public class ColorPanelPuzzle : MonoBehaviour
         if (hidingMaterial) meshRen.material = hidingMaterial;
         audioSource = GetComponent<AudioSource>();
 
+        UpdateMeshByEnum();
+    }
 
+    private void UpdateMeshByEnum()
+    {
         switch (buttonType)
         {
             case EButtonType.Box:
@@ -69,6 +74,11 @@ public class ColorPanelPuzzle : MonoBehaviour
                 frameMeshFilter.mesh = frameStarMesh;
                 break;
         }
+    }
+
+    void OnValidate()
+    {
+        UpdateMeshByEnum();
     }
 
     ColorPanelGate GetActiveGate()
@@ -98,7 +108,7 @@ public class ColorPanelPuzzle : MonoBehaviour
             }
         }
     }
-
+    GameObject playerInside;
     void OnTriggerEnter(Collider other)
     {
 
@@ -107,8 +117,10 @@ public class ColorPanelPuzzle : MonoBehaviour
             //TODO need cache to reduce lag ?
             var playerInfo = other.GetComponent<PlayerInfo>();
             if (!playerInfo.IsFallingDown()) return;
+            if (!playerInfo.CanStepButton) return;
 
             isStepped = true;
+
             animator.Play("ColorPanelPressedAnim");
             //audioSource.PlayOneShot(pushSound); //�E�j�E�󂳂��E�ƃo�E�O�E��E�
             Instantiate(steppedEffect, transform.position, transform.rotation);
@@ -136,6 +148,7 @@ public class ColorPanelPuzzle : MonoBehaviour
             {
                 StopCoroutine(resetCoroutine);
             }
+            playerInside = other.gameObject;
             resetCoroutine = StartCoroutine(ResetStepAfterDelay(autoResetTimer));
         }
     }
@@ -170,6 +183,12 @@ public class ColorPanelPuzzle : MonoBehaviour
     }
     void OnTriggerExit(Collider other)
     {
+        AnimalControlSimple animal = other.GetComponent<AnimalControlSimple>();
+        if (animal != null)
+        {
+            //animal.UnlockInput();
+            //animal.SetMoveSpeed(animal.baseMoveSpeed);
+        }
         if (other.CompareTag("Player"))
         {
             if (!isStepped) return;
@@ -182,8 +201,14 @@ public class ColorPanelPuzzle : MonoBehaviour
             {
                 meshRen.material = correctPanelMaterial;
             }
+
+            // Clear playerInside since they left
+            playerInside = null;
         }
     }
+
+    [SerializeField] private float upResetPush = 20.0f;
+    [SerializeField] private float horizontalResetPush = 20.0f;
     private IEnumerator ResetStepAfterDelay(float delay)
     {
         yield return new WaitForSeconds(delay);
@@ -196,6 +221,39 @@ public class ColorPanelPuzzle : MonoBehaviour
         if (!hidingMaterial)
         {
             meshRen.material = correctPanelMaterial;
+        }
+
+        if (playerInside)
+        {
+            AnimalControlSimple animalControl = playerInside.GetComponent<AnimalControlSimple>();
+            if (animalControl != null)
+            {
+                // 🔓 unlock FIRST so physics can move
+                animalControl.LockInput();
+
+                animalControl.SetMoveSpeed(animalControl.baseMoveSpeed);
+
+                // Choose random horizontal direction
+                int randomDir = UnityEngine.Random.Range(0, 4);
+                Vector3 horizontalForce = Vector3.zero;
+
+                switch (randomDir)
+                {
+                    case 0: horizontalForce = Vector3.forward; break;
+                    case 1: horizontalForce = Vector3.right; break;
+                    case 2: horizontalForce = Vector3.back; break;
+                    case 3: horizontalForce = Vector3.left; break;
+                }
+
+                Vector3 totalForce =
+                    (horizontalForce * horizontalResetPush) +
+                    (Vector3.up * upResetPush);
+
+                // 💥 push player out
+                animalControl.ApplyExternalForce(totalForce, 0.5f);
+            }
+
+            playerInside = null;
         }
     }
 

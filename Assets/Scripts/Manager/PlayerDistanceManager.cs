@@ -1,4 +1,3 @@
-using Unity.Cinemachine;
 using UnityEngine;
 
 public class PlayerDistanceManager : MonoBehaviour //またはPlayerManager
@@ -9,13 +8,17 @@ public class PlayerDistanceManager : MonoBehaviour //またはPlayerManager
 
     void Start()
     {
-        var group = GetComponent<CinemachineTargetGroup>();
-        if (group != null)
+        // Get players from PlayerInputManager if not assigned
+        if (_player1 == null || _player2 == null)
         {
-            if (_player1 == null && group.Targets.Count > 0)
-                _player1 = group.Targets[0].Object;
-            if (_player2 == null && group.Targets.Count > 1)
-                _player2 = group.Targets[1].Object;
+            var playerInputManager = PlayerInputManager.Instance;
+            if (playerInputManager != null)
+            {
+                if (_player1 == null && playerInputManager.Player1 != null)
+                    _player1 = playerInputManager.Player1.transform;
+                if (_player2 == null && playerInputManager.Player2 != null)
+                    _player2 = playerInputManager.Player2.transform;
+            }
         }
     }
 
@@ -37,7 +40,7 @@ public class PlayerDistanceManager : MonoBehaviour //またはPlayerManager
         }
     }
 
-    public bool HaveAllPlayersCaught() //全員捕まえたか
+    public bool HaveAllPlayersCaught() //全員捕まえたか TODO move this to GameManager
     {
         return Player1.GetComponent<PlayerInfo>().hasCaught && Player2.GetComponent<PlayerInfo>().hasCaught;
     }

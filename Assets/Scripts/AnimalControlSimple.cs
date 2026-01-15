@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
@@ -7,18 +7,7 @@ using UnityEngine.InputSystem.Utilities;
 using UnityEngine.Splines;
 using UnityEngine.UIElements;
 
-[System.Serializable]
-public struct PlayerInputKeys
-{
-    public KeyCode forward;
-    public KeyCode backward;
-    public KeyCode left;
-    public KeyCode right;
-    public KeyCode jump;
-    public KeyCode specialAction; //Slide / Throw
-    public KeyCode horizontalAxis; //Slide / Throw
-    public KeyCode verticalAxis; //Slide / Throw
-}
+
 [RequireComponent(typeof(Rigidbody))]
 public class AnimalControlSimple : MonoBehaviour
 {
@@ -31,6 +20,9 @@ public class AnimalControlSimple : MonoBehaviour
     [SerializeField] public float jumpForce = 5f;
     [SerializeField] public LayerMask groundMask;
     [SerializeField] public float groundCheckRadius = 0.1f;
+
+    [SerializeField] float fallGravityMultiplier = 2.5f;
+    [SerializeField] float lowJumpGravityMultiplier = 2.0f;
     [SerializeField, Header("Not a prefab")] private GameObject starPopEffect;
 
     public AudioClip jumpSound;      //
@@ -40,6 +32,7 @@ public class AnimalControlSimple : MonoBehaviour
     Rigidbody rb;
     Vector3 inputDir;
     JumpChecker jumpChecker;
+    Camera mainCamera;
 
     public GameObject moveEffect;
     private bool moveEffectFlag = false;
@@ -60,16 +53,34 @@ public class AnimalControlSimple : MonoBehaviour
     public float maxJumpHoldTime = 0.2f;   // 最大で押し続けられる時間
     public float jumpHoldCounter;   // ジャンプホールドの残り時間
     public bool jumpHeld;   // 現在ジャンプボタンを押し続けているかどうか
-    bool finishOnAIReachTarget = false;
+    bool isLastGateDone = false;
+    private bool allowExternalForce = false;
+    private float externalForceTimer = 0f;
+
+    /// <summary>
+    /// Apply an external force to the player and temporarily disable movement override
+    /// </summary>
+    public void ApplyExternalForce(Vector3 force, float duration = 0.5f)
+    {
+        rb.AddForce(force, ForceMode.Impulse);
+        allowExternalForce = true;
+        externalForceTimer = duration;
+    }
+
+    private bool wasGrounded = true; // 前フレームで地面にいたか
+
 
     void Awake()
     {
+        gameManager = FindAnyObjectByType<GameManager>();
+
         animator = GetComponentInChildren<Animator>();
         jumpChecker = GetComponentInChildren<JumpChecker>();
         rb = GetComponent<Rigidbody>();
         playerInfoSystem = GameObject.FindAnyObjectByType<PlayerInfoSystem>();
         //playerInput = GetComponent<PlayerInput>();
         optionMenu = FindAnyObjectByType<OptionMenu>();
+        mainCamera = Camera.main;
     }
 
 
@@ -122,10 +133,10 @@ public class AnimalControlSimple : MonoBehaviour
     public void SetMoveTo(Vector3 newMoveTarget, bool isLastGate)
     {
         SetMoveTo(newMoveTarget);
-        if (isLastGate) finishOnAIReachTarget = true;
+        if (isLastGate) isLastGateDone = true;
     }
-
-    private void UpdateInput()
+    GameManager gameManager;
+    private void UpdateInputMove()
     {
         float h = 0f;
         float v = 0f;
@@ -163,7 +174,22 @@ public class AnimalControlSimple : MonoBehaviour
             }
         }
 
-        inputDir = new Vector3(h, 0f, v).normalized;
+        // Convert input to camera-relative direction
+        inputDir = GetCameraRelativeDirection(h, v);
+
+
+        bool isGroundedNow = jumpChecker.isGrounded;
+
+        // 空中 → 着地した瞬間
+        if (!wasGrounded && isGroundedNow)
+        {
+            // 着地後、少しの間ボタンを踏める
+            GetComponent<PlayerInfo>().stepableTimer = 0.15f; // 好きに調整
+        }
+
+        wasGrounded = isGroundedNow;
+
+
 
         //DEBUG
 #if UNITY_EDITOR
@@ -188,14 +214,41 @@ public class AnimalControlSimple : MonoBehaviour
     {
         if (!isAIControlled)
         {
-            UpdateInput();
+            UpdateInputMove();
+            UpdateInputJump();
         }
         else
         {
             UpdateAIControlled();
         }
 
-        if (!isStuned && jumpPressed)
+
+        coyoteCounter = jumpChecker.isGrounded ? coyoteTime : coyoteCounter - Time.deltaTime;
+
+        // Handle external force timer
+        if (allowExternalForce)
+        {
+            externalForceTimer -= Time.deltaTime;
+            if (externalForceTimer <= 0f)
+            {
+                allowExternalForce = false;
+            }
+        }
+
+        //編集:江頭
+        //ポーズ時限定の処理にしました
+        if (Time.timeScale != 0)
+        {
+            TurnToLookDir(inputDir);
+        }
+        UpdateAnimator();
+        UpdateStunedState();
+        UpdateJumpHold();
+    }
+
+    private void UpdateInputJump()
+    {
+        if (!isStuned && jumpPressed && !isInputLocked)
         {
             jumpBufferCounter = jumpBufferTime; // store input
         }
@@ -204,30 +257,6 @@ public class AnimalControlSimple : MonoBehaviour
             jumpBufferCounter -= Time.deltaTime; // countdown every frame
         }
         jumpPressed = false;
-
-        coyoteCounter = jumpChecker.isGrounded ? coyoteTime : coyoteCounter - Time.deltaTime;
-
-        TurnToLookDir(inputDir);
-        UpdateAnimator();
-        UpdateStunedState();
-
-        // ===============================
-
-        if (jumpHeld && isJumping && jumpHoldCounter > 0f)
-        {
-            Vector3 vel = rb.linearVelocity;
-
-            vel.y += holdJumpForce * Time.deltaTime;
-
-            rb.linearVelocity = vel;
-
-            jumpHoldCounter -= Time.deltaTime;
-        }
-
-        if (rb.linearVelocity.y <= 0f)
-        {
-            isJumping = false;
-        }
     }
 
     private void UpdateAIControlled()
@@ -254,14 +283,14 @@ public class AnimalControlSimple : MonoBehaviour
             if (animator.HasParameterOfType("IsWalking", AnimatorControllerParameterType.Bool))
                 animator.SetBool("IsWalking", false);
 
-            if (finishOnAIReachTarget)
+            if (isLastGateDone)
             {
-                OnAIReachTarget();
+                OnAIReachLastGate();
             }
         }
     }
 
-    private void OnAIReachTarget()
+    private void OnAIReachLastGate()
     {
         GameClearManager gameClearManager = FindAnyObjectByType<GameClearManager>();
         if (gameClearManager)
@@ -271,6 +300,9 @@ public class AnimalControlSimple : MonoBehaviour
             rb.isKinematic = true;
             SetMoveSpeed(baseMoveSpeed * moveSpeedOnFinishMult);
             SetMoveTo(transform.position + Vector3.right * 1000.0f); //Move to far away
+
+            // Disable camera instead of nulling Follow to prevent teleportation
+            gameManager.FrontCm.enabled = false;
         }
     }
 
@@ -296,6 +328,12 @@ public class AnimalControlSimple : MonoBehaviour
 
             isJumping = true;
 
+
+
+            // ジャンプをした事実を記録（着地判定用）
+            GetComponent<PlayerInfo>().stepableTimer = 0f;
+
+
             if (audioSource && jumpSound)
                 audioSource.PlayOneShot(jumpSound);
         }
@@ -306,6 +344,10 @@ public class AnimalControlSimple : MonoBehaviour
     void Move()
     {
         if (rb.isKinematic) return;
+
+        // Don't override velocity if external force is active
+        if (allowExternalForce) return;
+
         Vector3 vel = rb.linearVelocity;
         vel.x = inputDir.x * moveSpeed;
         vel.z = inputDir.z * moveSpeed;
@@ -401,6 +443,70 @@ public class AnimalControlSimple : MonoBehaviour
         }
     }
 
+    private void UpdateJumpHold()
+    {
+        Vector3 vel = rb.linearVelocity;
+
+        // Falling → faster fall (no hang time)
+        if (vel.y < 0f)
+        {
+            vel.y += Physics.gravity.y * (fallGravityMultiplier - 1f) * Time.deltaTime;
+        }
+        // Rising but jump released → cut jump short
+        else if (vel.y > 0f && !jumpHeld)
+        {
+            vel.y += Physics.gravity.y * (lowJumpGravityMultiplier - 1f) * Time.deltaTime;
+        }
+
+        rb.linearVelocity = vel;
+    }
+    /*private void UpdateJumpHold()
+    {
+        // Apply additional upward force while holding jump button during a jump
+        if (jumpHeld && isJumping && jumpHoldCounter > 0f)
+        {
+            Vector3 vel = rb.linearVelocity;
+            vel.y += holdJumpForce * Time.deltaTime;
+            rb.linearVelocity = vel;
+            jumpHoldCounter -= Time.deltaTime;
+        }
+
+        // Stop jumping state when falling
+        if (rb.linearVelocity.y <= 0f)
+        {
+            isJumping = false;
+        }
+    }*/
+    /// <summary>
+    /// Converts raw input (h, v) to camera-relative direction on the ground plane.
+    /// Handles eagle-eye camera looking down at an angle.
+    /// </summary>
+    private Vector3 GetCameraRelativeDirection(float horizontal, float vertical)
+    {
+        if (mainCamera == null)
+        {
+            // Fallback to world-space input if no camera found
+            return new Vector3(horizontal, 0f, vertical).normalized;
+        }
+
+        // Get camera's forward and right directions
+        Vector3 cameraForward = mainCamera.transform.forward;
+        Vector3 cameraRight = mainCamera.transform.right;
+
+        // Project camera directions onto the horizontal plane (Y = 0)
+        cameraForward.y = 0f;
+        cameraRight.y = 0f;
+
+        // Normalize to ensure consistent movement speed
+        cameraForward.Normalize();
+        cameraRight.Normalize();
+
+        // Calculate movement direction relative to camera
+        Vector3 direction = (cameraForward * vertical + cameraRight * horizontal).normalized;
+
+        return direction;
+    }
+
     public void ExitStunedState()
     {
         if (!isStuned) return;
@@ -442,17 +548,5 @@ public class AnimalControlSimple : MonoBehaviour
         if (!optionMenu.IsPaused) return;
         if (context.performed)
             optionMenu.ToggleOption();
-    }
-}
-// Extension helper
-public static class AnimatorExtensions
-{
-    public static bool HasParameterOfType(this Animator animator, string paramName, AnimatorControllerParameterType type)
-    {
-        foreach (var param in animator.parameters)
-        {
-            if (param.name == paramName && param.type == type) return true;
-        }
-        return false;
     }
 }

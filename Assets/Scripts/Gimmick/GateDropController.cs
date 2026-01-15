@@ -2,15 +2,20 @@
 
 public class GateDropController : MonoBehaviour
 {
-    public float startY = 10f;     // vị trí ban đầu của cổng
-    public float endY = 0f;        // vị trí khi mở hoàn toàn
-    public float partialStepPercentage = 0.1f; // mỗi lần hạ trước khi hoàn thành
-    public float dropSpeed = 4f;
-    public float finalDropSpeed = 10f;
+    [SerializeField] public float startY = 10f;
+    [SerializeField] public float endY = 0f;
+    [SerializeField] public float partialStepPercentage = 0.1f;
+    [SerializeField] public float dropSpeed = 4f;
+    [SerializeField] private float finalDropSpeed = 5.0f;
 
     private bool fullyOpened = false;
+    private BoxCollider boxCollider;
 
-    // Drop một bước, nhưng nếu đây là lần cuối (finalStep = true) thì hạ 100%
+    private void Awake()
+    {
+        boxCollider = GetComponentInChildren<BoxCollider>();
+    }
+
     public void DropStep(bool finalStep = false, System.Action onComplete = null)
     {
         if (fullyOpened) return;
@@ -31,6 +36,9 @@ public class GateDropController : MonoBehaviour
                 if (player1AnimalControl) player1AnimalControl.LockInput();
                 if (player2AnimalControl) player2AnimalControl.LockInput();
             }
+
+            if (boxCollider != null)
+                boxCollider.enabled = false;
         }
         else
         {
@@ -64,4 +72,5 @@ public class GateDropController : MonoBehaviour
 
         if (callback != null) callback();
     }
+
 }
