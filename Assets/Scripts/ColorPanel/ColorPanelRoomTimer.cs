@@ -11,9 +11,8 @@ public class ColorPanelRoomTimer : MonoBehaviour
     [SerializeField] private float addTimePerRoom = 30f; // total seconds add
     [SerializeField] private float timeBeforeGameOverScreen = 5.0f;
     [SerializeField] private GameObject zookeeperPrefab;
-    [SerializeField, Header("ÉQÅ[ÉÄÉIÅ[ÉoÅ[éûÅAóLå¯Ç…Ç∑ÇÈ")] public GameObject gameOverImage;
+    [SerializeField, Header("Game Over„Å´Âá∫„Çã„Ç≠„É£„É≥„Éê„Çπ„Ç™„Éñ„Ç∏„Çß„ÇØ„Éà")] public GameObject gameOverImage;
     [SerializeField] private List<Transform> spawnTs = new();
-    //private string originalString = "écÇËéûä‘ : ";
     bool isGameOver = false;
     [SerializeField] private RectTransform zookeeperIcon;
     [SerializeField] Slider timerSlider;
@@ -28,17 +27,36 @@ public class ColorPanelRoomTimer : MonoBehaviour
     void SetSlider()
     {
         timerSlider.value = startingTime - totalTime; // slider increases as time passes
+        //Á∑®ÈõÜ:Ê±üÈ†≠
+        //„Ç≤„Éº„ÉàÈñãÈÄöÊôÇ„Å´„Çø„Ç§„É†ËøΩÂä†„ÅåË∂ÖÈÅé„Åó„Ç≤„Éº„Ç∏„ÅåÂãï„Åã„Å™„Åè„Å™„ÇãÂØæÁ≠ñ„Åß„Åô            
+        if(totalTime > timerSlider.maxValue)
+        {
+            totalTime = timerSlider.maxValue;
+        }
     }
 
     void Update()
     {
 #if UNITY_EDITOR
-        if (Input.GetKeyDown(KeyCode.Alpha1)) { Debug.Log("TIME END SET"); SetTimeEnd(); }
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            Debug.Log("TIME END SET"); SetTimeEnd();
+            GaugeFlickering gaugeFlicker = FindAnyObjectByType<GaugeFlickering>();
+            if (gaugeFlicker)
+            {
+                gaugeFlicker.PlayGaugeFlicker();
+            }
+        }
 #endif
         if (totalTime > 0)
         {
             totalTime -= Time.deltaTime;
-            if (totalTime < 0) totalTime = 0;
+            if (totalTime < 0)
+            {
+                //Á∑®ÈõÜ:Ê±üÈ†≠
+                //totalTime„Çí0„ÅßÁ∂≠ÊåÅ„Åó„ÄÅ„Ç≤„Éº„Ç∏„ÅåÁ´Ø„Å´Ë°å„Å£„Åü„Å®„ÅçÊàª„Çã„ÅÆ„ÇíÈò≤„Åê„Åü„ÇÅ
+                totalTime = 0;
+            }
 
             //UpdateTimeText();
             SetSlider();
@@ -65,26 +83,36 @@ public class ColorPanelRoomTimer : MonoBehaviour
         ButtonSceneChanger.ChangeScene("TemporaryGameOver");
     }
 
-    public void ResetSceneByGameOver()
+    public void SetGameOverByOneCaught() //ÂÖ®Âì°Êçï„Åæ„Åà„ÅüÁêÜÁî±„Åß„Ç≤„Éº„É†„Ç™„Éº„Éê„Éº
+    {
+        if (gameOverImage.activeSelf) return;
+        gameOverImage.SetActive(true);
+        Invoke("ResetSceneByGameOverImpl", timeBeforeGameOverScreen);
+    }
+    public void SetGameOverByAllCaught() //ÂÖ®Âì°Êçï„Åæ„Åà„ÅüÁêÜÁî±„Åß„Ç≤„Éº„É†„Ç™„Éº„Éê„Éº
     {
         if (gameOverImage.activeSelf) return;
         gameOverImage.SetActive(true);
         Invoke("ResetSceneByGameOverImpl", timeBeforeGameOverScreen);
     }
 
-    //èIÇÌÇÈéûä‘ÇÃê›íËÇ™Ç≈Ç´ÇÈä÷êî
-    //åªç›ÇÕâºÇ≈éûä‘Ç™ÇOÇ…Ç»Ç¡ÇΩÇÁÉQÅ[ÉÄÉIÅ[ÉoÅ[Ç…Ç∑ÇÈÇÊÇ§Ç…ïœçXÇµÇƒÇ¢Ç‹Ç∑
     private void SetTimeEnd()
     {
         totalTime = 0;
         // UpdateTimeText();
 
-        // timeText.text = "éîàÁàıÇ™óàÇ‹Ç∑ÅI";
+        SpawnZookeepers();
+        isGameOver = true;
+        SetSlider();
+    }
+
+    private void SpawnZookeepers()
+    {
         foreach (Transform spawnT in spawnTs)
         {
             if (spawnT == null || zookeeperPrefab == null)
             {
-                Debug.LogError("Zookeeper spawn positions are Missing!");
+                Debug.LogError("Zookeeper spawn Â†¥ÊâÄ„Åå„Å™„ÅÑ!");
                 continue;
             }
 
@@ -92,12 +120,10 @@ public class ColorPanelRoomTimer : MonoBehaviour
             AILogicController aiLogic = inst.GetComponent<AILogicController>();
             aiLogic.SetStateByEnum(AILogicController.SelectedState.InfiniteChase);
         }
-        isGameOver = true;
     }
-
 
     public void AddTime()
     {
-        totalTime += addTimePerRoom;
+        totalTime += addTimePerRoom;        
     }
 }

@@ -4,13 +4,16 @@ using UnityEngine.Audio;
 
 public class GateDropController : MonoBehaviour
 {
-    public float startY = 10f;     // vị trí ban đầu của cổng
-    public float endY = 0f;        // vị trí khi mở hoàn toàn
-    public float partialStepPercentage = 0.1f; // mỗi lần hạ trước khi hoàn thành
-    public float dropSpeed = 4f;
+    [SerializeField] public float startY = 10f;
+    [SerializeField] public float endY = 0f;
+    [SerializeField] public float partialStepPercentage = 0.1f;
+    [SerializeField] public float dropSpeed = 4f;
+    [SerializeField] private float finalDropSpeed = 5.0f;
 
     private bool fullyOpened = false;
+    private BoxCollider boxCollider;
 
+<<<<<<< HEAD
     public AudioClip gateSound;      // ゲート音のファイル
     private AudioSource audioSource; // AudioSourceを使うための変数
 
@@ -21,6 +24,14 @@ public class GateDropController : MonoBehaviour
     }
     // Drop một bước, nhưng nếu đây là lần cuối (finalStep = true) thì hạ 100%
     public void DropStep(bool finalStep = false)
+=======
+    private void Awake()
+    {
+        boxCollider = GetComponentInChildren<BoxCollider>();
+    }
+
+    public void DropStep(bool finalStep = false, System.Action onComplete = null)
+>>>>>>> dev
     {
         if (fullyOpened) return;
 
@@ -29,6 +40,20 @@ public class GateDropController : MonoBehaviour
         {
             targetY = endY;
             fullyOpened = true;
+
+            // Lock players immediately before gate finishes moving
+            var playerDistManager = FindAnyObjectByType<PlayerDistanceManager>();
+            if (playerDistManager)
+            {
+                var player1AnimalControl = playerDistManager.Player1.GetComponent<AnimalControlSimple>();
+                var player2AnimalControl = playerDistManager.Player2.GetComponent<AnimalControlSimple>();
+                // Lock player inputs
+                if (player1AnimalControl) player1AnimalControl.LockInput();
+                if (player2AnimalControl) player2AnimalControl.LockInput();
+            }
+
+            if (boxCollider != null)
+                boxCollider.enabled = false;
         }
         else
         {
@@ -36,21 +61,36 @@ public class GateDropController : MonoBehaviour
         }
 
         StopAllCoroutines();
-        StartCoroutine(SmoothMove(targetY));
+        StartCoroutine(SmoothMove(targetY, finalStep, onComplete));
     }
 
-    private System.Collections.IEnumerator SmoothMove(float targetY)
+    private System.Collections.IEnumerator SmoothMove(float targetY, bool isFinalStep, System.Action callback)
     {
         Vector3 pos = transform.position;
+<<<<<<< HEAD
         audioSource.PlayOneShot(gateSound);
         audioSource.volume = 2f;
+=======
+        float speed = isFinalStep ? finalDropSpeed : dropSpeed;
+
+>>>>>>> dev
         while (Mathf.Abs(pos.y - targetY) > 0.01f)
         {
-            pos.y = Mathf.Lerp(pos.y, targetY, Time.deltaTime * dropSpeed);
+            if (isFinalStep)
+            {
+                pos.y = Mathf.MoveTowards(pos.y, targetY, Time.deltaTime * speed);
+            }
+            else
+            {
+                pos.y = Mathf.Lerp(pos.y, targetY, Time.deltaTime * speed);
+            }
             transform.position = pos;
             yield return null;
         }
         pos.y = targetY;
         transform.position = pos;
+
+        if (callback != null) callback();
     }
+
 }

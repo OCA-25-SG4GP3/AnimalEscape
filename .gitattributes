@@ -1,1 +1,2 @@
-* !text !filter !merge !diff
+# C# source files
+*.cs text eol=crlf encoding=utf-8

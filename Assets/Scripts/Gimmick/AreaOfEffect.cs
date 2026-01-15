@@ -44,7 +44,7 @@ public class AreaOfEffect : MonoBehaviour
 
     private void Snapshot(Collider other)
     {
-        other.GetComponent<AnimalControlSimple>().EnterStunedState();
+        other.GetComponent<AnimalControlSimple>().SetStunnedState();
     }
     private void OnTriggerStay(Collider other)
     {

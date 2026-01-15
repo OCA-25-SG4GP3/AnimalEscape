@@ -1,7 +1,6 @@
-using Unity.Cinemachine;
 using UnityEngine;
 
-public class PlayerDistanceManager : MonoBehaviour
+public class PlayerDistanceManager : MonoBehaviour //またはPlayerManager
 {
     [SerializeField] Transform _player1; public Transform Player1 => _player1;
     [SerializeField] Transform _player2; public Transform Player2 => _player2;
@@ -9,19 +8,23 @@ public class PlayerDistanceManager : MonoBehaviour
 
     void Start()
     {
-        var group = GetComponent<CinemachineTargetGroup>();
-        if (group != null)
+        // Get players from PlayerInputManager if not assigned
+        if (_player1 == null || _player2 == null)
         {
-            if (_player1 == null && group.Targets.Count > 0)
-                _player1 = group.Targets[0].Object;
-            if (_player2 == null && group.Targets.Count > 1)
-                _player2 = group.Targets[1].Object;
+            var playerInputManager = PlayerInputManager.Instance;
+            if (playerInputManager != null)
+            {
+                if (_player1 == null && playerInputManager.Player1 != null)
+                    _player1 = playerInputManager.Player1.transform;
+                if (_player2 == null && playerInputManager.Player2 != null)
+                    _player2 = playerInputManager.Player2.transform;
+            }
         }
     }
 
     void LateUpdate()
     {
-        // If only one player �� do nothing
+        // If only one player �� do nothing
         if (_player1 == null || _player2 == null) return;
 
         Vector3 dir = _player2.position - _player1.position;
@@ -35,5 +38,10 @@ public class PlayerDistanceManager : MonoBehaviour
             _player1.position = midpoint - dir * _maxDistance / 2f;
             _player2.position = midpoint + dir * _maxDistance / 2f;
         }
+    }
+
+    public bool HaveAllPlayersCaught() //全員捕まえたか TODO move this to GameManager
+    {
+        return Player1.GetComponent<PlayerInfo>().hasCaught && Player2.GetComponent<PlayerInfo>().hasCaught;
     }
 }

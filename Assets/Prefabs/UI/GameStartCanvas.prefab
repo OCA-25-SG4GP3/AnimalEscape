@@ -119,8 +119,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -815, y: -15}
-  m_SizeDelta: {x: -230, y: -210}
+  m_AnchoredPosition: {x: -20, y: 6}
+  m_SizeDelta: {x: -414.22977, y: -304.00006}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &717650065177291792
 CanvasRenderer:
@@ -172,5 +172,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a53f464171949d74687e0daacab3a7a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 300
-  StartUiParent: {fileID: 6507986907359979145}
+  firstPosition: {x: 0, y: 0, z: 0}
+  isApear: 0
+  uiAppearFrame: 700
+  decelTimeSpeedNDeltaTime: 1

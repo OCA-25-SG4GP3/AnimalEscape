@@ -71,13 +71,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   meshRen: {fileID: 4010875617694740844}
+  pressedMaterial: {fileID: 0}
   upSide: 1
   hidingMaterial: {fileID: 0}
+<<<<<<< HEAD
   pushSound: {fileID: 8300000, guid: 0a4c302a02afcea45aa813cbbc0ae484, type: 3}
   push_volume: 0.01
   isStepped: 0
   returnToWhiteCD:
     cooldownDuration: 3
+=======
+  autoResetTimer: 1
+  autoHideTimer: 3
+  pushSound: {fileID: 8300000, guid: 68b496d10c278924d864c8577a395c20, type: 3}
+  isStepped: 0
+  steppedEffect: {fileID: 1344314377593938, guid: 9e03786a9517b604d8e930182607a128, type: 3}
+  upResetPush: 50
+  horizontalResetPush: 50
+>>>>>>> dev
 --- !u!95 &5468122513018524495
 Animator:
   serializedVersion: 7
