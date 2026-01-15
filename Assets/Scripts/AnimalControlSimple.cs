@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
@@ -61,6 +61,11 @@ public class AnimalControlSimple : MonoBehaviour
     public void LockInput() { isInputLocked = true; }
     public void UnlockInput() { isInputLocked = false; }
 
+    //--------------------------------------------------------------------------
+
+    private GameObject G;
+    //--------------------------------------------------------------------------
+
     /// <summary>
     /// Apply an external force to the player and temporarily disable movement override
     /// </summary>
@@ -71,11 +76,7 @@ public class AnimalControlSimple : MonoBehaviour
         externalForceTimer = duration;
     }
 
-<<<<<<< HEAD
-=======
     private bool wasGrounded = true; // 前フレームで地面にいたか
-
->>>>>>> dev
 
     void Awake()
     {
@@ -94,6 +95,21 @@ public class AnimalControlSimple : MonoBehaviour
     {
         moveSpeed = baseMoveSpeed;
         audioSource = GetComponent<AudioSource>();
+        //--------------------------------------------------------------------------
+
+        // プレイヤー直下の子オブジェクトGを取得
+        G = transform.Find("G")?.gameObject;
+
+        if (G == null)
+        {
+            Debug.LogError("G が見つかりません！名前を確認してください");
+            return;
+        }
+
+        // 最初は非アクティブにする
+        G.SetActive(false);
+        //--------------------------------------------------------------------------
+
     }
 
     private Vector2 moveInput;
@@ -186,8 +202,6 @@ public class AnimalControlSimple : MonoBehaviour
         // Convert input to camera-relative direction
         inputDir = GetCameraRelativeDirection(h, v);
 
-<<<<<<< HEAD
-=======
 
         bool isGroundedNow = jumpChecker.isGrounded;
 
@@ -202,8 +216,6 @@ public class AnimalControlSimple : MonoBehaviour
 
 
 
-        //DEBUG
->>>>>>> dev
 #if UNITY_EDITOR
         if (Input.GetKeyDown(KeyCode.B))
         {
@@ -252,6 +264,19 @@ public class AnimalControlSimple : MonoBehaviour
         UpdateAnimator();
         UpdateStunedState();
         UpdateJumpHold();
+
+        //--------------------------------------------------------------------------
+        // Oキーで G を有効化
+        if (Input.GetKeyDown(KeyCode.O))
+        {
+            if (G != null)
+            {
+                G.SetActive(true);
+                Debug.Log("G を再び有効化しました！");
+            }
+        }
+        //--------------------------------------------------------------------------
+
     }
 
     private void UpdateInputJump()
