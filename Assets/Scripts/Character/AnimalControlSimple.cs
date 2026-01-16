@@ -12,26 +12,40 @@ using UnityEngine.UIElements;
 public class AnimalControlSimple : MonoBehaviour
 {
     PlayerInfoSystem playerInfoSystem;
-    [SerializeField] public PlayerInputKeys inputKeys = new(); //Player 1, Player 2 
-    Animator animator;
-    [SerializeField] public float baseMoveSpeed = 5f;
-    [SerializeField] public float moveSpeed = 5f; public void SetMoveSpeed(float _moveSpeed) { moveSpeed = _moveSpeed; }
-    [SerializeField] private float moveSpeedOnFinishMult = 1.3f;
-    [SerializeField] public float jumpForce = 5f;
-    [SerializeField] public LayerMask groundMask;
-    [SerializeField] public float groundCheckRadius = 0.1f;
 
-    [SerializeField] float fallGravityMultiplier = 2.5f;
-    [SerializeField] float lowJumpGravityMultiplier = 2.0f;
+    [Header("Settings (ScriptableObjects)")]
+    [SerializeField] private AnimalAudioSettings audioSettings;       // SE担当用
+    [SerializeField] private AnimalMovementSettings movementSettings; // 移動担当用
+
+    [SerializeField] public PlayerInputKeys inputKeys = new(); //Player 1, Player 2
+    Animator animator;
+
+    [SerializeField] public LayerMask groundMask;
     [SerializeField, Header("Not a prefab")] private GameObject starPopEffect;
 
-    // SE（効果音）用
-    public AudioClip jumpSound;      // ジャンプ音
-    public AudioClip landingSound;   // 着地音
-    public AudioClip walkSound;      // 歩行音
+    // Runtime movement value (can be modified at runtime)
+    private float moveSpeed; public void SetMoveSpeed(float _moveSpeed) { moveSpeed = _moveSpeed; }
 
-    [SerializeField] public float soundPitch = 2.5f;
-    [NonSerializedAttribute] public AudioSource audioSource; // AudioSource用の変数
+    [NonSerializedAttribute] public AudioSource audioSource;
+
+    // Movement shortcuts (from movementSettings)
+    public float baseMoveSpeed => movementSettings != null ? movementSettings.baseMoveSpeed : 5f;
+    private float moveSpeedOnFinishMult => movementSettings != null ? movementSettings.moveSpeedOnFinishMult : 1.3f;
+    private float jumpForce => movementSettings != null ? movementSettings.jumpForce : 5f;
+    private float holdJumpForce => movementSettings != null ? movementSettings.holdJumpForce : 10f;
+    private float maxJumpHoldTime => movementSettings != null ? movementSettings.maxJumpHoldTime : 0.2f;
+    private float groundCheckRadius => movementSettings != null ? movementSettings.groundCheckRadius : 0.1f;
+    private float fallGravityMultiplier => movementSettings != null ? movementSettings.fallGravityMultiplier : 2.5f;
+    private float lowJumpGravityMultiplier => movementSettings != null ? movementSettings.lowJumpGravityMultiplier : 2.0f;
+    private float jumpBufferTime => movementSettings != null ? movementSettings.jumpBufferTime : 0.15f;
+    private float coyoteTime => movementSettings != null ? movementSettings.coyoteTime : 0.1f;
+    private float stunedDuration => movementSettings != null ? movementSettings.stunedDuration : 1.5f;
+
+    // Audio shortcuts (from audioSettings)
+    private AudioClip jumpSound => audioSettings != null ? audioSettings.jumpSound : null;
+    public AudioClip landingSound => audioSettings != null ? audioSettings.landingSound : null;
+    private AudioClip walkSound => audioSettings != null ? audioSettings.walkSound : null;
+    private float soundPitch => audioSettings != null ? audioSettings.soundPitch : 2.5f;
 
     Rigidbody rb;
     Vector3 inputDir;
@@ -52,9 +66,7 @@ public class AnimalControlSimple : MonoBehaviour
     //PlayerInput playerInput;
     OptionMenu optionMenu;
 
-    // ジャンプホールド用の追加設定
-    [SerializeField] public float holdJumpForce = 10f;      // ボタンを押している間の追加力
-    public float maxJumpHoldTime = 0.2f;   // 最大で押し続けられる時間
+    // ジャンプホールド用
     public float jumpHoldCounter;   // ジャンプホールドの残り時間
     public bool jumpHeld;   // 現在ジャンプボタンを押し続けているかどうか
     bool isLastGateDone = false;
@@ -205,8 +217,7 @@ public class AnimalControlSimple : MonoBehaviour
 #endif
 
     }
-    [SerializeField] private float jumpBufferTime = 0.15f; // store input
-    [SerializeField] private float coyoteTime = 0.1f;      // allow jump after leaving ground
+    // jumpBufferTime and coyoteTime are now in movementSettings
 
     // Tracks remaining time to buffer a jump input (allows jump shortly after pressing button)
     private float jumpBufferCounter = 0f;
@@ -331,8 +342,6 @@ public class AnimalControlSimple : MonoBehaviour
 
             isJumping = true;
 
-
-
             // ジャンプをした事実を記録（着地判定用）
             GetComponent<PlayerInfo>().stepableTimer = 0f;
 
@@ -341,8 +350,6 @@ public class AnimalControlSimple : MonoBehaviour
                 audioSource.PlayOneShot(jumpSound);
         }
     }
-
-
 
     void Move()
     {
@@ -414,10 +421,14 @@ public class AnimalControlSimple : MonoBehaviour
             }
         }
     }
-    [SerializeField] private float stunedDuration = 1.5f; // How long the freeze lasts
+    // stunedDuration is now in movementSettings
     private float stunedTimer = 0f;
+    private float stunedDurationOverrideValue = -1f; // For runtime override
     private bool isStuned = false;
     private bool stunedComplete = false;
+
+    // Get effective stun duration (override if set, otherwise from settings)
+    private float effectiveStunedDuration => stunedDurationOverrideValue > 0f ? stunedDurationOverrideValue : stunedDuration;
 
     public bool IsStunedComplete => stunedComplete; // public read-only flag
     public void SetCaughtState()
@@ -427,10 +438,8 @@ public class AnimalControlSimple : MonoBehaviour
     }
     public void SetStunnedState(float stunedDurationOverride = -1f)
     {
-        if (stunedDurationOverride > 0f)
-        {
-            stunedDuration = stunedDurationOverride;
-        }
+        // Store override value (will use effectiveStunedDuration to get the right value)
+        stunedDurationOverrideValue = stunedDurationOverride;
 
         stunedTimer = 0f;
         isStuned = true;
@@ -462,7 +471,7 @@ public class AnimalControlSimple : MonoBehaviour
 
         stunedTimer += Time.deltaTime;
 
-        if (stunedTimer >= stunedDuration)
+        if (stunedTimer >= effectiveStunedDuration)
         {
             stunedComplete = true;
             ExitStunedState();
@@ -486,27 +495,7 @@ public class AnimalControlSimple : MonoBehaviour
 
         rb.linearVelocity = vel;
     }
-    /*private void UpdateJumpHold()
-    {
-        // Apply additional upward force while holding jump button during a jump
-        if (jumpHeld && isJumping && jumpHoldCounter > 0f)
-        {
-            Vector3 vel = rb.linearVelocity;
-            vel.y += holdJumpForce * Time.deltaTime;
-            rb.linearVelocity = vel;
-            jumpHoldCounter -= Time.deltaTime;
-        }
-
-        // Stop jumping state when falling
-        if (rb.linearVelocity.y <= 0f)
-        {
-            isJumping = false;
-        }
-    }*/
-    /// <summary>
-    /// Converts raw input (h, v) to camera-relative direction on the ground plane.
-    /// Handles eagle-eye camera looking down at an angle.
-    /// </summary>
+ 
     private Vector3 GetCameraRelativeDirection(float horizontal, float vertical)
     {
         if (mainCamera == null)
