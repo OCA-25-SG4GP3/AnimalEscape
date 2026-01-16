@@ -167,7 +167,7 @@ public class ColorPanelPuzzle : MonoBehaviour
         tempAudio.transform.position = transform.position;
         AudioSource source = tempAudio.AddComponent<AudioSource>();
         source.clip = pushSound;
-        source.volume = 2f;        // can exceed 1 if using an AudioMixer or normalized later
+        source.volume = 0.3f;        // can exceed 1 if using an AudioMixer or normalized later
         source.Play();
         Destroy(tempAudio, pushSound.length);
     }

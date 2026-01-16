@@ -25,9 +25,13 @@ public class AnimalControlSimple : MonoBehaviour
     [SerializeField] float lowJumpGravityMultiplier = 2.0f;
     [SerializeField, Header("Not a prefab")] private GameObject starPopEffect;
 
-    public AudioClip jumpSound;      //
-    public AudioClip landingSound; // 
-    [NonSerializedAttribute] public AudioSource audioSource; // AudioSource
+    // SE（効果音）用
+    public AudioClip jumpSound;      // ジャンプ音
+    public AudioClip landingSound;   // 着地音
+    public AudioClip walkSound;      // 歩行音
+
+    [SerializeField] public float soundPitch = 2.5f;
+    [NonSerializedAttribute] public AudioSource audioSource; // AudioSource用の変数
 
     Rigidbody rb;
     Vector3 inputDir;
@@ -258,7 +262,6 @@ public class AnimalControlSimple : MonoBehaviour
         }
         jumpPressed = false;
     }
-
     private void UpdateAIControlled()
     {
         // Move straight toward target
@@ -352,6 +355,28 @@ public class AnimalControlSimple : MonoBehaviour
         vel.x = inputDir.x * moveSpeed;
         vel.z = inputDir.z * moveSpeed;
         rb.linearVelocity = vel;
+
+        // 歩行SE処理
+        if (inputDir.sqrMagnitude > 0.001f) // 動いている場合
+        {
+            // ループ用の歩行音を設定
+            if (!audioSource.isPlaying && walkSound != null)
+            {
+                audioSource.clip = walkSound;
+                audioSource.pitch = soundPitch;
+                audioSource.loop = true;
+                audioSource.Play();
+            }
+        }
+        else
+        {
+            // 止まった場合、ループを停止
+            if (audioSource.isPlaying && walkSound != null)
+            {
+                audioSource.Stop();
+            }
+        }
+
     }
 
     float turningSpeed = 10f;
@@ -361,6 +386,7 @@ public class AnimalControlSimple : MonoBehaviour
         {
             Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, turningSpeed * Time.fixedDeltaTime);
+            
         }
     }
     private Cooldown idle2AnimCooldown = new(5.0f);
