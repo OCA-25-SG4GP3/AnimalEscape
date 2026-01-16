@@ -16,7 +16,6 @@ public class JumpChecker : MonoBehaviour
     {
         // 地面に着地したことを判定
         // 地面と接触した場合にSEを再生
-        isGrounded = false;
 
         if (other.gameObject != animalControl.gameObject) // ignore self
         {
@@ -30,17 +29,37 @@ public class JumpChecker : MonoBehaviour
             //audioSource.PlayOneShot(landingSound);
 
             PlayLandingSound();
-       
+
+        }
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        // Continuously confirm ground contact while staying on ground
+        if (other.gameObject != animalControl.gameObject) // ignore self
+        {
+            isGrounded = true;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        // Left the ground
+        if (other.gameObject != animalControl.gameObject) // ignore self
+        {
+            isGrounded = false;
         }
     }
     private void PlayLandingSound()
     {
-        if (animalControl.audioSource != null && animalControl.landingSound != null)
+        if (animalControl.audioSourceWalk != null && animalControl.landingSound != null)
         {
-            if (!animalControl.audioSource.isPlaying)
+            //if (!animalControl.audioSource.isPlaying)
             {
-                animalControl.audioSource.clip = animalControl.landingSound;
-                animalControl.audioSource.Play(); //トラッキングしたいので、AudioSource使う
+                //This is not possible because it's audioSource is either used or stopped every frame.
+                //animalControl.audioSource.clip = animalControl.landingSound;
+                //animalControl.audioSource.Play(); //トラッキングしたいので、AudioSource使う
+                animalControl.PlaySFX(animalControl.landingSound, 1.0f); //トラッキングしたいので、AudioSource使う
             }
         }
     }

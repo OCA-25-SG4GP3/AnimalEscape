@@ -14,8 +14,8 @@ public class AnimalAudioSettings : ScriptableObject
 
     [Header("音声設定 (Audio Settings)")]
     [Range(0.1f, 3f)]
-    public float soundPitch = 2.5f;
+    public float walkSoundPitch = 2.5f;
 
     [Range(0f, 1f)]
-    public float volume = 1.0f;
+    public float walkVolume = 1.0f;
 }

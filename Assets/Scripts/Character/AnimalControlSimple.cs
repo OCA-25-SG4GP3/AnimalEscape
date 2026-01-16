@@ -26,7 +26,7 @@ public class AnimalControlSimple : MonoBehaviour
     // Runtime movement value (can be modified at runtime)
     private float moveSpeed; public void SetMoveSpeed(float _moveSpeed) { moveSpeed = _moveSpeed; }
 
-    [NonSerializedAttribute] public AudioSource audioSource;
+    [NonSerializedAttribute] public AudioSource audioSourceWalk;      // For looping sounds (walk)
 
     // Movement shortcuts (from movementSettings)
     public float baseMoveSpeed => movementSettings != null ? movementSettings.baseMoveSpeed : 5f;
@@ -45,7 +45,8 @@ public class AnimalControlSimple : MonoBehaviour
     private AudioClip jumpSound => audioSettings != null ? audioSettings.jumpSound : null;
     public AudioClip landingSound => audioSettings != null ? audioSettings.landingSound : null;
     private AudioClip walkSound => audioSettings != null ? audioSettings.walkSound : null;
-    private float soundPitch => audioSettings != null ? audioSettings.soundPitch : 2.5f;
+    private float walkSoundPitch => audioSettings != null ? audioSettings.walkSoundPitch : 2.5f;
+    private float walkVolume => audioSettings != null ? audioSettings.walkVolume : 1.0f;
 
     Rigidbody rb;
     Vector3 inputDir;
@@ -99,11 +100,10 @@ public class AnimalControlSimple : MonoBehaviour
         mainCamera = Camera.main;
     }
 
-
     void Start()
     {
         moveSpeed = baseMoveSpeed;
-        audioSource = GetComponent<AudioSource>();
+        audioSourceWalk = GetComponent<AudioSource>();
     }
     private Vector2 moveInput;
     public void OnMove(InputAction.CallbackContext context)
@@ -346,8 +346,8 @@ public class AnimalControlSimple : MonoBehaviour
             GetComponent<PlayerInfo>().stepableTimer = 0f;
 
 
-            if (audioSource && jumpSound)
-                audioSource.PlayOneShot(jumpSound);
+            if (jumpSound)
+                PlaySFX(jumpSound, 1.0f);
         }
     }
 
@@ -367,20 +367,21 @@ public class AnimalControlSimple : MonoBehaviour
         if (inputDir.sqrMagnitude > 0.001f) // 動いている場合
         {
             // ループ用の歩行音を設定
-            if (!audioSource.isPlaying && walkSound != null)
+            if (!audioSourceWalk.isPlaying && walkSound != null)
             {
-                audioSource.clip = walkSound;
-                audioSource.pitch = soundPitch;
-                audioSource.loop = true;
-                audioSource.Play();
+                audioSourceWalk.clip = walkSound;
+                audioSourceWalk.pitch = walkSoundPitch;
+                audioSourceWalk.volume = walkVolume;
+                audioSourceWalk.loop = true;
+                audioSourceWalk.Play();
             }
         }
         else
         {
             // 止まった場合、ループを停止
-            if (audioSource.isPlaying && walkSound != null)
+            if (audioSourceWalk.isPlaying && walkSound != null)
             {
-                audioSource.Stop();
+                audioSourceWalk.Stop();
             }
         }
 
@@ -393,7 +394,7 @@ public class AnimalControlSimple : MonoBehaviour
         {
             Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, turningSpeed * Time.fixedDeltaTime);
-            
+
         }
     }
     private Cooldown idle2AnimCooldown = new(5.0f);
@@ -495,7 +496,7 @@ public class AnimalControlSimple : MonoBehaviour
 
         rb.linearVelocity = vel;
     }
- 
+
     private Vector3 GetCameraRelativeDirection(float horizontal, float vertical)
     {
         if (mainCamera == null)
@@ -563,5 +564,20 @@ public class AnimalControlSimple : MonoBehaviour
         if (!optionMenu.IsPaused) return;
         if (context.performed)
             optionMenu.ToggleOption();
+    }
+
+    /// <summary>
+    /// Spawn a one-shot sound effect that won't be interrupted
+    /// </summary>
+    public void PlaySFX(AudioClip clip, float volume = 1.0f)
+    {
+        GameObject sfxObj = new GameObject("SFX_" + clip.name);
+        sfxObj.transform.position = transform.position;
+        AudioSource sfxSource = sfxObj.AddComponent<AudioSource>();
+        sfxSource.clip = clip;
+        sfxSource.volume = volume;
+        //sfxSource.spatialBlend = 0f; // 2D sound - full volume regardless of distance
+        sfxSource.Play();
+        Destroy(sfxObj, clip.length + 0.1f);
     }
 }
