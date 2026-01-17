@@ -1,21 +1,2 @@
-# Auto detect text files and normalize line endings to LF
-* text=auto
-
 # C# source files
 *.cs text eol=crlf encoding=utf-8
-
-# Unity files
-*.unity text eol=crlf encoding=utf-8 merge=unityyamlmerge
-*.prefab text eol=crlf encoding=utf-8 merge=unityyamlmerge
-*.asset text eol=crlf encoding=utf-8
-*.meta text eol=crlf encoding=utf-8
-*.mat text eol=crlf encoding=utf-8
-*.anim text eol=crlf encoding=utf-8
-*.controller text eol=crlf encoding=utf-8
-
-# Image and binary files
-*.png binary
-*.jpg binary
-*.fbx binary
-*.mp3 binary
-*.pdf binary

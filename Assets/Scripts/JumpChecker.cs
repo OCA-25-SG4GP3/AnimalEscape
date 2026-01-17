@@ -1,38 +1,65 @@
-using System;
+ï»¿using System;
 using UnityEngine;
 
 public class JumpChecker : MonoBehaviour
 {
     [SerializeField] private AnimalControlSimple animalControl;
-
+    GameClearManager gameClearManager;
     [NonSerializedAttribute] public bool isGrounded = false;
+
+    private void Awake()
+    {
+        gameClearManager = GameObject.FindAnyObjectByType<GameClearManager>();
+    }
 
     void OnTriggerEnter(Collider other)
     {
-        // ’n–Ê‚É’…’n‚µ‚½‚±‚Æ‚ğ”»’è
-        // ’n–Ê‚ÆÚG‚µ‚½ê‡‚ÉSE‚ğÄ¶
-        isGrounded = false;
+        // åœ°é¢ã«ç€åœ°ã—ãŸã“ã¨ã‚’åˆ¤å®š
+        // åœ°é¢ã¨æ¥è§¦ã—ãŸå ´åˆã«SEã‚’å†ç”Ÿ
 
         if (other.gameObject != animalControl.gameObject) // ignore self
         {
-            animalControl.isJumping = false;  // ƒWƒƒƒ“ƒvƒtƒ‰ƒO‚ğŒ³‚É–ß‚·
-            isGrounded = true; //’…’n
+            animalControl.isJumping = false;  // ã‚¸ãƒ£ãƒ³ãƒ—ãƒ•ãƒ©ã‚°ã‚’å…ƒã«æˆ»ã™
+            if(!gameClearManager.isFinish) animalControl.UnlockInput();
 
-            //// ’…’n‚ÌSE‚ğÄ¶
+            //animal.SetMoveSpeed(animal.baseMoveSpeed);
+            isGrounded = true; //ç€åœ°
+
+            //// ç€åœ°ã®SEã‚’å†ç”Ÿ
             //audioSource.PlayOneShot(landingSound);
 
             PlayLandingSound();
-       
+
+        }
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        // Continuously confirm ground contact while staying on ground
+        if (other.gameObject != animalControl.gameObject) // ignore self
+        {
+            isGrounded = true;
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        // Left the ground
+        if (other.gameObject != animalControl.gameObject) // ignore self
+        {
+            isGrounded = false;
         }
     }
     private void PlayLandingSound()
     {
-        if (animalControl.audioSource != null && animalControl.landingSound != null)
+        if (animalControl.audioSourceWalk != null && animalControl.landingSound != null)
         {
-            if (!animalControl.audioSource.isPlaying)
+            //if (!animalControl.audioSource.isPlaying)
             {
-                animalControl.audioSource.clip = animalControl.landingSound;
-                animalControl.audioSource.Play(); //ƒgƒ‰ƒbƒLƒ“ƒO‚µ‚½‚¢‚Ì‚ÅAAudioSourceg‚¤
+                //This is not possible because it's audioSource is either used or stopped every frame.
+                //animalControl.audioSource.clip = animalControl.landingSound;
+                //animalControl.audioSource.Play(); //ãƒˆãƒ©ãƒƒã‚­ãƒ³ã‚°ã—ãŸã„ã®ã§ã€AudioSourceä½¿ã†
+                animalControl.PlaySFX(animalControl.landingSound, 1.0f); //ãƒˆãƒ©ãƒƒã‚­ãƒ³ã‚°ã—ãŸã„ã®ã§ã€AudioSourceä½¿ã†
             }
         }
     }

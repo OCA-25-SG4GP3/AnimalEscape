@@ -1,23 +1,10 @@
-# EditorConfig for Unity C# projects
-# This works with Visual Studio, VS Code, and Rider
+# EditorConfig - safe solution for UTF-8 encoding consistency
+# Works with Visual Studio, VS Code, and Rider automatically
 root = true
 
-# All files
-[*]
-charset = utf-8
-insert_final_newline = true
-trim_trailing_whitespace = true
-
-# C# files
+# C# files only - this is safe and won't touch Unity assets
 [*.cs]
 charset = utf-8-bom
 indent_style = space
 indent_size = 4
-end_of_line = crlf
-
-# Unity YAML files
-[*.{unity,prefab,asset,mat,anim,controller,meta}]
-charset = utf-8
-indent_style = space
-indent_size = 2
 end_of_line = crlf

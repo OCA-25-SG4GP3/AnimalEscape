@@ -7754,10 +7754,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: ColorPanel (2)
       objectReference: {fileID: 0}
+    - target: {fileID: 3520212832908247382, guid: c2fc65a5e0d73674d94f26fd1d166a58, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -5015425401879572915, guid: 19c292c72d07da245a72fdd46b3f8683, type: 3}
     - target: {fileID: 4010875617694740844, guid: c2fc65a5e0d73674d94f26fd1d166a58, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: 72b840bfbb97b0641bdca75009f68e0d, type: 2}
+    - target: {fileID: 4595259029344159283, guid: c2fc65a5e0d73674d94f26fd1d166a58, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -6809916166929176288, guid: f4f69a3240a238c4b9e77c621d0e6434, type: 3}
     - target: {fileID: 6457257322156790629, guid: c2fc65a5e0d73674d94f26fd1d166a58, type: 3}
       propertyPath: m_LocalPosition.x
       value: 9.88
@@ -7806,6 +7814,10 @@ PrefabInstance:
       propertyPath: pairPanel
       value: 
       objectReference: {fileID: 1927195075}
+    - target: {fileID: 7281855194734368328, guid: c2fc65a5e0d73674d94f26fd1d166a58, type: 3}
+      propertyPath: buttonType
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7281855194734368328, guid: c2fc65a5e0d73674d94f26fd1d166a58, type: 3}
       propertyPath: normalMaterial
       value: 

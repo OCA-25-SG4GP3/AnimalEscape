@@ -1,8 +1,9 @@
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Unity.Cinemachine;
 using System;
+using static ColorPanelPuzzle;
 
 [SelectionBase]
 public class ColorPanelGate : MonoBehaviour
@@ -65,7 +66,8 @@ public class ColorPanelGate : MonoBehaviour
             {
                 ColorPanelPuzzle panelA = activePanels[i];
                 ColorPanelPuzzle panelB = activePanels[j];
-                if (panelA.correctPanelMaterial.name == panelB.correctPanelMaterial.name)
+                bool isSameMesh = panelA.buttonType == panelB.buttonType; 
+                if (panelA.correctPanelMaterial.name == panelB.correctPanelMaterial.name && isSameMesh)
                 {
                     if (usingSides && IsSameSide(panelA, panelB)) return;
                     // Matched pair!

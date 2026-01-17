@@ -1,13 +1,16 @@
-using System;
+﻿using System;
 using System.Collections;
-using UnityEngine.Audio;
 using UnityEngine;
+using UnityEngine.Audio;
+using UnityEngine.ProBuilder;
 [SelectionBase]
 public class ColorPanelPuzzle : MonoBehaviour
 {
     ColorPanelGate colorPanelGate;
     Animator animator;
     [SerializeField] public MeshRenderer meshRen;
+    [SerializeField] public MeshFilter btnMeshFilter;
+    [SerializeField] public MeshFilter frameMeshFilter;
     [NonSerializedAttribute] public Material correctPanelMaterial;
     [SerializeField] private Material pressedMaterial;
     public bool upSide = true; //is this upside or downside (to prevent double press / exploit)
@@ -25,7 +28,19 @@ public class ColorPanelPuzzle : MonoBehaviour
 
     public GameObject steppedEffect;
 
-
+    public enum EButtonType
+    {
+        Box, Circle, Star, Triang
+    };
+    [SerializeField] public EButtonType buttonType;
+    [SerializeField] Mesh boxMesh;
+    [SerializeField] Mesh starMesh;
+    [SerializeField] Mesh triangleMesh;
+    [SerializeField] Mesh circleMesh;
+    [SerializeField] Mesh frameBoxMesh;
+    [SerializeField] Mesh frameTriangMesh;
+    [SerializeField] Mesh frameStarMesh;
+    [SerializeField] Mesh frameCircleMesh;
     void Awake()
     {
         colorPanelGate = GetActiveGate();
@@ -34,6 +49,36 @@ public class ColorPanelPuzzle : MonoBehaviour
         colorPanelGate.RegisterPanel(this);
         if (hidingMaterial) meshRen.material = hidingMaterial;
         audioSource = GetComponent<AudioSource>();
+
+        UpdateMeshByEnum();
+    }
+
+    private void UpdateMeshByEnum()
+    {
+        switch (buttonType)
+        {
+            case EButtonType.Box:
+                btnMeshFilter.mesh = boxMesh;
+                frameMeshFilter.mesh = frameBoxMesh;
+                break;
+            case EButtonType.Circle:
+                btnMeshFilter.mesh = circleMesh;
+                frameMeshFilter.mesh = frameCircleMesh;
+                break;
+            case EButtonType.Triang:
+                btnMeshFilter.mesh = triangleMesh;
+                frameMeshFilter.mesh = frameTriangMesh;
+                break;
+            case EButtonType.Star:
+                btnMeshFilter.mesh = starMesh;
+                frameMeshFilter.mesh = frameStarMesh;
+                break;
+        }
+    }
+
+    void OnValidate()
+    {
+        UpdateMeshByEnum();
     }
 
     ColorPanelGate GetActiveGate()
@@ -75,6 +120,7 @@ public class ColorPanelPuzzle : MonoBehaviour
             if (!playerInfo.CanStepButton) return;
 
             isStepped = true;
+
             animator.Play("ColorPanelPressedAnim");
             //audioSource.PlayOneShot(pushSound); //�E�j�E�󂳂��E�ƃo�E�O�E��E�
             Instantiate(steppedEffect, transform.position, transform.rotation);
@@ -121,7 +167,7 @@ public class ColorPanelPuzzle : MonoBehaviour
         tempAudio.transform.position = transform.position;
         AudioSource source = tempAudio.AddComponent<AudioSource>();
         source.clip = pushSound;
-        source.volume = 2f;        // can exceed 1 if using an AudioMixer or normalized later
+        source.volume = 0.3f;        // can exceed 1 if using an AudioMixer or normalized later
         source.Play();
         Destroy(tempAudio, pushSound.length);
     }
@@ -137,6 +183,12 @@ public class ColorPanelPuzzle : MonoBehaviour
     }
     void OnTriggerExit(Collider other)
     {
+        AnimalControlSimple animal = other.GetComponent<AnimalControlSimple>();
+        if (animal != null)
+        {
+            //animal.UnlockInput();
+            //animal.SetMoveSpeed(animal.baseMoveSpeed);
+        }
         if (other.CompareTag("Player"))
         {
             if (!isStepped) return;
@@ -171,13 +223,17 @@ public class ColorPanelPuzzle : MonoBehaviour
             meshRen.material = correctPanelMaterial;
         }
 
-        if(playerInside)
+        if (playerInside)
         {
-            // Apply random force in one of 4 directions (forward, back, left, right) plus upward
             AnimalControlSimple animalControl = playerInside.GetComponent<AnimalControlSimple>();
             if (animalControl != null)
             {
-                // Choose random horizontal direction (0=forward, 1=right, 2=back, 3=left)
+                // 🔓 unlock FIRST so physics can move
+                animalControl.LockInput();
+
+                animalControl.SetMoveSpeed(animalControl.baseMoveSpeed);
+
+                // Choose random horizontal direction
                 int randomDir = UnityEngine.Random.Range(0, 4);
                 Vector3 horizontalForce = Vector3.zero;
 
@@ -189,10 +245,12 @@ public class ColorPanelPuzzle : MonoBehaviour
                     case 3: horizontalForce = Vector3.left; break;
                 }
 
-                // Combine horizontal and upward force
-                Vector3 totalForce = (horizontalForce * horizontalResetPush) + (Vector3.up * upResetPush);
-                animalControl.ApplyExternalForce(totalForce, 0.5f);
+                Vector3 totalForce =
+                    (horizontalForce * horizontalResetPush) +
+                    (Vector3.up * upResetPush);
 
+                // 💥 push player out
+                animalControl.ApplyExternalForce(totalForce, 0.5f);
             }
 
             playerInside = null;

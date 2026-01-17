@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.Audio;
 
+
 public class GateDropController : MonoBehaviour
 {
     [SerializeField] public float startY = 10f;
@@ -8,11 +9,12 @@ public class GateDropController : MonoBehaviour
     [SerializeField] public float partialStepPercentage = 0.1f;
     [SerializeField] public float dropSpeed = 4f;
     [SerializeField] private float finalDropSpeed = 5.0f;
+
     private bool fullyOpened = false;
     private BoxCollider boxCollider;
 
-    public AudioClip gateSound;
-    private AudioSource audioSource;
+    public AudioClip gateSound;      // ゲート音のファイル
+    private AudioSource audioSource; // AudioSourceを使うための変数
 
     private void Awake()
     {
@@ -24,6 +26,7 @@ public class GateDropController : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
+    // ゲートを一段階下げる。finalStep=trueの場合は100%下げる
     public void DropStep(bool finalStep = false, System.Action onComplete = null)
     {
         if (fullyOpened) return;
@@ -40,7 +43,7 @@ public class GateDropController : MonoBehaviour
             {
                 var player1AnimalControl = playerDistManager.Player1.GetComponent<AnimalControlSimple>();
                 var player2AnimalControl = playerDistManager.Player2.GetComponent<AnimalControlSimple>();
-
+                // Lock player inputs
                 if (player1AnimalControl) player1AnimalControl.LockInput();
                 if (player2AnimalControl) player2AnimalControl.LockInput();
             }
@@ -62,9 +65,12 @@ public class GateDropController : MonoBehaviour
         Vector3 pos = transform.position;
         float speed = isFinalStep ? finalDropSpeed : dropSpeed;
 
-        // Play gate sound
+        // ゲート音を再生
         if (audioSource != null && gateSound != null)
+        {
             audioSource.PlayOneShot(gateSound);
+            audioSource.volume = 2f;
+        }
 
         while (Mathf.Abs(pos.y - targetY) > 0.01f)
         {
@@ -79,10 +85,10 @@ public class GateDropController : MonoBehaviour
             transform.position = pos;
             yield return null;
         }
-
         pos.y = targetY;
         transform.position = pos;
 
         if (callback != null) callback();
     }
+
 }
