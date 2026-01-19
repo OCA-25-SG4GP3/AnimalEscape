@@ -1,5 +1,5 @@
 {
-    "name": "InputSystem",
+    "name": "AnimalInputSystem",
     "maps": [
         {
             "name": "Player",

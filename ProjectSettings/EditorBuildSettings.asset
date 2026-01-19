@@ -39,7 +39,7 @@ EditorBuildSettings:
     path: Assets/Scenes/dev/GameClear.unity
     guid: b54abf6bccd41f1499bbfc96e235a18f
   - enabled: 1
-    path: Assets/Scenes/dev/TemporaryGameOver.unity
+    path: Assets/Scenes/dev/GameOver.unity
     guid: ddfdec0bc42c507449774b8fef275783
   m_configObjects: {}
   m_UseUCBPForAssetBundles: 0
