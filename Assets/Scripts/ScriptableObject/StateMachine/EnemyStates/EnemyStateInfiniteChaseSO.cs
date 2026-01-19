@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 //EnemyStateInfiniteChaseSO.cs 
 
@@ -6,7 +6,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EnemyStateInfiniteChaseSO", menuName = "State/EnemyState/EnemyStateInfiniteChaseSO")]
 public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 {
-    [SerializeField] private float _catchRange = 3.5f;
+    [SerializeField] private float _catchRange = 1.5f;
     private Vector3 lastChaseTargetPos;
     ColorPanelRoomTimer colorPanelRoomTimer;
     public override void EnterState()
