@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -26,12 +26,14 @@ public class ColorPanelRoomTimer : MonoBehaviour
     }
     void SetSlider()
     {
+        //編集:江頭
+        //ステージ2かつ
         timerSlider.value = startingTime - totalTime; // slider increases as time passes
         //編集:江頭
         //ゲート開通時にタイム追加が超過しゲージが動かなくなる対策です            
         if(totalTime > timerSlider.maxValue)
         {
-            totalTime = timerSlider.maxValue;
+            totalTime = timerSlider.maxValue;            
         }
     }
 
@@ -55,16 +57,16 @@ public class ColorPanelRoomTimer : MonoBehaviour
             {
                 //編集:江頭
                 //totalTimeを0で維持し、ゲージが端に行ったとき戻るのを防ぐため
-                totalTime = 0;
+                //totalTime = 0;
             }
 
             //UpdateTimeText();
             SetSlider();
         }
         else
-        {
+        {        
             if (!isGameOver)
-            {
+            {                
                 SetTimeEnd();
             }
         }
