@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using UnityEngine.Audio;
+
 
 public class GateDropController : MonoBehaviour
 {
@@ -11,11 +13,20 @@ public class GateDropController : MonoBehaviour
     private bool fullyOpened = false;
     private BoxCollider boxCollider;
 
+    public AudioClip gateSound;      // ゲート音のファイル
+    private AudioSource audioSource; // AudioSourceを使うための変数
+
     private void Awake()
     {
         boxCollider = GetComponentInChildren<BoxCollider>();
     }
 
+    void Start()
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
+    // ゲートを一段階下げる。finalStep=trueの場合は100%下げる
     public void DropStep(bool finalStep = false, System.Action onComplete = null)
     {
         if (fullyOpened) return;
@@ -53,6 +64,13 @@ public class GateDropController : MonoBehaviour
     {
         Vector3 pos = transform.position;
         float speed = isFinalStep ? finalDropSpeed : dropSpeed;
+
+        // ゲート音を再生
+        if (audioSource != null && gateSound != null)
+        {
+            audioSource.PlayOneShot(gateSound);
+            audioSource.volume = 2f;
+        }
 
         while (Mathf.Abs(pos.y - targetY) > 0.01f)
         {

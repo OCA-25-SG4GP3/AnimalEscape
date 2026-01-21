@@ -1,3 +1,4 @@
+﻿using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -11,7 +12,7 @@ public class GameClearManager : MonoBehaviour
 
     //[SerializeField] private Text _clearTimeText;
     [SerializeField] private string nextSceneName = "NextScene"; // 次に移動するシーン�?
-    bool isFinish = false;
+    [NonSerializedAttribute] public bool isFinish = false;
     private void Start()
     {
     }

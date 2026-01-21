@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.InputSystem;
@@ -12,19 +12,41 @@ using UnityEngine.UIElements;
 public class AnimalControlSimple : MonoBehaviour
 {
     PlayerInfoSystem playerInfoSystem;
-    [SerializeField] public PlayerInputKeys inputKeys = new(); //Player 1, Player 2 
+
+    [Header("Settings (ScriptableObjects)")]
+    [SerializeField] private AnimalAudioSettings audioSettings;       // SE担当用
+    [SerializeField] private AnimalMovementSettings movementSettings; // 移動担当用
+
+    [SerializeField] public PlayerInputKeys inputKeys = new(); //Player 1, Player 2
     Animator animator;
-    [SerializeField] public float baseMoveSpeed = 5f;
-    [SerializeField] public float moveSpeed = 5f; public void SetMoveSpeed(float _moveSpeed) { moveSpeed = _moveSpeed; }
-    [SerializeField] private float moveSpeedOnFinishMult = 1.3f;
-    [SerializeField] public float jumpForce = 5f;
+
     [SerializeField] public LayerMask groundMask;
-    [SerializeField] public float groundCheckRadius = 0.1f;
     [SerializeField, Header("Not a prefab")] private GameObject starPopEffect;
 
-    public AudioClip jumpSound;      //
-    public AudioClip landingSound; // 
-    [NonSerializedAttribute] public AudioSource audioSource; // AudioSource
+    // Runtime movement value (can be modified at runtime)
+    private float moveSpeed; public void SetMoveSpeed(float _moveSpeed) { moveSpeed = _moveSpeed; }
+
+    [NonSerializedAttribute] public AudioSource audioSourceWalk;      // For looping sounds (walk)
+
+    // Movement shortcuts (from movementSettings)
+    public float baseMoveSpeed => movementSettings != null ? movementSettings.baseMoveSpeed : 5f;
+    private float moveSpeedOnFinishMult => movementSettings != null ? movementSettings.moveSpeedOnFinishMult : 1.3f;
+    private float jumpForce => movementSettings != null ? movementSettings.jumpForce : 5f;
+    private float holdJumpForce => movementSettings != null ? movementSettings.holdJumpForce : 10f;
+    private float maxJumpHoldTime => movementSettings != null ? movementSettings.maxJumpHoldTime : 0.2f;
+    private float groundCheckRadius => movementSettings != null ? movementSettings.groundCheckRadius : 0.1f;
+    private float fallGravityMultiplier => movementSettings != null ? movementSettings.fallGravityMultiplier : 2.5f;
+    private float lowJumpGravityMultiplier => movementSettings != null ? movementSettings.lowJumpGravityMultiplier : 2.0f;
+    private float jumpBufferTime => movementSettings != null ? movementSettings.jumpBufferTime : 0.15f;
+    private float coyoteTime => movementSettings != null ? movementSettings.coyoteTime : 0.1f;
+    private float stunedDuration => movementSettings != null ? movementSettings.stunedDuration : 1.5f;
+
+    // Audio shortcuts (from audioSettings)
+    private AudioClip jumpSound => audioSettings != null ? audioSettings.jumpSound : null;
+    public AudioClip landingSound => audioSettings != null ? audioSettings.landingSound : null;
+    private AudioClip walkSound => audioSettings != null ? audioSettings.walkSound : null;
+    private float walkSoundPitch => audioSettings != null ? audioSettings.walkSoundPitch : 2.5f;
+    private float walkVolume => audioSettings != null ? audioSettings.walkVolume : 1.0f;
 
     Rigidbody rb;
     Vector3 inputDir;
@@ -45,9 +67,7 @@ public class AnimalControlSimple : MonoBehaviour
     //PlayerInput playerInput;
     OptionMenu optionMenu;
 
-    // ジャンプホールド用の追加設定
-    [SerializeField] public float holdJumpForce = 10f;      // ボタンを押している間の追加力
-    public float maxJumpHoldTime = 0.2f;   // 最大で押し続けられる時間
+    // ジャンプホールド用
     public float jumpHoldCounter;   // ジャンプホールドの残り時間
     public bool jumpHeld;   // 現在ジャンプボタンを押し続けているかどうか
     bool isLastGateDone = false;
@@ -80,11 +100,10 @@ public class AnimalControlSimple : MonoBehaviour
         mainCamera = Camera.main;
     }
 
-
     void Start()
     {
         moveSpeed = baseMoveSpeed;
-        audioSource = GetComponent<AudioSource>();
+        audioSourceWalk = GetComponent<AudioSource>();
     }
     private Vector2 moveInput;
     public void OnMove(InputAction.CallbackContext context)
@@ -198,8 +217,7 @@ public class AnimalControlSimple : MonoBehaviour
 #endif
 
     }
-    [SerializeField] private float jumpBufferTime = 0.15f; // store input
-    [SerializeField] private float coyoteTime = 0.1f;      // allow jump after leaving ground
+    // jumpBufferTime and coyoteTime are now in movementSettings
 
     // Tracks remaining time to buffer a jump input (allows jump shortly after pressing button)
     private float jumpBufferCounter = 0f;
@@ -255,7 +273,6 @@ public class AnimalControlSimple : MonoBehaviour
         }
         jumpPressed = false;
     }
-
     private void UpdateAIControlled()
     {
         // Move straight toward target
@@ -325,18 +342,14 @@ public class AnimalControlSimple : MonoBehaviour
 
             isJumping = true;
 
-
-
             // ジャンプをした事実を記録（着地判定用）
             GetComponent<PlayerInfo>().stepableTimer = 0f;
 
 
-            if (audioSource && jumpSound)
-                audioSource.PlayOneShot(jumpSound);
+            if (jumpSound)
+                PlaySFX(jumpSound, 1.0f);
         }
     }
-
-
 
     void Move()
     {
@@ -349,6 +362,29 @@ public class AnimalControlSimple : MonoBehaviour
         vel.x = inputDir.x * moveSpeed;
         vel.z = inputDir.z * moveSpeed;
         rb.linearVelocity = vel;
+
+        // 歩行SE処理
+        if (inputDir.sqrMagnitude > 0.001f) // 動いている場合
+        {
+            // ループ用の歩行音を設定
+            if (!audioSourceWalk.isPlaying && walkSound != null)
+            {
+                audioSourceWalk.clip = walkSound;
+                audioSourceWalk.pitch = walkSoundPitch;
+                audioSourceWalk.volume = walkVolume;
+                audioSourceWalk.loop = true;
+                audioSourceWalk.Play();
+            }
+        }
+        else
+        {
+            // 止まった場合、ループを停止
+            if (audioSourceWalk.isPlaying && walkSound != null)
+            {
+                audioSourceWalk.Stop();
+            }
+        }
+
     }
 
     float turningSpeed = 10f;
@@ -358,6 +394,7 @@ public class AnimalControlSimple : MonoBehaviour
         {
             Quaternion targetRot = Quaternion.LookRotation(dir, Vector3.up);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, turningSpeed * Time.fixedDeltaTime);
+
         }
     }
     private Cooldown idle2AnimCooldown = new(5.0f);
@@ -385,19 +422,25 @@ public class AnimalControlSimple : MonoBehaviour
             }
         }
     }
-    [SerializeField] private float stunedDuration = 1.5f; // How long the freeze lasts
+    // stunedDuration is now in movementSettings
     private float stunedTimer = 0f;
+    private float stunedDurationOverrideValue = -1f; // For runtime override
     private bool isStuned = false;
     private bool stunedComplete = false;
 
-    public bool IsStunedComplete => stunedComplete; // public read-only flag
+    // Get effective stun duration (override if set, otherwise from settings)
+    private float effectiveStunedDuration => stunedDurationOverrideValue > 0f ? stunedDurationOverrideValue : stunedDuration;
 
+    public bool IsStunedComplete => stunedComplete; // public read-only flag
+    public void SetCaughtState()
+    {
+        //animator.SetBool
+        animator.Play("LPn01_struggle");
+    }
     public void SetStunnedState(float stunedDurationOverride = -1f)
     {
-        if (stunedDurationOverride > 0f)
-        {
-            stunedDuration = stunedDurationOverride;
-        }
+        // Store override value (will use effectiveStunedDuration to get the right value)
+        stunedDurationOverrideValue = stunedDurationOverride;
 
         stunedTimer = 0f;
         isStuned = true;
@@ -429,7 +472,7 @@ public class AnimalControlSimple : MonoBehaviour
 
         stunedTimer += Time.deltaTime;
 
-        if (stunedTimer >= stunedDuration)
+        if (stunedTimer >= effectiveStunedDuration)
         {
             stunedComplete = true;
             ExitStunedState();
@@ -438,26 +481,22 @@ public class AnimalControlSimple : MonoBehaviour
 
     private void UpdateJumpHold()
     {
-        // Apply additional upward force while holding jump button during a jump
-        if (jumpHeld && isJumping && jumpHoldCounter > 0f)
+        Vector3 vel = rb.linearVelocity;
+
+        // Falling → faster fall (no hang time)
+        if (vel.y < 0f)
         {
-            Vector3 vel = rb.linearVelocity;
-            vel.y += holdJumpForce * Time.deltaTime;
-            rb.linearVelocity = vel;
-            jumpHoldCounter -= Time.deltaTime;
+            vel.y += Physics.gravity.y * (fallGravityMultiplier - 1f) * Time.deltaTime;
+        }
+        // Rising but jump released → cut jump short
+        else if (vel.y > 0f && !jumpHeld)
+        {
+            vel.y += Physics.gravity.y * (lowJumpGravityMultiplier - 1f) * Time.deltaTime;
         }
 
-        // Stop jumping state when falling
-        if (rb.linearVelocity.y <= 0f)
-        {
-            isJumping = false;
-        }
+        rb.linearVelocity = vel;
     }
 
-    /// <summary>
-    /// Converts raw input (h, v) to camera-relative direction on the ground plane.
-    /// Handles eagle-eye camera looking down at an angle.
-    /// </summary>
     private Vector3 GetCameraRelativeDirection(float horizontal, float vertical)
     {
         if (mainCamera == null)
@@ -525,5 +564,20 @@ public class AnimalControlSimple : MonoBehaviour
         if (!optionMenu.IsPaused) return;
         if (context.performed)
             optionMenu.ToggleOption();
+    }
+
+    /// <summary>
+    /// Spawn a one-shot sound effect that won't be interrupted
+    /// </summary>
+    public void PlaySFX(AudioClip clip, float volume = 1.0f)
+    {
+        GameObject sfxObj = new GameObject("SFX_" + clip.name);
+        sfxObj.transform.position = transform.position;
+        AudioSource sfxSource = sfxObj.AddComponent<AudioSource>();
+        sfxSource.clip = clip;
+        sfxSource.volume = volume;
+        //sfxSource.spatialBlend = 0f; // 2D sound - full volume regardless of distance
+        sfxSource.Play();
+        Destroy(sfxObj, clip.length + 0.1f);
     }
 }
