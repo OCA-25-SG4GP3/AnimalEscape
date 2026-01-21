@@ -278,16 +278,20 @@ public class AnimalControlSimple : MonoBehaviour
         // Move straight toward target
         transform.position = Vector3.MoveTowards(transform.position, aiMoveTarget, moveSpeed * Time.deltaTime);
 
-        Vector3 direction = (aiMoveTarget - transform.position).normalized;
+        Vector3 direction = (aiMoveTarget - transform.position);
 
-        if (direction != Vector3.zero)
+        if (direction.sqrMagnitude > 0.001f)
         {
             // Flatten direction to horizontal plane (ignore Y axis)
             direction.y = 0f;
-            direction.Normalize();
 
-            Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, turningSpeed * Time.deltaTime);
+            // Check again after flattening to prevent zero vector
+            if (direction.sqrMagnitude > 0.001f)
+            {
+                direction.Normalize();
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, turningSpeed * Time.deltaTime);
+            }
         }
 
         //Stop when close
@@ -311,7 +315,7 @@ public class AnimalControlSimple : MonoBehaviour
         {
             gameClearManager.SetClearGameByFinish();
             //Last AI MOVE to exit point
-            rb.isKinematic = true;
+            //rb.isKinematic = true;
             SetMoveSpeed(baseMoveSpeed * moveSpeedOnFinishMult);
             SetMoveTo(transform.position + Vector3.right * 1000.0f); //Move to far away
 
