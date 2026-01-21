@@ -6,8 +6,13 @@ public class MainMenuInput : MonoBehaviour
 {
     [SerializeField] private string nextSceneName = "PanelPuzzle1";
     [SerializeField] private Button[] buttons;
-    InputSystem InputSystem = new();
+    InputSystem InputSystem;
     int selectedBtnIdx = 0;
+
+    void Awake()
+    {
+        InputSystem = new InputSystem();
+    }
 
     // Start is  called once before the first execution of Update after the MonoBehaviour is created
     void Start()
