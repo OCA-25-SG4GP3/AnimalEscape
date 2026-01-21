@@ -95,4 +95,9 @@ MonoBehaviour:
   _spawnPoints:
   - {fileID: 0}
   - {fileID: 0}
+  _gameManager: {fileID: 0}
   _targetGroup: {fileID: 0}
+  followZAxis: 1
+  autoTargetToTargetGroup: 1
+  _onEnterGameEvent: {fileID: 11400000, guid: 2d9dfe56189f5074199858f13d3bf9be, type: 2}
+  _onFinishIntroEvent: {fileID: 11400000, guid: 0143d1210c6cb324f8444a3a01da18e6, type: 2}
