@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 //EnemyStateDetectingSO.cs 
 
@@ -6,14 +6,14 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "EnemyStateDetectingSO", menuName = "State/EnemyState/EnemyStateDetectingSO")]
 public class EnemyStateDetectingSO : EnemyStateBaseSO
 {
-    [SerializeField] private float _catchRange = 3.5f;
-    [SerializeField] private float maxChaseDistance = 4.0f;
+    [SerializeField] private float _catchRange = 1.5f;
+    [SerializeField] private float maxChaseDistance = 2.0f;
     bool infiniteDetectionRange = false;
 
-    public override void EnterState()
-    {
-        _logicController.AlertMark.SetActive(true);
-    }
+    //public override void EnterState()
+    //{
+    //    _logicController.AlertMark.SetActive(true);
+    //}
     public void SetInfiniteDetectionRange(bool isEnabled)
     {
         infiniteDetectionRange = isEnabled;
@@ -54,7 +54,7 @@ public class EnemyStateDetectingSO : EnemyStateBaseSO
 
     public override void ExitState()
     {
-        _logicController.AlertMark.SetActive(false);
+        //_logicController.AlertMark.SetActive(false);
         //AgentHelper.ClearPath(_logicController.Agent); //Stop chasing after losing target
         _logicController.rbNavMesh.ClearPath();
     }

@@ -1,125 +1,145 @@
 ﻿using UnityEngine;
 
-//EnemyStateInfiniteChaseSO.cs 
-
-
+/// <summary>
+/// 敵AI：無限追跡状態
+/// ターゲットを視野に関係なく永遠に追いかける状態
+/// </summary>
 [CreateAssetMenu(fileName = "EnemyStateInfiniteChaseSO", menuName = "State/EnemyState/EnemyStateInfiniteChaseSO")]
 public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 {
-    [SerializeField] private float _catchRange = 1.5f;
-    private Vector3 lastChaseTargetPos;
-    ColorPanelRoomTimer colorPanelRoomTimer;
+    [SerializeField] private float _catchRange = 1.5f; // 捕獲可能距離
+    private Vector3 lastChaseTargetPos; // 前回の追跡目標位置（パス更新の最適化用）
+    ColorPanelRoomTimer colorPanelRoomTimer; // ゲームオーバー管理用タイマー
+
+    #region 状態の開始・終了
+
+    /// <summary>
+    /// 無限追跡状態に入った時の初期化
+    /// </summary>
     public override void EnterState()
     {
+        // ゲームオーバー管理システムを取得
         colorPanelRoomTimer = GameObject.FindAnyObjectByType<ColorPanelRoomTimer>();
-        _logicController.AlertMark.SetActive(true);
-        animator.SetBool("IsWalking", true);
-        _logicController.rbNavMesh.Resume();
 
-        //  _logicController.CurrentTarget = FindClosestUnTargetedTarget(); //Obtain once
+        // アニメーション設定：歩行開始
+        animator.SetBool("IsWalking", true);
+
+        // NavMeshエージェントを再開
+        _logicController.rbNavMesh.Resume();
     }
-    bool isCarrying = false; //運んでいますか
+
+    /// <summary>
+    /// 無限追跡状態から抜ける時の処理
+    /// </summary>
+    public override void ExitState()
+    {
+        // すべてのアニメーションフラグをリセット
+        animator.SetBool("IsWalking", false);
+        animator.SetBool("IsDiving", false);
+        animator.SetBool("IsCatching", false);
+
+        // 移動パスをクリア
+        _logicController.rbNavMesh.ClearPath();
+    }
+
+    #endregion
+
+    #region メイン更新ループ
+
+    private bool isCarrying = false; // 現在ターゲットを運搬中かどうか
+
+    /// <summary>
+    /// 毎フレームの更新処理
+    /// </summary>
     public override void UpdateState()
     {
+        // 運搬中は追跡を停止
         if (isCarrying) return;
 
-        // Find the closest uncaught target and set it as the chase target
-        GameObject closestTarget = FindClosestUncaughtTarget(); //Always check for closest one.
-        if (closestTarget) _logicController.SetChaseTarget(closestTarget);
+        // 最も近い未捕獲のターゲットを検索して設定
+        GameObject closestTarget = FindClosestUncaughtTarget();
+        if (closestTarget)
+            _logicController.SetChaseTarget(closestTarget);
 
-        if (IsValidChaseTarget()) //ターゲットが存在する
+        // 有効な追跡ターゲットが存在する場合
+        if (IsValidChaseTarget())
         {
-            //GameObject untargetedTarget = _logicController.CurrentTarget;
-
+            // ターゲットに向かって移動
             SetChaseTargetPos();
+
+            // 捕獲範囲内に入った場合
             if (IsWithinCatchRange(closestTarget))
             {
-                isCarrying = true;
-                //For now we us both because we dont have miss
-                animator.SetBool("IsDiving", true); //今回はまだスキップする。
-                animator.SetBool("IsCatching", true); //TODO move this to Caught State for better animation flow
-                closestTarget.GetComponent<AnimalControlSimple>().SetCaughtState();
-                closestTarget.GetComponent<CatchPosition>().SetCatch(this);
-                _logicController.rbNavMesh.ClearPath();
-
-                closestTarget.GetComponent<PlayerInfo>().SetCaught();
-
-                ColorPanelRoomTimer colorPanelRoomTimer = FindAnyObjectByType<ColorPanelRoomTimer>();
-                if (colorPanelRoomTimer) colorPanelRoomTimer.SetGameOverByOneCaught();
-
-                //TryGameOver();
-
-                //_logicController.SetState(_logicController.LoiterStateInstance);
-
-                //Destroy(closestTarget);
-                // Handle catch logic
+                HandleTargetCatch(closestTarget);
                 return;
             }
         }
-        else //ターゲットそもそも存在しない
+        else // ターゲットが存在しない場合
         {
 #if UNITY_EDITOR
             Debug.Log("No Animal found");
 #endif
-            // Optional: no targets in scene
-            // Find the closest uncaught target regardless of cone or distance
-            //GameObject closestTarget = FindClosestUncaughtTarget();
-            //if (IsValidChaseTarget()) _logicController.CurrentTarget = closestTarget;
-            //else _logicController.SetState(_logicController.LoiterStateInstance);
+            // ターゲットがいないので、うろうろ状態に移行
             _logicController.SetState(_logicController.LoiterStateInstance);
         }
     }
 
+    #endregion
+
+    #region 捕獲処理
+
+    /// <summary>
+    /// ターゲットを捕獲した時の処理
+    /// </summary>
+    private void HandleTargetCatch(GameObject target)
+    {
+        isCarrying = true;
+
+        // 捕獲アニメーションを再生
+        animator.SetBool("IsDiving", true);    // 飛び込みアニメーション
+        animator.SetBool("IsCatching", true);  // 捕獲アニメーション
+
+        // ターゲットを捕獲状態にする
+        target.GetComponent<AnimalControlSimple>().SetCaughtState();
+        target.GetComponent<CatchPosition>().SetCatch(this);
+        target.GetComponent<PlayerInfo>().SetCaught();
+
+        // 移動を停止
+        _logicController.rbNavMesh.ClearPath();
+
+        // ゲームオーバー判定
+        if (colorPanelRoomTimer)
+            colorPanelRoomTimer.SetGameOverByOneCaught();
+    }
+
+    #endregion
+
+    #region ターゲット検出と判定
+
+    /// <summary>
+    /// 現在の追跡ターゲットが有効かチェック
+    /// </summary>
     private bool IsValidChaseTarget()
     {
-        return _logicController.CurrentTarget != null && _logicController.CurrentTarget.activeSelf; //Because When Finish, !activeSelf
+        return _logicController.CurrentTarget != null &&
+               _logicController.CurrentTarget.activeSelf;
     }
 
-    private void TryGameOver()
-    {
-        PlayerDistanceManager playerDistanceManager = GameObject.FindAnyObjectByType<PlayerDistanceManager>();
-        if (!playerDistanceManager.HaveAllPlayersCaught()) return;
-
-        colorPanelRoomTimer.SetGameOverByAllCaught();
-    }
-
-    public override void ExitState()
-    {
-        animator.SetBool("IsWalking", false);
-        animator.SetBool("IsDiving", false);
-        animator.SetBool("IsCatching", false);
-        _logicController.AlertMark.SetActive(false);
-        _logicController.rbNavMesh.ClearPath();
-    }
-
-    public override void DrawStateGizmo()
-    {
-        if (_logicController.CurrentTarget == null) return;
-
-        Vector3 center = _logicController.transform.position;
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(center, _catchRange);
-
-        ConeHelper.DrawConeGizmo(_logicController.GetConeInfo());
-    }
-
-    private void SetChaseTargetPos()
-    {
-        if (_logicController.CurrentTarget == null) return;
-
-        Vector3 targetPos = _logicController.CurrentTarget.transform.position;
-        if ((targetPos - lastChaseTargetPos).sqrMagnitude > 0.1f)
-        {
-            _logicController.rbNavMesh.MoveTo(targetPos);
-            lastChaseTargetPos = targetPos;
-        }
-    }
-
+    /// <summary>
+    /// ターゲットが捕獲範囲内にいるかチェック
+    /// </summary>
     private bool IsWithinCatchRange(GameObject objectToCheck)
     {
-        return Vector3.Distance(objectToCheck.transform.position, _logicController.transform.position) <= _catchRange;
+        return Vector3.Distance(
+            objectToCheck.transform.position,
+            _logicController.transform.position
+        ) <= _catchRange;
     }
 
+    /// <summary>
+    /// 最も近い未捕獲のターゲットを検索
+    /// 他の敵のターゲット状況は考慮しない
+    /// </summary>
     private GameObject FindClosestUncaughtTarget()
     {
         GameObject[] targets = GameObject.FindGameObjectsWithTag("Player");
@@ -129,7 +149,8 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         foreach (var t in targets)
         {
             PlayerInfo info = t.GetComponent<PlayerInfo>();
-            //if (info != null && info.IsFallingDown()) continue;
+            // 必要に応じて倒れているプレイヤーをスキップ
+            // if (info != null && info.IsFallingDown()) continue;
 
             float dist = Vector3.Distance(_logicController.transform.position, t.transform.position);
             if (dist < minDist)
@@ -142,6 +163,10 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         return closest;
     }
 
+    /// <summary>
+    /// 他の敵にターゲットされていない、最も近いプレイヤーを検索
+    /// ※現在は未使用
+    /// </summary>
     private GameObject FindClosestUnTargetedTarget()
     {
         GameObject[] allPlayers = GameObject.FindGameObjectsWithTag("Player");
@@ -154,20 +179,20 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         {
             PlayerInfo info = player.GetComponent<PlayerInfo>();
 
-            // Skip caught players
+            // 既に捕獲されたプレイヤーをスキップ
             if (info != null && info.hasCaught) continue;
 
-            // Skip falling players
-            //if (info != null && info.IsFallingDown()) continue;
+            // 倒れているプレイヤーをスキップ（オプション）
+            // if (info != null && info.IsFallingDown()) continue;
 
-            // Check if this player is already targeted by another enemy
+            // このプレイヤーが他の敵にターゲットされているかチェック
             bool isTargetedByOther = false;
             foreach (var enemy in allEnemies)
             {
-                // Skip checking this enemy (self)
+                // 自分自身はスキップ
                 if (enemy == _logicController) continue;
 
-                // If another enemy is targeting this player, skip
+                // 他の敵がこのプレイヤーをターゲット中ならスキップ
                 if (enemy.CurrentTarget == player)
                 {
                     isTargetedByOther = true;
@@ -177,7 +202,7 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 
             if (isTargetedByOther) continue;
 
-            // Find the closest untargeted player
+            // ターゲットされていない最も近いプレイヤーを見つける
             float dist = Vector3.Distance(_logicController.transform.position, player.transform.position);
             if (dist < minDist)
             {
@@ -188,4 +213,64 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 
         return closestUntargeted;
     }
+
+    #endregion
+
+    #region 移動制御
+
+    /// <summary>
+    /// 追跡ターゲットの位置に向かって移動
+    /// 位置が大きく変わった時のみパスを更新（最適化）
+    /// </summary>
+    private void SetChaseTargetPos()
+    {
+        if (_logicController.CurrentTarget == null) return;
+
+        Vector3 targetPos = _logicController.CurrentTarget.transform.position;
+
+        // ターゲットが前回から0.1m以上移動していたらパスを更新
+        if ((targetPos - lastChaseTargetPos).sqrMagnitude > 0.1f)
+        {
+            _logicController.rbNavMesh.MoveTo(targetPos);
+            lastChaseTargetPos = targetPos;
+        }
+    }
+
+    #endregion
+
+    #region ゲームオーバー判定（未使用）
+
+    /// <summary>
+    /// 全プレイヤーが捕獲されたかチェックしてゲームオーバー
+    /// ※現在はコメントアウトされている
+    /// </summary>
+    private void TryGameOver()
+    {
+        PlayerDistanceManager playerDistanceManager = GameObject.FindAnyObjectByType<PlayerDistanceManager>();
+        if (!playerDistanceManager.HaveAllPlayersCaught()) return;
+
+        colorPanelRoomTimer.SetGameOverByAllCaught();
+    }
+
+    #endregion
+
+    #region デバッグ表示
+
+    /// <summary>
+    /// エディタ上でギズモを描画（捕獲範囲と視野角）
+    /// </summary>
+    public override void DrawStateGizmo()
+    {
+        if (_logicController.CurrentTarget == null) return;
+
+        // 捕獲範囲を赤い円で表示
+        Vector3 center = _logicController.transform.position;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(center, _catchRange);
+
+        // 視野角を表示
+        ConeHelper.DrawConeGizmo(_logicController.GetConeInfo());
+    }
+
+    #endregion
 }

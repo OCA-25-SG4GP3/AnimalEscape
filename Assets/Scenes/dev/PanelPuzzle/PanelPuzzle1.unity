@@ -8405,7 +8405,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5077794318542750628, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
       propertyPath: totalTime
-      value: 30
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5077794318542750628, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
       propertyPath: addTimePerRoom
