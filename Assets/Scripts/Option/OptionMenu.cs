@@ -1,11 +1,12 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class OptionMenu : MonoBehaviour
 {
     public bool IsPaused => canvas.enabled;
-    Canvas canvas;
+    public Canvas canvas;
+    [SerializeField] private GameObject startUI;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     //protected override void Awake()
     void Awake()
@@ -23,15 +24,21 @@ public class OptionMenu : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Escape)) ToggleOption();
+    {        
+        Debug.Log(Time.timeScale);
+        if (Input.GetKeyDown(KeyCode.Escape)) ToggleOption();     
     }
     public void ToggleOption()
     {
-        canvas.enabled = !canvas.enabled;
 
+        canvas.enabled = !canvas.enabled;
         bool isPaused = !Time.timeScale.Equals(0f);
         Time.timeScale = isPaused ? 0f : 1f;
+        //編集:江頭　以下は岩野さんからのソース改善案のようです
+        //bool isPaused = !Time.timeScale.Equals(0f);
+        //Time.timeScale = isPaused ? 0f : 1f;
+        //canvas.enabled = isPaused ? true : false;
+
 
         foreach (var player in PlayerInputManager.I.players)
         {
