@@ -8662,10 +8662,6 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3453463163881155132, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3740987094845606514, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_Name
       value: SETUPS
@@ -8698,10 +8694,6 @@ PrefabInstance:
       propertyPath: m_Sprite
       value: 
       objectReference: {fileID: 10905, guid: 0000000000000000f000000000000000, type: 0}
-    - target: {fileID: 5060329739625214882, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
-      propertyPath: fadeSpeed
-      value: 0.65
-      objectReference: {fileID: 0}
     - target: {fileID: 5219001806242368570, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -8749,10 +8741,6 @@ PrefabInstance:
     - target: {fileID: 6058260439838976373, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_LocalPosition.z
       value: 1.99
-      objectReference: {fileID: 0}
-    - target: {fileID: 6076577453615692753, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
-      propertyPath: uiAppearSeconds
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6112570238065172459, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_Color.b
