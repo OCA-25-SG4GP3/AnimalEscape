@@ -6,6 +6,7 @@ public class OptionMenu : MonoBehaviour
 {
     public bool IsPaused => canvas.enabled;
     public Canvas canvas;
+    [SerializeField] private GameStartUI startUI;
     //
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -27,8 +28,11 @@ public class OptionMenu : MonoBehaviour
     void Update()
     {        
         Debug.Log(Time.timeScale);
-        if(startUI)
-        if (Input.GetKeyDown(KeyCode.Escape)) ToggleOption();     
+        //編集:江頭 
+        if(startUI.isApear == false)
+        {
+            if (Input.GetKeyDown(KeyCode.Escape)) ToggleOption();
+        }        
     }
     public void ToggleOption()
     {
