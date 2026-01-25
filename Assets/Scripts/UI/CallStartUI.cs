@@ -1,11 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class GameStartUI : MonoBehaviour
 {
     //ゲームオーバー、クリアと同じように、少し止めてから処理
     [SerializeField] private Vector3 firstPosition = new Vector3(0.0f, 0.0f, 0.0f);
     [SerializeField] private bool isApear = false;  //UI表示中かどうか
-    [SerializeField] private float uiAppearSeconds = 4.0f;//UIの表示時間 (秒)
+    [SerializeField] private float uiAppearSeconds = 2.0f;//UIの表示時間 (秒)
     [SerializeField] private float decelTimeSpeedNDeltaTime = 1.0f;//表示時間を減らす速度
 
     [SerializeField] private GameObject fadeObject;
