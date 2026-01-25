@@ -6,6 +6,7 @@ using UnityEngine.InputSystem.Users;
 using UnityEngine.InputSystem.Utilities;
 using UnityEngine.Splines;
 using UnityEngine.UIElements;
+using static UnityEngine.ParticleSystem;
 
 
 [RequireComponent(typeof(Rigidbody))]
@@ -22,6 +23,10 @@ public class AnimalControlSimple : MonoBehaviour
 
     [SerializeField] public LayerMask groundMask;
     [SerializeField, Header("Not a prefab")] private GameObject starPopEffect;
+
+    //サルの暴れるアニメーションが今のゲームでメインで使用しているモデルでは再生できないためモデル変更で対応
+    [SerializeField] private GameObject MainModel;   // 消したい方
+    [SerializeField] private GameObject Struggle_model;   // 表示したい方
 
     // Runtime movement value (can be modified at runtime)
     private float moveSpeed; public void SetMoveSpeed(float _moveSpeed) { moveSpeed = _moveSpeed; }
@@ -439,7 +444,16 @@ public class AnimalControlSimple : MonoBehaviour
     public void SetCaughtState()
     {
         //animator.SetBool
-        animator.Play("LPn01_struggle");
+        animator.Play("LPn01_struggle");    //ペンギン
+
+        // モデル切り替え
+        if (MainModel != null)
+            MainModel.SetActive(false);
+
+        if (Struggle_model != null)
+            Struggle_model.SetActive(true);
+        animator.Play("struggle");
+
     }
     public void SetStunnedState(float stunedDurationOverride = -1f)
     {
