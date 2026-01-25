@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -17,6 +17,8 @@ public class ColorPanelRoomTimer : MonoBehaviour
     [SerializeField] private RectTransform zookeeperIcon;
     [SerializeField] Slider timerSlider;
     float startingTime;
+    [SerializeField] private bool isMultipleGate = false; //追加:江頭 ゲートが複数あるかどうかを確かめる変数
+    //[SerializeField] private List<GameObject> gateList = new List<GameObject>(); 追加:江頭 (仮)の設定
     void Awake()
     {
         startingTime = totalTime;

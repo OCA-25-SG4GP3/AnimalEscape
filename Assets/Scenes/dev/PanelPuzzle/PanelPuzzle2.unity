@@ -7061,6 +7061,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 3304917992345702437, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
+      propertyPath: isAddTimerOnClear
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3304917992345702437, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
       propertyPath: panelPairsRequired
       value: 6
       objectReference: {fileID: 0}
