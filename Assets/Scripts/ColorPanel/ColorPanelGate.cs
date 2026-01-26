@@ -7,11 +7,12 @@ using static ColorPanelPuzzle;
 
 [SelectionBase]
 public class ColorPanelGate : MonoBehaviour
-{
+{    
     [SerializeField] private bool usingSides = true;
     [SerializeField, Header("ペアーのことでご注意。")] private int panelPairsRequired = 0;
     [SerializeField] private Transform cameraFollowObjectT;
     [SerializeField, Header("扉が開いたら、どこに動く")] private Transform[] playerAIMoveToTransform = new Transform[2];
+    [SerializeField] bool isAddTimerOnClear = true;//追加:イザンさん,江頭 このゲートでタイマーを追加するかどうか
     [SerializeField, Header("前のゲート")] private ColorPanelGate previousGate;
 
     // Auto-detected components
@@ -66,7 +67,7 @@ public class ColorPanelGate : MonoBehaviour
             {
                 ColorPanelPuzzle panelA = activePanels[i];
                 ColorPanelPuzzle panelB = activePanels[j];
-                bool isSameMesh = panelA.buttonType == panelB.buttonType; 
+                bool isSameMesh = panelA.buttonType == panelB.buttonType;
                 if (panelA.correctPanelMaterial.name == panelB.correctPanelMaterial.name && isSameMesh)
                 {
                     if (usingSides && IsSameSide(panelA, panelB)) return;
@@ -131,23 +132,23 @@ public class ColorPanelGate : MonoBehaviour
             audioObj.transform.position = Camera.main.transform.position;
             //
             var audioSrc = audioObj.AddComponent<AudioSource>();
-            
+
             ////////////
             audioSrc.clip = correctSFX;
             audioSrc.Play();
-            
+
             //audioSrc.PlayOneShot(correctSFX);
             //audioSrc.PlayOneShot(correct2SFX);
             //audioSrc.PlayOneShot(correct3SFX);
             ////////////
-            
+
             //2秒後消す
             Destroy(audioObj, 2.0f);
 
             //Instantiate(audioPrefab,,);
         }
 
-      //  [SerializeField] GameObject audioPrefab;
+        //  [SerializeField] GameObject audioPrefab;
 
         // Drop the gate step by step
         if (gateDropController)
@@ -160,13 +161,13 @@ public class ColorPanelGate : MonoBehaviour
             OpenGateFully();
         }
     }
-
     public void OpenGateFully()
     {
         gateOpened = true;
 
         // Add time bonus
-        if (colorPanelRoomTimer) { colorPanelRoomTimer.AddTime(); }
+        if (colorPanelRoomTimer && isAddTimerOnClear)
+        { colorPanelRoomTimer.AddTime(); }
 
         // Open gate animation
         //if (gateAnimator)        {            gateAnimator.Play("GateLift");        }
