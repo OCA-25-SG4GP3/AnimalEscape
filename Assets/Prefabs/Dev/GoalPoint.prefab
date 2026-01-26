@@ -553,7 +553,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6989550815197594825}
-  - component: {fileID: 6246668003054615436}
   - component: {fileID: 5285371516247232952}
   m_Layer: 0
   m_Name: GoalPoint
@@ -582,27 +581,6 @@ Transform:
   - {fileID: 3329067422704024714}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &6246668003054615436
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7112349901315144723}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 0
-  serializedVersion: 3
-  m_Size: {x: 0.79, y: 1.54, z: 0.44}
-  m_Center: {x: 0, y: 1.08, z: 0}
 --- !u!114 &5285371516247232952
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -617,9 +595,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _clearTimeSO: {fileID: 11400000, guid: 4c026bbafd3434e40a1e34a631935afd, type: 2}
   finishImageObject: {fileID: 4135589664249861625}
-  fadeObject: {fileID: 0}
   setFinishImageOnClearGame: 0
   nextSceneName: PanelPuzzle2
+  fadeOutDelay: 3
+  loadNextSceneDelay: 5
 --- !u!1 &7517718711275230455
 GameObject:
   m_ObjectHideFlags: 0

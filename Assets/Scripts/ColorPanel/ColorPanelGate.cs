@@ -68,7 +68,9 @@ public class ColorPanelGate : MonoBehaviour
                 ColorPanelPuzzle panelA = activePanels[i];
                 ColorPanelPuzzle panelB = activePanels[j];
                 bool isSameMesh = panelA.buttonType == panelB.buttonType;
-                if (panelA.correctPanelMaterial.name == panelB.correctPanelMaterial.name && isSameMesh)
+                bool isSameMaterial = panelA.correctPanelMaterial == panelB.correctPanelMaterial;
+
+                if (isSameMaterial && isSameMesh)
                 {
                     if (usingSides && IsSameSide(panelA, panelB)) return;
                     // Matched pair!
