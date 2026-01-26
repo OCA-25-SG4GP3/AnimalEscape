@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Cinemachine;
@@ -11,7 +11,7 @@ public class GateAndButtonsRequired
     [NonSerializedAttribute] public GateDropController gateDropController;
     [SerializeField] public int panelsRequired = 0;
     [SerializeField] public Transform cameraFollowObjectT;
-    [SerializeField, Header("扉が開いたら、どこに動く")] public Transform[] playerAIMoveToTransform = new Transform[2];
+    [SerializeField, Header("謇峨′髢九＞縺溘ｉ縲√←縺薙↓蜍輔￥")] public Transform[] playerAIMoveToTransform = new Transform[2];
 }
 public class ColorPanelManager : MonoBehaviour
 {
@@ -78,11 +78,6 @@ public class ColorPanelManager : MonoBehaviour
         return panelA.upSide && panelB.upSide || !panelA.upSide && !panelB.upSide;
     }
 
-    public void PanelReleased(ColorPanelPuzzle panel)
-    {
-        steppedPanels.Remove(panel);
-    }
-
     public void AccumulatePoint()
     {
         bool isFinalStep = DropStep();
@@ -99,7 +94,7 @@ public class ColorPanelManager : MonoBehaviour
         int panelsRequired = gatesInOrder[currentGateIndex].panelsRequired;
         bool isFinalStep = point >= panelsRequired;
 
-        // Gọi DropStep, nếu l�? panel cuối cùng thì hạ 100%
+        // G盻絞 DropStep, n蘯ｿu lﾃ? panel cu盻訴 cﾃｹng thﾃｬ h蘯｡ 100%
         var gateAndButtons = gatesInOrder[currentGateIndex];
         gateAndButtons.gateDropController = gatesInOrder[currentGateIndex].gate.GetComponent<GateDropController>();
         gateAndButtons.gateDropController.DropStep(isFinalStep);

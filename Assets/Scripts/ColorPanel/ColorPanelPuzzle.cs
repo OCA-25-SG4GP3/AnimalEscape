@@ -251,10 +251,21 @@ public class ColorPanelPuzzle : MonoBehaviour
 
                 // 💥 push player out
                 animalControl.ApplyExternalForce(totalForce, 0.5f);
+                PlayBounceSound();
             }
 
             playerInside = null;
         }
+    }
+
+    private void PlayBounceSound()
+    {
+        GameObject bouncingAudio = new GameObject("BouncingAudio");
+        AudioSource source = bouncingAudio.AddComponent<AudioSource>();
+        source.clip = pushSound;
+        source.volume = 0.3f;
+        source.Play();
+        Destroy(bouncingAudio, pushSound.length);
     }
 
     private IEnumerator HideAfterDelay(float delay)
