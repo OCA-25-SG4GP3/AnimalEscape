@@ -18,6 +18,8 @@ public class ColorPanelPuzzle : MonoBehaviour
     [SerializeField, Header("何秒までリセチE��")] private float autoResetTimer = 1.0f;
     [SerializeField, Header("何秒までリセチE��")] private float autoHideTimer = 3.0f;
 
+    [SerializeField] private AudioClip bouncingSfx;
+    [SerializeField] float bouncingSoundVolume = 1.0f;
     public AudioClip pushSound;
     private AudioSource audioSource;
 
@@ -251,10 +253,21 @@ public class ColorPanelPuzzle : MonoBehaviour
 
                 // 💥 push player out
                 animalControl.ApplyExternalForce(totalForce, 0.5f);
+                PlayBounceSound();
             }
 
             playerInside = null;
         }
+    }
+   
+    private void PlayBounceSound()
+    {
+        GameObject bouncingAudio = new GameObject("Bouncing");
+        AudioSource source = bouncingAudio.AddComponent<AudioSource>();
+        source.clip = bouncingSfx;
+        source.volume = bouncingSoundVolume;
+        source.Play();
+        Destroy(bouncingAudio, bouncingSfx.length);
     }
 
     private IEnumerator HideAfterDelay(float delay)

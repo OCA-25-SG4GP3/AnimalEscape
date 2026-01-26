@@ -78,6 +78,8 @@ MonoBehaviour:
   hidingMaterial: {fileID: 0}
   autoResetTimer: 1
   autoHideTimer: 3
+  bouncingSfx: {fileID: 8300000, guid: 8e3483fd05632794f82facafb59ab150, type: 3}
+  bouncingSoundVolume: 1
   pushSound: {fileID: 8300000, guid: 68b496d10c278924d864c8577a395c20, type: 3}
   isStepped: 0
   steppedEffect: {fileID: 1344314377593938, guid: 9e03786a9517b604d8e930182607a128, type: 3}
