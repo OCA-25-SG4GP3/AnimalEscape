@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: cc5c57104c2e55a4c94b0723bd7c1b25
+guid: cb0e6f6457e2b7245be29856587173c2
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -35,7 +35,7 @@ ModelImporter:
       takeName: LPn01_sorrow
       internalID: -7841891400345620642
       firstFrame: 0
-      lastFrame: 60
+      lastFrame: 40
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

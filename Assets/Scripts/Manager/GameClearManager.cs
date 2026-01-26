@@ -13,8 +13,11 @@ public class GameClearManager : MonoBehaviour
     //[SerializeField] private Text _clearTimeText;
     [SerializeField] private string nextSceneName = "NextScene"; // 次に移動するシーン�?
     [NonSerializedAttribute] public bool isFinish = false;
+    static public bool FadeOut = false;
+
     private void Start()
     {
+        FadeOut = false;
     }
 
     void OnCollisionEnter(Collision collision)
@@ -28,8 +31,8 @@ public class GameClearManager : MonoBehaviour
                 SetClearGameByFinish();
         }
     }
-    [SerializeField] private float fadeOutDelay = 3.0f;
-    [SerializeField] private float loadNextSceneDelay = 4.0f;
+    [SerializeField] private float fadeOutDelay = 0.0f;
+    [SerializeField] private float loadNextSceneDelay = 0.0f;
     public void SetClearGameByFinish()
     {
         if (isFinish) return;
@@ -42,8 +45,8 @@ public class GameClearManager : MonoBehaviour
 
     private void SetFadeOut()
     {
-        fadeObject = GameObject.FindGameObjectWithTag("FadeObject");
-        fadeObject.GetComponent<Animator>().Play("FadeOut");
+        //FadeInImgManagerへ
+        FadeOut = true;
     }
 
     void LoadNextScene() { SceneManager.LoadScene(nextSceneName); }

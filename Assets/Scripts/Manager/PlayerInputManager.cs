@@ -27,10 +27,11 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
         base.Awake();
 
         // Set the camera to track the TargetGroup (only if enabled)
-        if (autoTargetToTargetGroup && _gameManager != null && _gameManager.FrontCm != null && _targetGroup != null)
-        {
-            _gameManager.FrontCm.Target.TrackingTarget = _targetGroup.transform;
-        }
+        // (Z: We no longer need this. We manually moves it)
+        //if (autoTargetToTargetGroup && _gameManager != null && _gameManager.FrontCm != null && _targetGroup != null)
+        //{
+        //    _gameManager.FrontCm.Target.TrackingTarget = _targetGroup.transform;
+        //}
 
         SpawnPlayers();
     }
