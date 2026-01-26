@@ -3799,8 +3799,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-<<<<<<< HEAD
-=======
     - target: {fileID: 324099038815813587, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -3819,13 +3817,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1775384396984789450, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: Target.TrackingTarget
-      value: 
+      value:
       objectReference: {fileID: 0}
     - target: {fileID: 3394540720467042579, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
       objectReference: {fileID: 0}
->>>>>>> dev
     - target: {fileID: 3740987094845606514, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_Name
       value: SETUPS
@@ -3870,8 +3867,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-<<<<<<< HEAD
-=======
     - target: {fileID: 6058260439838976373, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_LocalPosition.x
       value: -11.27
@@ -3880,7 +3875,6 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: 3.6
       objectReference: {fileID: 0}
->>>>>>> dev
     - target: {fileID: 6843784987305697534, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: '_spawnPoints.Array.data[0]'
       value: 
