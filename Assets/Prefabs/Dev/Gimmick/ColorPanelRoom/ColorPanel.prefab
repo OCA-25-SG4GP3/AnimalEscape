@@ -73,7 +73,6 @@ MonoBehaviour:
   meshRen: {fileID: 4010875617694740844}
   btnMeshFilter: {fileID: 4595259029344159283}
   frameMeshFilter: {fileID: 3520212832908247382}
-  pressedMaterial: {fileID: 0}
   upSide: 1
   hidingMaterial: {fileID: 0}
   autoResetTimer: 1
