@@ -17,6 +17,8 @@ public class ColorPanelRoomTimer : MonoBehaviour
     [SerializeField] private RectTransform zookeeperIcon;
     [SerializeField] Slider timerSlider;
     float startingTime;
+    [SerializeField] private bool isMultipleGate = false; //追加:江頭 ゲートが複数あるかどうかを確かめる変数
+    //[SerializeField] private List<GameObject> gateList = new List<GameObject>(); 追加:江頭 (仮)の設定
     void Awake()
     {
         startingTime = totalTime;
@@ -26,12 +28,14 @@ public class ColorPanelRoomTimer : MonoBehaviour
     }
     void SetSlider()
     {
+        //編集:江頭
+        //ステージ2かつ
         timerSlider.value = startingTime - totalTime; // slider increases as time passes
         //編集:江頭
         //ゲート開通時にタイム追加が超過しゲージが動かなくなる対策です            
         if(totalTime > timerSlider.maxValue)
         {
-            totalTime = timerSlider.maxValue;
+            totalTime = timerSlider.maxValue;            
         }
     }
 
@@ -55,16 +59,16 @@ public class ColorPanelRoomTimer : MonoBehaviour
             {
                 //編集:江頭
                 //totalTimeを0で維持し、ゲージが端に行ったとき戻るのを防ぐため
-                totalTime = 0;
+                //totalTime = 0;
             }
 
             //UpdateTimeText();
             SetSlider();
         }
         else
-        {
+        {        
             if (!isGameOver)
-            {
+            {                
                 SetTimeEnd();
             }
         }
@@ -80,7 +84,7 @@ public class ColorPanelRoomTimer : MonoBehaviour
 
     private void ResetSceneByGameOverImpl()
     {
-        ButtonSceneChanger.ChangeScene("TemporaryGameOver");
+        ButtonSceneChanger.ChangeScene("GameOver");
     }
 
     public void SetGameOverByOneCaught() //全員捕まえた理由でゲームオーバー

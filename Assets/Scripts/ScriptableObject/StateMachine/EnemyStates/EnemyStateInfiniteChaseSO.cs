@@ -40,6 +40,7 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         animator.SetBool("IsCatching", false);
 
         // 移動パスをクリア
+        _logicController.rbNavMesh.Resume();
         _logicController.rbNavMesh.ClearPath();
     }
 
@@ -75,10 +76,6 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
                 HandleTargetCatch(closestTarget);
             }
 
-            if (isDiving)
-            {
-                TryCatchAnimal();
-            }
         }
         else // ターゲットが存在しない場合
         {
@@ -103,6 +100,7 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         animator.SetBool("IsDiving", true);    // 飛び込みアニメーション
 
         // 移動を停止
+        _logicController.rbNavMesh.Pause();
         _logicController.rbNavMesh.ClearPath();
         isDiving = true;
 
@@ -110,11 +108,12 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 
     #endregion
     // クラスの上部に定数を追加
-    private const float CATCH_SPHERE_FINAL_RADIUS = 1.5f;
+    [SerializeField] float CATCH_SPHERE_FINAL_RADIUS = 1.5f;//黄色
     private const float CATCH_MAX_DISTANCE = 3.0f;
     private const float CATCH_ORIGIN_HEIGHT = 0.5f;
 
-    void TryCatchAnimal()
+    //アニメーションから呼ぶ
+    public void TryCatchAnimal()
     {
         RaycastHit hit;
         Vector3 origin = Owner.transform.position + Vector3.up * CATCH_ORIGIN_HEIGHT;
@@ -133,7 +132,7 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 
                 target.GetComponent<AnimalControlSimple>().SetCaughtState();
                 var catchComp = target.GetComponent<CatchPosition>();
-                if(!catchComp) Debug.Log("CATCHがないです");
+                if (!catchComp) Debug.Log("CATCHがないです");
                 catchComp.SetCatch(this);
                 target.GetComponent<PlayerInfo>().SetCaught();
 
@@ -310,8 +309,10 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 
         // 捕獲範囲を赤い円で表示
         Vector3 center = _logicController.transform.position;
+        Vector3 direction = _logicController.ModelObj.transform.forward;
+
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(center, _catchRange);
+        Gizmos.DrawWireSphere(direction * CATCH_MAX_DISTANCE, _catchRange);
 
         // 視野角を表示
         ConeHelper.DrawConeGizmo(_logicController.GetConeInfo());

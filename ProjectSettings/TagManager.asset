@@ -13,6 +13,7 @@ TagManager:
   - Jail
   - Ground
   - FadeObject
+  - Option
   layers:
   - Default
   - TransparentFX

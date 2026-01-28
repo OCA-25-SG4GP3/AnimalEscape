@@ -6,6 +6,7 @@ using UnityEngine.InputSystem.Users;
 using UnityEngine.InputSystem.Utilities;
 using UnityEngine.Splines;
 using UnityEngine.UIElements;
+using static UnityEngine.ParticleSystem;
 
 
 [RequireComponent(typeof(Rigidbody))]
@@ -22,6 +23,10 @@ public class AnimalControlSimple : MonoBehaviour
 
     [SerializeField] public LayerMask groundMask;
     [SerializeField, Header("Not a prefab")] private GameObject starPopEffect;
+
+    //サルの暴れるアニメーションが今のゲームでメインで使用しているモデルでは再生できないためモデル変更で対応
+    [SerializeField] private GameObject MainModel;   // 消したい方
+    [SerializeField] private GameObject Struggle_model;   // 表示したい方
 
     // Runtime movement value (can be modified at runtime)
     private float moveSpeed; public void SetMoveSpeed(float _moveSpeed) { moveSpeed = _moveSpeed; }
@@ -278,16 +283,20 @@ public class AnimalControlSimple : MonoBehaviour
         // Move straight toward target
         transform.position = Vector3.MoveTowards(transform.position, aiMoveTarget, moveSpeed * Time.deltaTime);
 
-        Vector3 direction = (aiMoveTarget - transform.position).normalized;
+        Vector3 direction = (aiMoveTarget - transform.position);
 
-        if (direction != Vector3.zero)
+        if (direction.sqrMagnitude > 0.001f)
         {
             // Flatten direction to horizontal plane (ignore Y axis)
             direction.y = 0f;
-            direction.Normalize();
 
-            Quaternion lookRotation = Quaternion.LookRotation(direction);
-            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, turningSpeed * Time.deltaTime);
+            // Check again after flattening to prevent zero vector
+            if (direction.sqrMagnitude > 0.001f)
+            {
+                direction.Normalize();
+                Quaternion lookRotation = Quaternion.LookRotation(direction);
+                transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, turningSpeed * Time.deltaTime);
+            }
         }
 
         //Stop when close
@@ -311,7 +320,7 @@ public class AnimalControlSimple : MonoBehaviour
         {
             gameClearManager.SetClearGameByFinish();
             //Last AI MOVE to exit point
-            rb.isKinematic = true;
+            //rb.isKinematic = true;
             SetMoveSpeed(baseMoveSpeed * moveSpeedOnFinishMult);
             SetMoveTo(transform.position + Vector3.right * 1000.0f); //Move to far away
 
@@ -435,7 +444,16 @@ public class AnimalControlSimple : MonoBehaviour
     public void SetCaughtState()
     {
         //animator.SetBool
-        animator.Play("LPn01_struggle");
+        animator.Play("LPn01_struggle");    //ペンギン
+
+        // モデル切り替え
+        if (MainModel != null)
+            MainModel.SetActive(false);
+
+        if (Struggle_model != null)
+            Struggle_model.SetActive(true);
+        animator.Play("struggle");
+
     }
     public void SetStunnedState(float stunedDurationOverride = -1f)
     {

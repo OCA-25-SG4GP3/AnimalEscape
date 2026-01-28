@@ -12,12 +12,14 @@ public class ColorPanelPuzzle : MonoBehaviour
     [SerializeField] public MeshFilter btnMeshFilter;
     [SerializeField] public MeshFilter frameMeshFilter;
     [NonSerializedAttribute] public Material correctPanelMaterial;
-    [SerializeField] private Material pressedMaterial;
+    private Material pressedMaterial;
     public bool upSide = true; //is this upside or downside (to prevent double press / exploit)
     [SerializeField, Header("隠したぁE��合�EチE��アル")] private Material hidingMaterial;
     [SerializeField, Header("何秒までリセチE��")] private float autoResetTimer = 1.0f;
     [SerializeField, Header("何秒までリセチE��")] private float autoHideTimer = 3.0f;
 
+    [SerializeField] private AudioClip bouncingSfx;
+    [SerializeField] float bouncingSoundVolume = 1.0f;
     public AudioClip pushSound;
     private AudioSource audioSource;
 
@@ -51,6 +53,16 @@ public class ColorPanelPuzzle : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
 
         UpdateMeshByEnum();
+
+        // Copy from correctPanelMaterial and darken
+        pressedMaterial = new Material(correctPanelMaterial);
+        pressedMaterial.color *= 0.4f; // darken
+
+        pressedMaterial.EnableKeyword("_EMISSION");
+
+        // Darken emission based on the base color instead of the emission color
+        Color baseColor = pressedMaterial.color;
+        pressedMaterial.SetColor("_EmissionColor", baseColor * 0.4f);
     }
 
     private void UpdateMeshByEnum()
@@ -251,10 +263,21 @@ public class ColorPanelPuzzle : MonoBehaviour
 
                 // 💥 push player out
                 animalControl.ApplyExternalForce(totalForce, 0.5f);
+                PlayBounceSound();
             }
 
             playerInside = null;
         }
+    }
+
+    private void PlayBounceSound()
+    {
+        GameObject bouncingAudio = new GameObject("Bouncing");
+        AudioSource source = bouncingAudio.AddComponent<AudioSource>();
+        source.clip = bouncingSfx;
+        source.volume = bouncingSoundVolume;
+        source.Play();
+        Destroy(bouncingAudio, bouncingSfx.length);
     }
 
     private IEnumerator HideAfterDelay(float delay)

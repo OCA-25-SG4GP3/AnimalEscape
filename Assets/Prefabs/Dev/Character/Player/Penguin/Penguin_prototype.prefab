@@ -640,6 +640,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   starPopEffect: {fileID: 689128422694211566}
+  MainModel: {fileID: 0}
+  Struggle_model: {fileID: 0}
   moveEffect: {fileID: 1344314377593938, guid: 9e03786a9517b604d8e930182607a128, type: 3}
   smokeEffect: {fileID: 1735024089641582, guid: 378b2c30ef426554495292cb902cb8f4, type: 3}
   jumpHoldCounter: 0
@@ -651,7 +653,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8460430454786289905}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a3a76925d04f51c449c9ec27b4c6a46b, type: 3}
   m_Name: 
@@ -775,7 +777,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyState: {fileID: 0}
-  offset: {x: 0, y: -5, z: 0}
+  offset: {x: 0, y: 0.3, z: 0}
 --- !u!1001 &1913588038347678006
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -787,6 +789,10 @@ PrefabInstance:
     - target: {fileID: 2999223032471151577, guid: ef2c4310fc065cc49ab7229afc634675, type: 3}
       propertyPath: m_Name
       value: PlayerCooldownCanvas
+      objectReference: {fileID: 0}
+    - target: {fileID: 2999223032471151577, guid: ef2c4310fc065cc49ab7229afc634675, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8141984969014809296, guid: ef2c4310fc065cc49ab7229afc634675, type: 3}
       propertyPath: m_PresetInfoIsWorld
