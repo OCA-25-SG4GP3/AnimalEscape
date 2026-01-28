@@ -7121,6 +7121,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1336906530995183405, guid: c7d0c2e3e955fb746b2e6db7c72cc9eb, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 1941647473, guid: cdc4bd170b6814f4eb363b5f9c58d4d6, type: 3}
     - target: {fileID: 3556301127256611733, guid: c7d0c2e3e955fb746b2e6db7c72cc9eb, type: 3}
       propertyPath: m_Name
       value: GameStartCanvas (STAGE 1 ONLY)
