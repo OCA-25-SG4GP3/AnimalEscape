@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Description: 
   _logicController: {fileID: 0}
-  _catchRange: 3.5
+  _catchRange: 2.5

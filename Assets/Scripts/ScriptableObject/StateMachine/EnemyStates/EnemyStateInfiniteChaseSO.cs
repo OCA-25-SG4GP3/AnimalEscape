@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// 敵AI：無限追跡状態
@@ -48,6 +49,7 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 
     private bool isCarrying = false; // 現在ターゲットを運搬中かどうか
 
+    bool isDiving = false;
     /// <summary>
     /// 毎フレームの更新処理
     /// </summary>
@@ -68,10 +70,14 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
             SetChaseTargetPos();
 
             // 捕獲範囲内に入った場合
-            if (IsWithinCatchRange(closestTarget))
+            if (IsWithinCatchRange(closestTarget) && !isDiving)
             {
                 HandleTargetCatch(closestTarget);
-                return;
+            }
+
+            if (isDiving)
+            {
+                TryCatchAnimal();
             }
         }
         else // ターゲットが存在しない場合
@@ -93,26 +99,65 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
     /// </summary>
     private void HandleTargetCatch(GameObject target)
     {
-        isCarrying = true;
-
         // 捕獲アニメーションを再生
         animator.SetBool("IsDiving", true);    // 飛び込みアニメーション
-        animator.SetBool("IsCatching", true);  // 捕獲アニメーション
-
-        // ターゲットを捕獲状態にする
-        target.GetComponent<AnimalControlSimple>().SetCaughtState();
-        target.GetComponent<CatchPosition>().SetCatch(this);
-        target.GetComponent<PlayerInfo>().SetCaught();
 
         // 移動を停止
         _logicController.rbNavMesh.ClearPath();
+        isDiving = true;
 
-        // ゲームオーバー判定
-        if (colorPanelRoomTimer)
-            colorPanelRoomTimer.SetGameOverByOneCaught();
     }
 
     #endregion
+    // クラスの上部に定数を追加
+    private const float CATCH_SPHERE_FINAL_RADIUS = 1.5f;
+    private const float CATCH_MAX_DISTANCE = 3.0f;
+    private const float CATCH_ORIGIN_HEIGHT = 0.5f;
+
+    void TryCatchAnimal()
+    {
+        RaycastHit hit;
+        Vector3 origin = Owner.transform.position + Vector3.up * CATCH_ORIGIN_HEIGHT;
+        Vector3 direction = _logicController.ModelObj.transform.forward;
+
+        Debug.DrawRay(origin, direction * CATCH_MAX_DISTANCE, Color.yellow, 0.5f);
+
+        if (Physics.SphereCast(origin, CATCH_SPHERE_FINAL_RADIUS, direction, out hit, CATCH_MAX_DISTANCE))
+        {
+            GameObject target = null;
+            if (hit.collider.CompareTag("Player") || hit.collider.CompareTag("Animal"))
+            {
+                target = hit.collider.gameObject;
+                isCarrying = true;
+                animator.SetBool("IsCatchingSuccess", true);
+
+                target.GetComponent<AnimalControlSimple>().SetCaughtState();
+                var catchComp = target.GetComponent<CatchPosition>();
+                if(!catchComp) Debug.Log("CATCHがないです");
+                catchComp.SetCatch(this);
+                target.GetComponent<PlayerInfo>().SetCaught();
+
+                if (colorPanelRoomTimer)
+                    colorPanelRoomTimer.SetGameOverByOneCaught();
+            }
+        }
+    }
+
+    public void OnDrawGizmos()
+    {
+        Vector3 origin = Owner.transform.position + Vector3.up * CATCH_ORIGIN_HEIGHT;
+        Vector3 direction = _logicController.ModelObj.transform.forward;
+
+        // 開始位置の球
+
+        // 終了位置の球
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(origin + direction * CATCH_MAX_DISTANCE, CATCH_SPHERE_FINAL_RADIUS);
+
+        // 中心線
+        Gizmos.color = Color.blue;
+        Gizmos.DrawLine(origin, origin + direction * CATCH_MAX_DISTANCE);
+    }
 
     #region ターゲット検出と判定
 

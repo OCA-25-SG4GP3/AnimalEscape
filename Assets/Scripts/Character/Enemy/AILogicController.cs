@@ -147,6 +147,9 @@ public class AILogicController : MonoBehaviour
         if (_currentState)
         {
             _currentState.DrawStateGizmo();
+
+        EnemyStateInfiniteChaseSO infiniteState = _currentState as EnemyStateInfiniteChaseSO;
+        infiniteState.OnDrawGizmos();
         }
     }
 
