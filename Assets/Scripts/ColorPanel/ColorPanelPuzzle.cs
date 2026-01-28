@@ -17,6 +17,7 @@ public class ColorPanelPuzzle : MonoBehaviour
     [SerializeField, Header("隠したぁE��合�EチE��アル")] private Material hidingMaterial;
     [SerializeField, Header("何秒までリセチE��")] private float autoResetTimer = 1.0f;
     [SerializeField, Header("何秒までリセチE��")] private float autoHideTimer = 3.0f;
+ 
 
     [SerializeField] private AudioClip bouncingSfx;
     [SerializeField] float bouncingSoundVolume = 1.0f;
@@ -35,6 +36,8 @@ public class ColorPanelPuzzle : MonoBehaviour
         Box, Circle, Star, Triang
     };
     [SerializeField] public EButtonType buttonType;
+    [SerializeField] private bool isHiding = false;
+    private bool isRevealed = false;
     [SerializeField] Mesh boxMesh;
     [SerializeField] Mesh starMesh;
     [SerializeField] Mesh triangleMesh;
@@ -52,8 +55,36 @@ public class ColorPanelPuzzle : MonoBehaviour
         if (hidingMaterial) meshRen.material = hidingMaterial;
         audioSource = GetComponent<AudioSource>();
 
-        UpdateMeshByEnum();
+        btnMeshFilter.mesh = boxMesh;
+        frameMeshFilter.mesh = frameBoxMesh;
+        if (isHiding)
+        {
+            // Start hidden as square
+            btnMeshFilter.mesh = boxMesh;
+            frameMeshFilter.mesh = frameBoxMesh;
 
+            if (hidingMaterial)
+                meshRen.material = hidingMaterial;
+
+            isRevealed = false;
+        }
+        else
+        {
+            // Start revealed (real shape)
+            UpdateMeshByEnum();
+            RestoreToCorrectMaterial();
+            isRevealed = true;
+        }
+
+        if (hidingMaterial)
+        {
+            meshRen.material = hidingMaterial;
+        }
+
+        if (hidingMaterial)
+        {
+            meshRen.material = hidingMaterial;
+        }
         // Copy from correctPanelMaterial and darken
         pressedMaterial = new Material(correctPanelMaterial);
         pressedMaterial.color *= 0.4f; // darken
@@ -68,6 +99,28 @@ public class ColorPanelPuzzle : MonoBehaviour
     private void UpdateMeshByEnum()
     {
         switch (buttonType)
+        {
+            case EButtonType.Box:
+                btnMeshFilter.mesh = boxMesh;
+                frameMeshFilter.mesh = frameBoxMesh;
+                break;
+            case EButtonType.Circle:
+                btnMeshFilter.mesh = circleMesh;
+                frameMeshFilter.mesh = frameCircleMesh;
+                break;
+            case EButtonType.Triang:
+                btnMeshFilter.mesh = triangleMesh;
+                frameMeshFilter.mesh = frameTriangMesh;
+                break;
+            case EButtonType.Star:
+                btnMeshFilter.mesh = starMesh;
+                frameMeshFilter.mesh = frameStarMesh;
+                break;
+        }
+    }
+    private void UpdateMesh(EButtonType type)
+    {
+        switch (type)
         {
             case EButtonType.Box:
                 btnMeshFilter.mesh = boxMesh;
@@ -132,7 +185,16 @@ public class ColorPanelPuzzle : MonoBehaviour
             if (!playerInfo.CanStepButton) return;
 
             isStepped = true;
+            if (!isRevealed)
+            {
+                isRevealed = true;
 
+                // Reveal real shape
+                UpdateMeshByEnum();
+
+                // Reveal real material
+                RestoreToCorrectMaterial();
+            }
             animator.Play("ColorPanelPressedAnim");
             //audioSource.PlayOneShot(pushSound); //�E�j�E�󂳂��E�ƃo�E�O�E��E�
             Instantiate(steppedEffect, transform.position, transform.rotation);
@@ -284,9 +346,14 @@ public class ColorPanelPuzzle : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
 
-        // After timer expires, hide the panel again (regardless of current material)
         if (hidingMaterial)
         {
+            isRevealed = false;
+
+            // Back to square
+            btnMeshFilter.mesh = boxMesh;
+            frameMeshFilter.mesh = frameBoxMesh;
+
             RestoreToHidingMaterial();
         }
     }

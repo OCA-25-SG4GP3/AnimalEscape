@@ -83,6 +83,7 @@ MonoBehaviour:
   isStepped: 0
   steppedEffect: {fileID: 1344314377593938, guid: 9e03786a9517b604d8e930182607a128, type: 3}
   buttonType: 0
+  isHiding: 1
   boxMesh: {fileID: -6809916166929176288, guid: f4f69a3240a238c4b9e77c621d0e6434, type: 3}
   starMesh: {fileID: 6238207543483332434, guid: b94fd3c1d99cd3e4b83e70fdde098fc7, type: 3}
   triangleMesh: {fileID: 8365824813992421434, guid: a97cd82e041d1244980163bcbb1f2934, type: 3}
