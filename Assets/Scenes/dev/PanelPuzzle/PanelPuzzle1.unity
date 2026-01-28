@@ -7105,6 +7105,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameStartCanvas (STAGE 1 ONLY)
       objectReference: {fileID: 0}
+    - target: {fileID: 5463181755173270624, guid: c7d0c2e3e955fb746b2e6db7c72cc9eb, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -19.999939
+      objectReference: {fileID: 0}
     - target: {fileID: 8860761047128863461, guid: c7d0c2e3e955fb746b2e6db7c72cc9eb, type: 3}
       propertyPath: m_Pivot.x
       value: 0
