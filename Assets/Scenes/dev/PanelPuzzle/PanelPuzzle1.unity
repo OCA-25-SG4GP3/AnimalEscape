@@ -2164,16 +2164,6 @@ Transform:
   - {fileID: 1235792519}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &610365454 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4515923728960444574, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
-  m_PrefabInstance: {fileID: 1106119270}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &618207616 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7765054538324620922, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
-  m_PrefabInstance: {fileID: 1106119270}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &644738866
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2826,11 +2816,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c2fc65a5e0d73674d94f26fd1d166a58, type: 3}
---- !u!1 &739899806 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3875006494217275180, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
-  m_PrefabInstance: {fileID: 1106119270}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &761177537
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3809,7 +3794,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 788211061822199728, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 1.99
+      value: 3.44
       objectReference: {fileID: 0}
     - target: {fileID: 808168671421658851, guid: 22504c02c7738e3479fdb8dcb6dbebda, type: 3}
       propertyPath: m_Enabled
@@ -4935,11 +4920,6 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 4191139528695294892, guid: 9ed36621bb8c8cc4d9ae73bfc563aa4c, type: 3}
   m_PrefabInstance: {fileID: 1295669805}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &1318991478 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3890901011434622329, guid: d29077baff83ee749bae7c3e394b2904, type: 3}
-  m_PrefabInstance: {fileID: 1106119270}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1326229393
 PrefabInstance:
@@ -8027,34 +8007,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: TimerManager
       objectReference: {fileID: 0}
-    - target: {fileID: 1048754459432054650, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: cm
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: gatesInOrder.Array.data[0].gate
-      value: 
-      objectReference: {fileID: 739899806}
-    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: gatesInOrder.Array.data[0].gateDropController
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: gatesInOrder.Array.data[0].cameraFollowObjectT
-      value: 
-      objectReference: {fileID: 610365454}
-    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: 'gatesInOrder.Array.data[0].playerAIMoveToTransform.Array.data[0]'
-      value: 
-      objectReference: {fileID: 618207616}
-    - target: {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: 'gatesInOrder.Array.data[0].playerAIMoveToTransform.Array.data[1]'
-      value: 
-      objectReference: {fileID: 1318991478}
     - target: {fileID: 3713019981782567374, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -8062,14 +8014,6 @@ PrefabInstance:
     - target: {fileID: 3713019981782567374, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4284090596619935388, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4777443720049749120, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: m_MatchWidthOrHeight
-      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 5000981288403268208, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
       propertyPath: m_LocalPosition.x
@@ -8112,14 +8056,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5077794318542750628, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: totalTime
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 5077794318542750628, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: addTimePerRoom
-      value: 5
-      objectReference: {fileID: 0}
-    - target: {fileID: 5077794318542750628, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
       propertyPath: 'spawnTs.Array.data[0]'
       value: 
       objectReference: {fileID: 281372648}
@@ -8139,20 +8075,7 @@ PrefabInstance:
       propertyPath: m_AnchorMin.x
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 8193715270035996904, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: m_fontAsset
-      value: 
-      objectReference: {fileID: 11400000, guid: 739eed005c8a67a4fb9ff7e4c8765741, type: 2}
-    - target: {fileID: 8193715270035996904, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: m_sharedMaterial
-      value: 
-      objectReference: {fileID: 1052623971164806631, guid: 739eed005c8a67a4fb9ff7e4c8765741, type: 2}
-    - target: {fileID: 8193715270035996904, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
-      propertyPath: m_hasFontAssetChanged
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 2787172980837603999, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
+    m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
