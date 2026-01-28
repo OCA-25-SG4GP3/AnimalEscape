@@ -31,7 +31,7 @@ public class OptionMenu : MonoBehaviour
     {        
         //Debug.Log(Time.timeScale);
         //編集:江頭 
-        if(startUI && startUI.isApear == false)
+        if(!startUI || startUI.isApear == false)
         {
             if (Input.GetKeyDown(KeyCode.Escape)) ToggleOption();
         }        
