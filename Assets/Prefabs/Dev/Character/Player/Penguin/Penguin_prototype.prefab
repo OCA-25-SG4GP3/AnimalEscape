@@ -305,6 +305,7 @@ GameObject:
   - component: {fileID: -912640767434729747}
   - component: {fileID: 6773676947951746315}
   - component: {fileID: 202164699887812056}
+  - component: {fileID: 7253417141389836488}
   m_Layer: 7
   m_Name: Penguin_prototype
   m_TagString: Player
@@ -639,6 +640,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967295
   starPopEffect: {fileID: 689128422694211566}
+  MainModel: {fileID: 0}
+  Struggle_model: {fileID: 0}
   moveEffect: {fileID: 1344314377593938, guid: 9e03786a9517b604d8e930182607a128, type: 3}
   smokeEffect: {fileID: 1735024089641582, guid: 378b2c30ef426554495292cb902cb8f4, type: 3}
   jumpHoldCounter: 0
@@ -761,6 +764,20 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &7253417141389836488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8460430454786289905}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f8bbfa9a4dfa8834ba24b2381baa01d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  enemyState: {fileID: 0}
+  offset: {x: 0, y: 0.3, z: 0}
 --- !u!1001 &1913588038347678006
 PrefabInstance:
   m_ObjectHideFlags: 0
