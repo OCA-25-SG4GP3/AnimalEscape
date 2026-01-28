@@ -290,6 +290,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2735345347667730751, guid: b3db85ab0317b384da224a93313c10e7, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 31830581, guid: cdc4bd170b6814f4eb363b5f9c58d4d6, type: 3}
     - target: {fileID: 5285371516247232952, guid: b3db85ab0317b384da224a93313c10e7, type: 3}
       propertyPath: nextSceneName
       value: GameClear

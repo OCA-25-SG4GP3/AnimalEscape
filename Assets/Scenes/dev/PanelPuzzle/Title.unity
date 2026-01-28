@@ -720,6 +720,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2335848593619504353, guid: 08c50329c862dbd46825b42d193df38b, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2335848593619504353, guid: 08c50329c862dbd46825b42d193df38b, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -240226429, guid: 5a64019e915fabc8888c01c76ccc5f5c, type: 3}
     - target: {fileID: 2821269740704686310, guid: 08c50329c862dbd46825b42d193df38b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -812,6 +820,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4831835199259614947, guid: 08c50329c862dbd46825b42d193df38b, type: 3}
+      propertyPath: m_Type
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4831835199259614947, guid: 08c50329c862dbd46825b42d193df38b, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -240226429, guid: 5a64019e915fabc8888c01c76ccc5f5c, type: 3}
     - target: {fileID: 5919969610321336306, guid: 08c50329c862dbd46825b42d193df38b, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
