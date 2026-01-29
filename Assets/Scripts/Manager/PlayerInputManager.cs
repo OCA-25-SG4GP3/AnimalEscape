@@ -47,7 +47,7 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
         }
 
         // Player 1
-        _player1 = PlayerInput.Instantiate(_playerPrefab[0], controlScheme: "Player1", pairWithDevices: new[] { Keyboard.current });
+        _player1 = PlayerInput.Instantiate(_playerPrefab[0]);
         _player1.transform.position = _spawnPoints[0].position;
         _player1.transform.Rotate(0, 180, 0);
 
@@ -69,7 +69,7 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
         // Player 2
         if (_playerPrefab.Length >= 2 && _spawnPoints.Length >= 2)
         {
-            _player2 = PlayerInput.Instantiate(_playerPrefab[1], controlScheme: "Player2", pairWithDevices: new[] { Keyboard.current });
+            _player2 = PlayerInput.Instantiate(_playerPrefab[1]);
             _player2.transform.position = _spawnPoints[1].position;
 
             // Create camera target for Player 2 (follows horizontal position only)
@@ -111,9 +111,7 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
     protected virtual void EnableInput()
     {
         _player1.enabled = true;
-        _player1.SwitchCurrentControlScheme("Player1", devices: new[] { Keyboard.current });
         _player2.enabled = true;
-        _player2.SwitchCurrentControlScheme("Player2", devices: new[] { Keyboard.current });
     }
 
 }
