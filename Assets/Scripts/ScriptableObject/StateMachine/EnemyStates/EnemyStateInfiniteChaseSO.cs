@@ -104,6 +104,8 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         _logicController.rbNavMesh.ClearPath();
         isDiving = true;
 
+        //force stop root motion
+        animator.applyRootMotion = false;
     }
 
     #endregion
@@ -124,7 +126,7 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         if (Physics.SphereCast(origin, CATCH_SPHERE_FINAL_RADIUS, direction, out hit, CATCH_MAX_DISTANCE))
         {
             GameObject target = null;
-            if (hit.collider.CompareTag("Player") || hit.collider.CompareTag("Animal"))
+            if (hit.collider.CompareTag("Player"))
             {
                 target = hit.collider.gameObject;
                 isCarrying = true;
