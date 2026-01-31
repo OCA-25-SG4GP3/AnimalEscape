@@ -90,13 +90,15 @@ public class ColorPanelRoomTimer : MonoBehaviour
     public void SetGameOverByOneCaught() //全員捕まえた理由でゲームオーバー
     {
         if (gameOverImage.activeSelf) return;
-        gameOverImage.SetActive(true);
+        //編集: 江頭 プレイヤーが捕まった時点では「脱出失敗」のUIを出さないようにしました
+        //gameOverImage.SetActive(true);
         Invoke("ResetSceneByGameOverImpl", timeBeforeGameOverScreen);
     }
     public void SetGameOverByAllCaught() //全員捕まえた理由でゲームオーバー
     {
         if (gameOverImage.activeSelf) return;
-        gameOverImage.SetActive(true);
+        //編集: 江頭 プレイヤーが捕まった時点では「脱出失敗」のUIを出さないようにしました
+        //gameOverImage.SetActive(true);
         Invoke("ResetSceneByGameOverImpl", timeBeforeGameOverScreen);
     }
 
