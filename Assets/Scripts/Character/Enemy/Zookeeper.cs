@@ -1,13 +1,14 @@
-using System;
+ï»¿using System;
 using UnityEngine;
 
 
+[SelectionBaseAttribute]
 public class Zookeeper : MonoBehaviour
 {
     [SerializeField] public Animator animator;
     void Awake()
     {
-        // •û–@1: ƒŒƒCƒ„[–¼‚Åİ’è
+        // æ–¹æ³•1: ãƒ¬ã‚¤ãƒ¤ãƒ¼åã§è¨­å®š
     }
         
 

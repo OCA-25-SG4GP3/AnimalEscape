@@ -1,4 +1,4 @@
-using UnityEngine;
+ï»¿using UnityEngine;
 using UnityEngine.InputSystem.Layouts;
 
 public class CatchPosition : MonoBehaviour
@@ -36,8 +36,8 @@ public class CatchPosition : MonoBehaviour
         if(enemyState == null)
             return;
 
-        // ”ˆçˆõ‚ªƒLƒƒƒbƒ`ƒ‚[ƒVƒ‡ƒ“‚Ì
-        if(enemyState.animator.GetBool("IsCatching"))
+        // é£¼è‚²å“¡ãŒã‚­ãƒ£ãƒƒãƒãƒ¢ãƒ¼ã‚·ãƒ§ãƒ³ã®æ™‚
+        if(enemyState.animator.GetBool("IsCatchingSuccess"))
         {
             transform.position = hand.position + offset;
             transform.rotation = hand.rotation;

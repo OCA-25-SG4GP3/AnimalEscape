@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(Rigidbody))]
@@ -7,7 +7,7 @@ public class RigidbodyNavMesh : MonoBehaviour
     //Please respect the size of the baked radius
     Rigidbody rb;
     NavMeshPath navMeshPath;
-    float moveSpeed = 2.0f;
+    float moveSpeed = 1.5f;
     int cornerIndex = 0;
     void Awake()
     {

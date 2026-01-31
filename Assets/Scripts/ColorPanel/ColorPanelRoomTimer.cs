@@ -84,7 +84,7 @@ public class ColorPanelRoomTimer : MonoBehaviour
 
     private void ResetSceneByGameOverImpl()
     {
-        ButtonSceneChanger.ChangeScene("TemporaryGameOver");
+        ButtonSceneChanger.ChangeScene("GameOver");
     }
 
     public void SetGameOverByOneCaught() //全員捕まえた理由でゲームオーバー
