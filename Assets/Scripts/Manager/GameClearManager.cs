@@ -6,8 +6,9 @@ using UnityEngine.UI;
 public class GameClearManager : MonoBehaviour
 {
     [SerializeField] private ClearTime _clearTimeSO;
+    //編集: 江頭 プレイヤーが捕まった時点では「脱出失敗」のUIを出さないようにします
     //[SerializeField] private GameObject finishImageObject;
-     private GameObject fadeObject;
+    private GameObject fadeObject;
     [SerializeField] private bool setFinishImageOnClearGame = false;
 
     //[SerializeField] private Text _clearTimeText;
@@ -39,7 +40,8 @@ public class GameClearManager : MonoBehaviour
 
         isFinish = true;
         Invoke("SetFadeOut", fadeOutDelay);
-       // if (setFinishImageOnClearGame) finishImageObject.SetActive(true); //もう使わない。ゲームクリアのみ
+        //編集:江頭 プレイヤーがクリアした時点では「脱出成功」のUIを出さないようにしました
+        //if (setFinishImageOnClearGame) finishImageObject.SetActive(true);
         Invoke("LoadNextScene", loadNextSceneDelay);
     }
 
