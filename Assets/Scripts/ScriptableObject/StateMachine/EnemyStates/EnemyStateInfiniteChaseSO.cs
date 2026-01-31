@@ -123,12 +123,14 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 
         Debug.DrawRay(origin, direction * CATCH_MAX_DISTANCE, Color.yellow, 0.5f);
 
+        bool catchSuccess = false;
+
         if (Physics.SphereCast(origin, CATCH_SPHERE_FINAL_RADIUS, direction, out hit, CATCH_MAX_DISTANCE))
         {
-            GameObject target = null;
             if (hit.collider.CompareTag("Player"))
             {
-                target = hit.collider.gameObject;
+                GameObject target = hit.collider.gameObject;
+                catchSuccess = true;
                 isCarrying = true;
                 animator.SetBool("IsCatchingSuccess", true);
 
@@ -141,6 +143,17 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
                 if (colorPanelRoomTimer)
                     colorPanelRoomTimer.SetGameOverByOneCaught();
             }
+        }
+
+        // 捕獲失敗時：元の状態に戻す
+        if (!catchSuccess)
+        {
+            isDiving = false;
+            animator.SetBool("IsDiving", false);
+            _logicController.rbNavMesh.Resume();
+
+            // モデルの位置をリセット
+            _logicController.ModelObj.transform.localPosition = Vector3.zero;
         }
     }
 
