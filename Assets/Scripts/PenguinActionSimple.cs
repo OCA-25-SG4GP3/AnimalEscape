@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PenguinActionSimple : MonoBehaviour
 {
@@ -49,20 +50,19 @@ public class PenguinActionSimple : MonoBehaviour
             originalCapsuleHeight = capsule.height;
         }
     }
-    void Update()
+    public void OnSpecialAction(InputAction.CallbackContext context)
     {
-        // trigger slide only if requested
-        if (Input.GetKeyDown(animalControlSimple.inputKeys.specialAction)
-        &&
-        !slideCooldown.IsCooldown
-        &&
-        !animalControlSimple.IsAIControlled
-        )
+        if (!context.performed) return;
+
+        if (!slideCooldown.IsCooldown && !animalControlSimple.IsAIControlled)
         {
             StartSlide();
             slideCooldown.StartCooldown();
         }
+    }
 
+    void Update()
+    {
         if (isSliding)
         {
             slideTimer += Time.deltaTime;
@@ -80,7 +80,7 @@ public class PenguinActionSimple : MonoBehaviour
         // Move along initial slide direction
         transform.position += slideDirection * slideSpeed * Time.fixedDeltaTime;
 
-        // Apply safe tilt: add 90Åã X on top of original local rotation
+        // Apply safe tilt: add 90ÔøΩÔøΩ X on top of original local rotation
         model.localRotation = originalLocalRotation * Quaternion.Euler(90f, 0f, 0f);
 
         // Slightly hover the model above the ground

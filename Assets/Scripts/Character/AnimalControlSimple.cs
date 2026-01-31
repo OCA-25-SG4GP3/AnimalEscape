@@ -18,7 +18,6 @@ public class AnimalControlSimple : MonoBehaviour
     [SerializeField] private AnimalAudioSettings audioSettings;       // SE担当用
     [SerializeField] private AnimalMovementSettings movementSettings; // 移動担当用
 
-    [SerializeField] public PlayerInputKeys inputKeys = new(); //Player 1, Player 2
     Animator animator;
 
     [SerializeField] public LayerMask groundMask;
@@ -164,18 +163,11 @@ public class AnimalControlSimple : MonoBehaviour
 
         if (!isStuned && !isInputLocked)
         {
-            h += moveInput.x;
-            v += moveInput.y;
+            h = moveInput.x;
+            v = moveInput.y;
 
-            if (Input.GetKey(inputKeys.forward)) v += 1f;
-            if (Input.GetKey(inputKeys.backward)) v -= 1f;
-            if (Input.GetKey(inputKeys.left)) h -= 1f;
-            if (Input.GetKey(inputKeys.right)) h += 1f;
-
-            if (Input.GetKeyDown(inputKeys.jump)) jumpPressed = true;
-
-            if (Input.GetKey(inputKeys.forward) || Input.GetKey(inputKeys.backward) ||
-              Input.GetKey(inputKeys.left) || Input.GetKey(inputKeys.right))
+            // Move effect when walking
+            if (moveInput.sqrMagnitude > 0.01f)
             {
                 moveEffectFlag = true;
             }
@@ -212,14 +204,6 @@ public class AnimalControlSimple : MonoBehaviour
 
 
 
-        //DEBUG
-#if UNITY_EDITOR
-
-        if (Input.GetKeyDown(KeyCode.B))
-        {
-            Instantiate(smokeEffect, transform.position, transform.rotation);
-        }
-#endif
 
     }
     // jumpBufferTime and coyoteTime are now in movementSettings
@@ -479,13 +463,6 @@ public class AnimalControlSimple : MonoBehaviour
 
     public void UpdateStunedState()
     {
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-#if UNITY_EDITOR
-            SetStunnedState();
-#endif
-        }
-
         if (!isStuned) return;
 
         stunedTimer += Time.deltaTime;

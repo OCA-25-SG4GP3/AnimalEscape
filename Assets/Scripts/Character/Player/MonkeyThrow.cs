@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class MonkeyThrow : MonoBehaviour
@@ -15,17 +16,19 @@ public class MonkeyThrow : MonoBehaviour
         animalControlSimple = GetComponent<AnimalControlSimple>();
     }
 
+    public void OnSpecialAction(InputAction.CallbackContext context)
+    {
+        if (!context.performed) return;
+
+        if (!throwCd.IsCooldown && !animalControlSimple.IsAIControlled)
+        {
+            Throw();
+            throwCd.StartCooldown();
+        }
+    }
+
     void Update()
     {
-        if (Input.GetKeyDown(animalControlSimple.inputKeys.specialAction))
-        {
-            if (!throwCd.IsCooldown && !animalControlSimple.IsAIControlled)
-            {
-                Throw();
-                throwCd.StartCooldown();
-            }
-        }
-
         float cdRemaining = throwCd.GetCooldownRemainingSecond();
         if (cdRemaining > 0)
         {
