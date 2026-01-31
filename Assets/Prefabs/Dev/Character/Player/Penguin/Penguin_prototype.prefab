@@ -777,7 +777,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyState: {fileID: 0}
-  offset: {x: 0, y: 0.3, z: 0}
+  offset: {x: -0.3, y: -1, z: 0}
 --- !u!1001 &1913588038347678006
 PrefabInstance:
   m_ObjectHideFlags: 0
