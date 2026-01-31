@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class GameClearManager : MonoBehaviour
 {
     [SerializeField] private ClearTime _clearTimeSO;
-    [SerializeField] private GameObject finishImageObject;
+    //[SerializeField] private GameObject finishImageObject;
      private GameObject fadeObject;
     [SerializeField] private bool setFinishImageOnClearGame = false;
 
@@ -39,7 +39,7 @@ public class GameClearManager : MonoBehaviour
 
         isFinish = true;
         Invoke("SetFadeOut", fadeOutDelay);
-        if (setFinishImageOnClearGame) finishImageObject.SetActive(true);
+       // if (setFinishImageOnClearGame) finishImageObject.SetActive(true); //もう使わない。ゲームクリアのみ
         Invoke("LoadNextScene", loadNextSceneDelay);
     }
 
