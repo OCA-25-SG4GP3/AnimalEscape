@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71bd0f1db8660fd459bde5af6269a7b6, type: 3}
   m_Name: MonkeyMovementSettings
   m_EditorClassIdentifier: 
-  baseMoveSpeed: 5
+  baseMoveSpeed: 7
   moveSpeedOnFinishMult: 1.3
   jumpForce: 5
   holdJumpForce: 10
   maxJumpHoldTime: 0.2
   groundCheckRadius: 0.1
-  fallGravityMultiplier: 2.5
+  fallGravityMultiplier: 3.5
   lowJumpGravityMultiplier: 2
   jumpBufferTime: 0.15
   coyoteTime: 0.1
