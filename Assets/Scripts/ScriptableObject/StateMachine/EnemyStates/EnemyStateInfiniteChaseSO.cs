@@ -111,7 +111,7 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
     #endregion
     // クラスの上部に定数を追加
     [SerializeField] float CATCH_SPHERE_FINAL_RADIUS = 1.5f;//黄色
-    private const float CATCH_MAX_DISTANCE = 3.0f;
+    [SerializeField] private float CATCH_MAX_DISTANCE_FORWARD = 1.0f;
     private const float CATCH_ORIGIN_HEIGHT = 0.5f;
 
     //アニメーションから呼ぶ
@@ -121,11 +121,11 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         Vector3 origin = Owner.transform.position + Vector3.up * CATCH_ORIGIN_HEIGHT;
         Vector3 direction = _logicController.ModelObj.transform.forward;
 
-        Debug.DrawRay(origin, direction * CATCH_MAX_DISTANCE, Color.yellow, 0.5f);
+        Debug.DrawRay(origin, direction * CATCH_MAX_DISTANCE_FORWARD, Color.yellow, 0.5f);
 
         bool catchSuccess = false;
 
-        if (Physics.SphereCast(origin, CATCH_SPHERE_FINAL_RADIUS, direction, out hit, CATCH_MAX_DISTANCE))
+        if (Physics.SphereCast(origin, CATCH_SPHERE_FINAL_RADIUS, direction, out hit, CATCH_MAX_DISTANCE_FORWARD))
         {
             if (hit.collider.CompareTag("Player"))
             {
@@ -166,11 +166,11 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
 
         // 終了位置の球
         Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(origin + direction * CATCH_MAX_DISTANCE, CATCH_SPHERE_FINAL_RADIUS);
+        Gizmos.DrawWireSphere(origin + direction * CATCH_MAX_DISTANCE_FORWARD, CATCH_SPHERE_FINAL_RADIUS);
 
         // 中心線
         Gizmos.color = Color.blue;
-        Gizmos.DrawLine(origin, origin + direction * CATCH_MAX_DISTANCE);
+        Gizmos.DrawLine(origin, origin + direction * CATCH_MAX_DISTANCE_FORWARD);
     }
 
     #region ターゲット検出と判定
@@ -327,7 +327,7 @@ public class EnemyStateInfiniteChaseSO : EnemyStateBaseSO
         Vector3 direction = _logicController.ModelObj.transform.forward;
 
         Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(direction * CATCH_MAX_DISTANCE, _catchRange);
+        Gizmos.DrawWireSphere(direction * CATCH_MAX_DISTANCE_FORWARD, _catchRange);
 
         // 視野角を表示
         ConeHelper.DrawConeGizmo(_logicController.GetConeInfo());

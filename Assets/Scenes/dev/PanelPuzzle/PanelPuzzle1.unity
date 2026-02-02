@@ -18164,6 +18164,10 @@ PrefabInstance:
       value: 20
       objectReference: {fileID: 0}
     - target: {fileID: 5077794318542750628, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
+      propertyPath: zookeeperPrefab
+      value: 
+      objectReference: {fileID: 3632063498514462046, guid: b109888d40a9fdd4c9413ff21e9c61b3, type: 3}
+    - target: {fileID: 5077794318542750628, guid: 41aa7e058acbe6b48a13b7b704404a60, type: 3}
       propertyPath: 'spawnTs.Array.data[0]'
       value: 
       objectReference: {fileID: 281372648}
