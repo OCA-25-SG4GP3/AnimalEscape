@@ -123,47 +123,65 @@ public class ColorPanelPuzzle : MonoBehaviour
     GameObject playerInside;
     void OnTriggerEnter(Collider other)
     {
-
         if (other.CompareTag("Player"))
         {
-            //TODO need cache to reduce lag ?
+            Debug.Log(other.name + " ontrigerenter");
             var playerInfo = other.GetComponent<PlayerInfo>();
-            if (!playerInfo.IsFallingDown()) return;
-            if (!playerInfo.CanStepButton) return;
-
-            isStepped = true;
-
-            animator.Play("ColorPanelPressedAnim");
-            //audioSource.PlayOneShot(pushSound); //�E�j�E�󂳂��E�ƃo�E�O�E��E�
-            Instantiate(steppedEffect, transform.position, transform.rotation);
-            //audioSource.PlayOneShot(pushSound); //�j�󂳂��ƃo�O��
-            //AudioSource.PlayClipAtPoint(pushSound, transform.position, 10000.0f); this volume is capped at 1
-            PlayPushedSFX();
-
-            meshRen.material = pressedMaterial;
-
-            if (hidingMaterial) //If hiding material is assigned
+            if (playerInfo != null && playerInfo.justLandedFromJump)
             {
-                RestoreToCorrectMaterial();
-
-                // Start hide timer to restore to hiding material later
-                if (hideCoroutine != null)
-                {
-                    StopCoroutine(hideCoroutine);
-                }
-                hideCoroutine = StartCoroutine(HideAfterDelay(autoHideTimer));
+                ActivatePanel(other.gameObject);
             }
-
-            colorPanelGate.PanelStepped(this); //last order so it change first then checked
-
-            if (resetCoroutine != null)
-            {
-                StopCoroutine(resetCoroutine);
-            }
-            playerInside = other.gameObject;
-            resetCoroutine = StartCoroutine(ResetStepAfterDelay(autoResetTimer));
         }
     }
+
+    void OnTriggerStay(Collider other)
+    {
+        // Handle case where player enters trigger while in air, then lands
+        if (other.CompareTag("Player") && !isStepped)
+        {
+            var playerInfo = other.GetComponent<PlayerInfo>();
+            if (playerInfo != null && playerInfo.justLandedFromJump)
+            {
+                ActivatePanel(other.gameObject);
+            }
+        }
+    }
+
+    private void ActivatePanel(GameObject player)
+    {
+        if (isStepped) return;
+
+        Debug.Log(player.name + " stepped");
+
+        isStepped = true;
+
+        animator.Play("ColorPanelPressedAnim");
+        Instantiate(steppedEffect, transform.position, transform.rotation);
+        PlayPushedSFX();
+
+        meshRen.material = pressedMaterial;
+
+        if (hidingMaterial)
+        {
+            RestoreToCorrectMaterial();
+
+            if (hideCoroutine != null)
+            {
+                StopCoroutine(hideCoroutine);
+            }
+            hideCoroutine = StartCoroutine(HideAfterDelay(autoHideTimer));
+        }
+
+        colorPanelGate.PanelStepped(this);
+
+        if (resetCoroutine != null)
+        {
+            StopCoroutine(resetCoroutine);
+        }
+        playerInside = player;
+        resetCoroutine = StartCoroutine(ResetStepAfterDelay(autoResetTimer));
+    }
+
     private bool IsCurrentlyUsingHidingMaterial()
     {
         return hidingMaterial && meshRen.material == hidingMaterial;

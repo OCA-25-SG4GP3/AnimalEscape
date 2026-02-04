@@ -10,6 +10,8 @@ public class AnimalMovementSettings : ScriptableObject
     [Header("移動 (Movement)")]
     public float baseMoveSpeed = 5f;
     public float moveSpeedOnFinishMult = 1.3f;
+    [Range(0f, 1.0f)]
+    public float inputDeadZone = 0.15f;
 
     [Header("ジャンプ (Jump)")]
     public float jumpForce = 5f;
@@ -23,6 +25,5 @@ public class AnimalMovementSettings : ScriptableObject
 
     [Header("タイミング (Timing)")]
     public float jumpBufferTime = 0.15f;
-    public float coyoteTime = 0.1f;
     public float stunedDuration = 1.5f;
 }

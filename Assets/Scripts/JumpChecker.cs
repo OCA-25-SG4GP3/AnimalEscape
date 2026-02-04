@@ -19,7 +19,15 @@ public class JumpChecker : MonoBehaviour
 
         if (other.gameObject != animalControl.gameObject) // ignore self
         {
-            animalControl.isJumping = false;  // ジャンプフラグを元に戻す
+            // Set justLandedFromJump flag if we were jumping
+            var playerInfo = animalControl.GetComponent<PlayerInfo>();
+            if (playerInfo != null && animalControl.isJumping)
+            {
+                playerInfo.justLandedFromJump = true;
+            }
+
+            // Delay resetting isJumping by one frame to allow other triggers (ColorPanel) to check it first
+            StartCoroutine(ResetJumpingNextFrame());
             if(!gameClearManager.isFinish) animalControl.UnlockInput();
 
             //animal.SetMoveSpeed(animal.baseMoveSpeed);
@@ -31,6 +39,12 @@ public class JumpChecker : MonoBehaviour
             PlayLandingSound();
 
         }
+    }
+
+    private System.Collections.IEnumerator ResetJumpingNextFrame()
+    {
+        yield return null; // Wait one frame
+        animalControl.isJumping = false;  // ジャンプフラグを元に戻す
     }
 
     void OnTriggerStay(Collider other)
@@ -48,6 +62,13 @@ public class JumpChecker : MonoBehaviour
         if (other.gameObject != animalControl.gameObject) // ignore self
         {
             isGrounded = false;
+
+            // Clear justLandedFromJump when leaving ground
+            var playerInfo = animalControl.GetComponent<PlayerInfo>();
+            if (playerInfo != null)
+            {
+                playerInfo.justLandedFromJump = false;
+            }
         }
     }
     private void PlayLandingSound()

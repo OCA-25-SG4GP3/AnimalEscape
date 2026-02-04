@@ -36,6 +36,7 @@ public class AnimalControlSimple : MonoBehaviour
     // Movement shortcuts (from movementSettings)
     public float baseMoveSpeed => movementSettings != null ? movementSettings.baseMoveSpeed : 5f;
     private float moveSpeedOnFinishMult => movementSettings != null ? movementSettings.moveSpeedOnFinishMult : 1.3f;
+    private float inputDeadZone => movementSettings != null ? movementSettings.inputDeadZone : 0.15f;
     private float jumpForce => movementSettings != null ? movementSettings.jumpForce : 5f;
     private float holdJumpForce => movementSettings != null ? movementSettings.holdJumpForce : 10f;
     private float maxJumpHoldTime => movementSettings != null ? movementSettings.maxJumpHoldTime : 0.2f;
@@ -43,7 +44,6 @@ public class AnimalControlSimple : MonoBehaviour
     private float fallGravityMultiplier => movementSettings != null ? movementSettings.fallGravityMultiplier : 2.5f;
     private float lowJumpGravityMultiplier => movementSettings != null ? movementSettings.lowJumpGravityMultiplier : 2.0f;
     private float jumpBufferTime => movementSettings != null ? movementSettings.jumpBufferTime : 0.15f;
-    private float coyoteTime => movementSettings != null ? movementSettings.coyoteTime : 0.1f;
     private float stunedDuration => movementSettings != null ? movementSettings.stunedDuration : 1.5f;
 
     // Audio shortcuts (from audioSettings)
@@ -164,8 +164,15 @@ public class AnimalControlSimple : MonoBehaviour
 
         if (!isStuned && !isInputLocked)
         {
-            h += moveInput.x;
-            v += moveInput.y;
+            // Apply dead zone to analog input to prevent controller drift
+            Vector2 processedInput = moveInput;
+            if (processedInput.magnitude < inputDeadZone)
+            {
+                processedInput = Vector2.zero;
+            }
+
+            h += processedInput.x;
+            v += processedInput.y;
 
             if (Input.GetKey(inputKeys.forward)) v += 1f;
             if (Input.GetKey(inputKeys.backward)) v -= 1f;
@@ -222,12 +229,10 @@ public class AnimalControlSimple : MonoBehaviour
 #endif
 
     }
-    // jumpBufferTime and coyoteTime are now in movementSettings
+    // jumpBufferTime is now in movementSettings
 
     // Tracks remaining time to buffer a jump input (allows jump shortly after pressing button)
     private float jumpBufferCounter = 0f;
-    // Tracks remaining time for "coyote time" (allows jump shortly after leaving ground)
-    private float coyoteCounter = 0f;
     // Stores whether jump button was pressed this frame (reset to false each Update)
     bool jumpPressed = false;
     void Update()
@@ -241,9 +246,6 @@ public class AnimalControlSimple : MonoBehaviour
         {
             UpdateAIControlled();
         }
-
-
-        coyoteCounter = jumpChecker.isGrounded ? coyoteTime : coyoteCounter - Time.deltaTime;
 
         // Handle external force timer
         if (allowExternalForce)
@@ -337,7 +339,7 @@ public class AnimalControlSimple : MonoBehaviour
 
     void Jump()
     {
-        if (jumpBufferCounter > 0f && coyoteCounter > 0f)
+        if (jumpBufferCounter > 0f && jumpChecker.isGrounded)
         {
             Vector3 vel = rb.linearVelocity;
             vel.y = jumpForce;
@@ -345,7 +347,6 @@ public class AnimalControlSimple : MonoBehaviour
 
             jumpHoldCounter = maxJumpHoldTime;
             jumpBufferCounter = 0f;
-            coyoteCounter = 0f;
 
             jumpChecker.isGrounded = false;
 
@@ -472,9 +473,6 @@ public class AnimalControlSimple : MonoBehaviour
         // Set animation flag if exists
         if (animator && animator.HasParameterOfType("IsStuned", AnimatorControllerParameterType.Bool))
             animator.SetBool("IsStuned", true);
-
-        Debug.Log("STUNED");
-
     }
 
     public void UpdateStunedState()
@@ -499,6 +497,8 @@ public class AnimalControlSimple : MonoBehaviour
 
     private void UpdateJumpHold()
     {
+        if (rb.isKinematic) return;
+
         Vector3 vel = rb.linearVelocity;
 
         // Falling → faster fall (no hang time)

@@ -1,3 +1,4 @@
+using System;
 using TMPro;
 using UnityEngine;
 
@@ -10,7 +11,10 @@ public class PlayerInfo : MonoBehaviour
     public float stepableTimer = 0f;
 
     // ボタン側が見る用
-    public bool CanStepButton => stepableTimer > 0f;
+    public bool CanStepButton => true;
+
+    // ColorPanel用: ジャンプから着地したかどうか
+    [NonSerialized] public bool justLandedFromJump = false;
 
     void Update()
     {
@@ -48,11 +52,12 @@ public class PlayerInfo : MonoBehaviour
         GetComponent<AnimalControlSimple>().SetStunnedState(999.0f); //プレイヤー操作を無効化
     }
 
+//This is too sensitive or too buggy. use jump input check instead
     private void FixedUpdateIsFalling()
     {
         float currentY = transform.position.y;
         float diff = currentY - lastY;
-        float minFall = 0.001f; // ignore tiny movement
+        float minFall = 0.000001f; // ignore tiny movement
         isFalling = diff < -minFall;
         lastY = currentY;
     }
