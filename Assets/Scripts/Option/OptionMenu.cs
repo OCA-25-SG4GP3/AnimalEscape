@@ -38,6 +38,7 @@ public class OptionMenu : MonoBehaviour
     }
     public void ToggleOption()
     {
+        if (startUI && startUI.isApear) return;
 
         canvas.enabled = !canvas.enabled;
         bool isPaused = !Time.timeScale.Equals(0f);
