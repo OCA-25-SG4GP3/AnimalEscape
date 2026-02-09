@@ -1475,7 +1475,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   menuItems:
   - {fileID: 2778251402986120413}
-  - {fileID: 5338327723085146961}
   - {fileID: 6998796037769887106}
 --- !u!1 &6419917072393818657
 GameObject:
