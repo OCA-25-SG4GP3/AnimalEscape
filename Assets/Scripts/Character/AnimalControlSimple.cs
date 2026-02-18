@@ -120,8 +120,8 @@ public class AnimalControlSimple : MonoBehaviour
     {
         if (isAIControlled)
         {
-            jumpPressed = false;
-            jumpHeld = false;
+            //jumpPressed = false;
+            //jumpHeld = false;
             return;
         }
 
